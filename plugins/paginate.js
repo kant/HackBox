@@ -1,6 +1,6 @@
 // Pagination plugin
 // For consistent pagination results
-export function register(server, options, next) {
+function register(server, options, next) {
   server.ext("onPreResponse", (request, reply) => {
     if (request.query.limit) {
       const { source } = request.response;
@@ -21,3 +21,5 @@ register.attributes = {
   name: "pagination",
   version: "1.0.0",
 };
+
+export default { register }

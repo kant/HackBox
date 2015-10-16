@@ -2,7 +2,7 @@ import Joi from "joi";
 import Boom from "boom";
 import { hackathons } from "../fixtures/mock-data";
 
-export function register(server, options, next) {
+function register(server, options, next) {
   server.route({
     method: "GET",
     path: "/hackathons",
@@ -26,7 +26,7 @@ export function register(server, options, next) {
     path: "/hackathons/{id}",
     config: {
       handler(request, reply) {
-        const found = hackathons[request.params.id];
+        const found = hackathons.find((event => event.id === request.params.id));
         if (found) {
           reply(found);
         } else {
@@ -50,3 +50,5 @@ register.attributes = {
   name: "hackathons",
   version: "1.0.0",
 };
+
+export default { register }

@@ -4,8 +4,8 @@ import GoodConsole from "good-console";
 import Vision from "vision";
 import Inert from "inert";
 import Lout from "lout";
-import * as PaginationPlugin from "./plugins/paginate";
-import * as HackathonRoutes from "./routes/hackathons";
+import PaginationPlugin from "./plugins/paginate";
+import HackathonRoutes from "./routes/hackathons";
 
 const server = new Hapi.Server({ debug: { request: ["error"] } });
 const port = process.env.PORT || 3000;
