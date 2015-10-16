@@ -1,3 +1,5 @@
+import Joi from "joi";
+import Boom from "boom";
 import { hackathons } from "../fixtures/mock-data";
 
 export function register(server, options, next) {
@@ -5,9 +7,16 @@ export function register(server, options, next) {
     method: "GET",
     path: "/hackathons",
     config: {
+      description: "Fetch all hackathons",
+      tags: ["paginated", "list"],
       handler(request, reply) {
-        console.log(hackathons)
         reply(hackathons);
+      },
+      validate: {
+        query: {
+          limit: Joi.number().integer().min(1).max(100).default(10),
+          offset: Joi.number().integer().min(0).default(0),
+        },
       },
     },
   });
@@ -17,7 +26,19 @@ export function register(server, options, next) {
     path: "/hackathons/{id}",
     config: {
       handler(request, reply) {
-
+        const found = hackathons[request.params.id];
+        if (found) {
+          reply(found);
+        } else {
+          reply(Boom.notFound());
+        }
+      },
+      tags: ["detail"],
+      description: "Fetch details about a single hackathon",
+      validate: {
+        params: {
+          id: Joi.number().integer(),
+        },
       },
     },
   });

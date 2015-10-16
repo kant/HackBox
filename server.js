@@ -4,6 +4,7 @@ import GoodConsole from "good-console";
 import Vision from "vision";
 import Inert from "inert";
 import Lout from "lout";
+import * as PaginationPlugin from "./plugins/paginate";
 import * as HackathonRoutes from "./routes/hackathons";
 
 const server = new Hapi.Server({ debug: { request: ["error"] } });
@@ -33,6 +34,7 @@ server.register([
     },
   },
   HackathonRoutes,
+  PaginationPlugin,
 ], function(err) {
   if (err) {
     console.error(err);
