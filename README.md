@@ -29,6 +29,58 @@ Run `npm run` to see all available scripts.
 
 `npm run lint` will run linting tests on the whole project
 
+
+## basic structure
+
+**note this is quite rough** 
+
+This is not meant to be a full DB schema, just trying to wrap my head around the data
+
+```
+┌──────────────────────┐
+│ projects             │
+├────────────────────  │                                     ┌───────────────────┐
+│ id                   │        ┌───────────────────┐        │ participants      │
+│ title                │        │ hackathons        │        ├───────────────────┤
+│ tagline              │        ├───────────────────┤        │ id                │
+│ status               │        │ id                │        │ name              │
+│ description          │        │ start_date        │        │ username          │
+│ owner_id             │        │ end_date          │        │ email             │
+│ venue_id             │╲       │ num_participants  │        │ bio               │
+│ stat_likes           │───────┼│ num_cities        │        │ job_title         │
+│ stat_shares          │╱       │ num_countries     │        │ company_name      │
+│ stat_comments        │        │ num_first_timers  │        │ registration_date │◇─┐
+│ stat_views           │        │ num_unique_skills │        │ photo             │  │
+│ stat_views_uniq      │        │ num_projects      │        │ address_1         │  │
+│ stat_videoviews      │        │ num_open_projects │        │ address_2         │  │
+│ stat_videoviews_uniq │        └───────────────────┘        │ city              │  │
+│ resources            │                  ┼                  │ state             │  │
+│ participant_ids []   │                  │                  │ country           │  │
+└──────────────────────┘                  │                  │ twitter           │  │
+            ┼                             │                  │ facebook          │  │
+            │                             │                  │ linkedin          │  │
+            │                             │                  └───────────────────┘  │
+            │                             │                            ┼            │
+            │                             │                            │            │
+            │                             │    ┌───────────────────┐   │            │
+            │                             │    │ attended_events   │   │            │
+            │                             │   ╱├───────────────────┤╲  │            │
+            │                             └────│ participant_id    │───┘            │
+            │                                 ╲│ hackathon_id      │╱               │
+            │                                  └───────────────────┘                │
+            │                                                                       │
+            │                                                                       │
+            │                                                                       │
+            │                     ┌───────────────────┐                             │
+            │                     │ comments          │                             │
+            │                     ├───────────────────┤                             │
+            │                    ╱│ id                │╲                            │
+            └─────────────────────│ text              │─────────────────────────────┘
+                                 ╲│ participant_id    │╱
+                                  │ created_date      │
+                                  └───────────────────┘
+```
+
 ## Running tests
 
 `npm test`
