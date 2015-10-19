@@ -30,6 +30,152 @@ Run `npm run` to see all available scripts.
 `npm run lint` will run linting tests on the whole project
 
 
+## RESTful routes
+
+```
+// managing hackathons (editing would be admin-only functionality)
+GET    /hackathons (paginated list)
+POST   /hackathons
+PUT    /hackathons/{id}
+DELETE /hackathons/{id}
+GET    /hackathons/{id}
+
+// edits to participants would happen as a root resource
+GET    /participants (paginated, filterable list)
+POST   /participants
+PUT    /participants/{id}
+DELETE /participants/{id}
+GET    /participants/{id}
+
+// filtered participants would still be available 
+// through hackathon resource but editing would happen
+// at root level
+GET    /hackathons/{id}/participants (paginated, filterable list)
+POST   /hackathons/{id}/participants 
+
+// managing projects in hackathons
+GET    /hackathons/projects (paginated, filterable list)
+POST   /hackathons/projects
+PUT    /hackathons/projects/{id}
+DELETE /hackathons/projects/{id}
+GET    /hackathons/projects/{id}
+
+// manage project members
+// owner is fixed
+POST   /hackathons/projects/{id}/members?participant_id={id}
+DELETE /hackathons/projects/{id}/members?participant_id={id}
+
+// project comments
+GET    /hackathons/projects/{id}/comments/ (list, possibly paginated?)
+POST   /hackathons/projects/{id}/comments/
+DELETE /hackathons/projects/{id}/comments/{id} (is this desired functinality?)
+PUT    /hackathons/projects/{id}/comments/{id} (is this desired functinality?)
+
+```
+
+## Potentially existing/fixed data sources
+
+These were all pulled from search/filter pages of the staging site. 
+
+Is this what should exist? Should these be fixed, or editable?
+
+- Hack Venue Country list
+  - USA
+  - India
+  - China
+  - UK
+  - Brazil
+  - Czech Republic
+  - Denmark
+  - Estonia
+  - Finland
+  - France
+  - Hong Kong SAR
+  - Ireland
+  - Israel
+  - Russia
+  - Serbia
+  - Sweden
+  - Switzerland
+  - Taiwan
+  - S4
+  - TechReady
+- Participant roles:
+  - Developer
+  - Services
+  - PM
+  - IT operations
+  - Sales
+  - Marketing
+  - Service Eng
+  - Sales
+  - Design
+  - Content Publishing
+  - Data Science
+  - Design Research
+  - Business Programs & Ops
+  - Supply Chain & Ops
+  - Evangelism
+  - HW Engineering
+  - HR
+  - Legal & Corporate Affairs
+  - Finance
+- Project categories
+  - Azure
+  - Office
+  - Bing
+  - Windows 10
+  - Skype
+  - Dynamics
+  - Xbox
+  - SQL
+  - Visual Studio
+  - HoloLens
+  - Windows Phone
+  - Cortana
+  - SQL
+  - MSIT
+  - Exchange
+  - Power BI
+  - Machine Learning
+  - Mobile
+  - Intune
+  - Yammer
+- Expertise Types
+  - JavaScript
+  - Azure
+  - Android
+  - C#
+  - IoT
+  - Python
+  - Cortana
+  - iOS
+  - Skype
+- Product/service types
+  - Windows
+  - Devices
+  - Consumer Services
+  - Cloud + Enterprise
+  - Office
+  - Dynamics
+  - 3rd Party Platforms
+  - Misc
+  - Other
+- Customer Types
+  - Consumers
+  - MS Employees/Culture
+  - Developers
+  - Business
+  - Students/Schools
+  - IT Pros
+  - Millennnials
+  - MS Groups
+  - Tech for Good
+  - Advertisers
+  - Industries
+  - Other
+
+
 ## basic structure
 
 **note this is quite rough** 
@@ -39,26 +185,27 @@ This is not meant to be a full DB schema, just trying to wrap my head around the
 ```
 ┌──────────────────────┐
 │ projects             │
-├────────────────────  │                                     ┌───────────────────┐
-│ id                   │        ┌───────────────────┐        │ participants      │
-│ title                │        │ hackathons        │        ├───────────────────┤
-│ tagline              │        ├───────────────────┤        │ id                │
-│ status               │        │ id                │        │ name              │
-│ description          │        │ start_date        │        │ username          │
-│ owner_id             │        │ end_date          │        │ email             │
-│ venue_id             │╲       │ num_participants  │        │ bio               │
-│ stat_likes           │───────┼│ num_cities        │        │ job_title         │
-│ stat_shares          │╱       │ num_countries     │        │ company_name      │
-│ stat_comments        │        │ num_first_timers  │        │ registration_date │◇─┐
-│ stat_views           │        │ num_unique_skills │        │ photo             │  │
-│ stat_views_uniq      │        │ num_projects      │        │ address_1         │  │
-│ stat_videoviews      │        │ num_open_projects │        │ address_2         │  │
-│ stat_videoviews_uniq │        └───────────────────┘        │ city              │  │
-│ resources            │                  ┼                  │ state             │  │
-│ participant_ids []   │                  │                  │ country           │  │
-└──────────────────────┘                  │                  │ twitter           │  │
-            ┼                             │                  │ facebook          │  │
-            │                             │                  │ linkedin          │  │
+├────────────────────  │
+│ id                   │                                     ┌───────────────────┐
+│ title                │        ┌───────────────────┐        │ participants      │
+│ tagline              │        │ hackathons        │        ├───────────────────┤
+│ status               │        ├───────────────────┤        │ id                │
+│ description          │        │ id                │        │ name              │
+│ owner_id             │        │ start_date        │        │ username          │
+│ venue_id             │        │ end_date          │        │ email             │
+│ stat_likes           │╲       │ num_participants  │        │ bio               │
+│ stat_shares          │───────┼│ num_cities        │        │ job_title         │
+│ stat_comments        │╱       │ num_countries     │        │ company_name      │
+│ stat_views           │        │ num_first_timers  │        │ registration_date │◇─┐
+│ stat_views_uniq      │        │ num_unique_skills │        │ photo             │  │
+│ stat_videoviews      │        │ num_projects      │        │ address_1         │  │
+│ stat_videoviews_uniq │        │ num_open_projects │        │ address_2         │  │
+│ resources            │        └───────────────────┘        │ city              │  │
+│ participant_ids []   │                  ┼                  │ state             │  │
+│ needs_hackers        │                  │                  │ country           │  │
+│ has_video            │                  │                  │ twitter           │  │
+└──────────────────────┘                  │                  │ facebook          │  │
+            ┼                             │                  │ linkedin          │  │
             │                             │                  └───────────────────┘  │
             │                             │                            ┼            │
             │                             │                            │            │
