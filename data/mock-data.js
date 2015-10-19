@@ -51,10 +51,6 @@ export const projects = [
     num_views: 211,
     num_videoviews: 122,
     num_uniques: 89,
-    num_uniqueviews: 89
-  }
-]
-
-export const user_profile = {
-
-};
+    num_uniqueviews: 89,
+  },
+];

@@ -1,16 +1,15 @@
 import Boom from "boom";
-import { hackathons } from "../data/mock-data";
-import { pagination, newHackathon, hackathon, id } from "../data/schemas";
+import { pagination, newParticipant, participant, id } from "../data/schemas";
 
 function register(server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathons",
+    path: "/participants",
     config: {
-      description: "Fetch all hackathons",
+      description: "Fetch all participants",
       tags: ["paginated", "list"],
       handler(request, reply) {
-        reply(hackathons);
+        reply(Boom.notImplemented());
       },
       validate: {
         query: pagination,
@@ -20,25 +19,23 @@ function register(server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathons",
+    path: "/participants",
     config: {
-      description: "Create a new hackathon",
-      tags: ["admin"],
+      description: "Create a new participant",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        payload: newHackathon,
+        payload: newParticipant,
       },
     },
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathons/{id}",
+    path: "/participants/{id}",
     config: {
-      description: "Delete a hackathon",
-      tags: ["admin"],
+      description: "Delete a participant",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
@@ -50,15 +47,14 @@ function register(server, options, next) {
 
   server.route({
     method: "PUT",
-    path: "/hackathons/{id}",
+    path: "/participants/{id}",
     config: {
-      description: "Edit hackathon details",
-      tags: ["admin"],
+      description: "Edit participant details",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        payload: hackathon,
+        payload: participant,
         params: {id},
       },
     },
@@ -66,17 +62,12 @@ function register(server, options, next) {
 
   server.route({
     method: "GET",
-    path: "/hackathons/{id}",
+    path: "/participants/{id}",
     config: {
-      description: "Fetch details about a single hackathon",
+      description: "Fetch details about a single participant",
       tags: ["detail"],
       handler(request, reply) {
-        const found = hackathons.find(event => event.id === request.params.id);
-        if (found) {
-          reply(found);
-        } else {
-          reply(Boom.notFound());
-        }
+        reply(Boom.notImplemented());
       },
       validate: {
         params: id,
@@ -88,7 +79,7 @@ function register(server, options, next) {
 }
 
 register.attributes = {
-  name: "hackathons",
+  name: "participants",
   version: "1.0.0",
 };
 

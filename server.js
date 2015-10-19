@@ -6,6 +6,8 @@ import Inert from "inert";
 import Lout from "lout";
 import PaginationPlugin from "./plugins/paginate";
 import HackathonRoutes from "./routes/hackathons";
+import ProjectRoutes from "./routes/projects";
+import ParticipantRoutes from "./routes/participants";
 
 const server = new Hapi.Server({ debug: { request: ["error"] } });
 const port = process.env.PORT || 3000;
@@ -34,6 +36,8 @@ server.register([
     },
   },
   HackathonRoutes,
+  ParticipantRoutes,
+  ProjectRoutes,
   PaginationPlugin,
 ], function(err) {
   if (err) {
