@@ -22,15 +22,15 @@ export const hackathon = Joi.object().keys(Object.assign({id}, hackathonBase));
 /*
   Participants
 */
-const participantBase = {
+const userBase = {
   name: Joi.string().min(3).max(60).trim().required(),
   phone: Joi.string().regex(/^[0-9\(\) \+]*$/).trim().required(),
   title: Joi.string().min(0).max(30).trim().required(),
   email: Joi.string().email().required(),
   username: Joi.string().min(1).max(30).trim().required(),
 };
-export const newParticipant = Joi.object().keys(participantBase);
-export const participant = Joi.object().keys(Object.assign({id}, participantBase));
+export const newUser = Joi.object().keys(userBase);
+export const user = Joi.object().keys(Object.assign({id}, userBase));
 
 /*
   Project
@@ -47,3 +47,13 @@ const projectBase = {
 };
 export const newProject = Joi.object().keys(projectBase);
 export const project = Joi.object().keys(Object.assign({id}, projectBase));
+
+/*
+  Project
+*/
+const commentBase = {
+  body: Joi.string().min(3).max(2000),
+  user_id: id,
+};
+export const newComment = Joi.object().keys(commentBase);
+export const comment = Joi.object().keys(Object.assign({id}, commentBase));

@@ -1,54 +1,56 @@
 import Boom from "boom";
-import { pagination, id } from "../data/schemas";
+import { id, newComment } from "../data/schemas";
 
 function register(server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/participants",
+    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments",
     config: {
-      description: "Fetch all participants",
-      tags: ["list", "paginated", "filterable"],
+      description: "Fetch all comments on a project",
+      tags: ["list"],
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
         params: {
           hackathon_id: id,
+          project_id: id,
         },
-        query: pagination,
       },
     },
   });
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathon_id}/participants/{user_id}",
+    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments",
     config: {
-      description: "Add user to hackathon",
+      description: "Post a comment",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
         params: {
           hackathon_id: id,
-          user_id: id,
+          project_id: id,
         },
+        payload: newComment,
       },
     },
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathon_id}/participants/{user_id}",
+    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments/{comment_id}",
     config: {
-      description: "Remove a user from a project",
+      description: "Delete a comment",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
         params: {
           hackathon_id: id,
-          user_id: id,
+          project_id: id,
+          comment_id: id,
         },
       },
     },
@@ -58,7 +60,7 @@ function register(server, options, next) {
 }
 
 register.attributes = {
-  name: "participants",
+  name: "comments",
   version: "1.0.0",
 };
 

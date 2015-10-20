@@ -4,6 +4,11 @@ This is a node.js api server written using [hapi](http://hapijs.com) framework.
 
 It's written in ES6 transpiled with Babel to allow full ES6 support. In order to use all of the ES6 features we're using [babel.js](https://babeljs.io) transpiler via the [require hook](https://babeljs.io/docs/usage/require/) as can be seen in index.js.
 
+## Questions
+
+1. Can one user ever be on multiple projects in the same hackathon?
+2. Can the owner of a project change?
+3. Do projects ever exist outside of a hackathon, or in multiple hackathons? (I'm assuming not)
 
 ## Running Locally
 
@@ -40,18 +45,19 @@ PUT    /hackathons/{id}
 DELETE /hackathons/{id}
 GET    /hackathons/{id}
 
-// edits to participants would happen as a root resource
-GET    /participants (paginated, filterable list)
-POST   /participants
-PUT    /participants/{id}
-DELETE /participants/{id}
-GET    /participants/{id}
+// edits to users would happen as a root resource
+GET    /users (paginated, filterable list)
+POST   /users
+PUT    /users/{id}
+DELETE /users/{id}
+GET    /users/{id}
 
-// filtered participants would still be available 
+// filtered user lists would still be available 
 // through hackathon resource but editing would happen
-// at root level
+// at root level for `/users`
 GET    /hackathons/{id}/participants (paginated, filterable list)
-POST   /hackathons/{id}/participants 
+POST   /hackathons/{id}/participants/{user_id}
+DELETE /hackathons/{id}/participants/{user_id}
 
 // managing projects in hackathons
 GET    /hackathons/projects (paginated, filterable list)
@@ -62,14 +68,14 @@ GET    /hackathons/projects/{id}
 
 // manage project members
 // owner is fixed
-POST   /hackathons/projects/{id}/members?participant_id={id}
-DELETE /hackathons/projects/{id}/members?participant_id={id}
+POST   /hackathons/projects/{id}/members/{user_id}
+DELETE /hackathons/projects/{id}/members/{user_id}
 
 // project comments
-GET    /hackathons/projects/{id}/comments/ (list, possibly paginated?)
-POST   /hackathons/projects/{id}/comments/
-DELETE /hackathons/projects/{id}/comments/{id} (is this desired functinality?)
-PUT    /hackathons/projects/{id}/comments/{id} (is this desired functinality?)
+GET    /hackathons/{id}/projects/{id}/comments/ (list, possibly paginated?)
+POST   /hackathons/{id}/projects/{id}/comments/
+DELETE /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
+PUT    /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
 
 ```
 

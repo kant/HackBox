@@ -8,6 +8,9 @@ import PaginationPlugin from "./plugins/paginate";
 import HackathonRoutes from "./routes/hackathons";
 import ProjectRoutes from "./routes/projects";
 import ParticipantRoutes from "./routes/participants";
+import UserRoutes from "./routes/users";
+import DataSetRoutes from "./routes/data-sets";
+import CommentRoutes from "./routes/comments";
 
 const server = new Hapi.Server({ debug: { request: ["error"] } });
 const port = process.env.PORT || 3000;
@@ -38,6 +41,9 @@ server.register([
   HackathonRoutes,
   ParticipantRoutes,
   ProjectRoutes,
+  UserRoutes,
+  CommentRoutes,
+  DataSetRoutes,
   PaginationPlugin,
 ], function(err) {
   if (err) {

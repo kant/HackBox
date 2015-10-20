@@ -1,20 +1,17 @@
 import Boom from "boom";
-import { pagination, newProject, project, id } from "../data/schemas";
+import { pagination, newUser, user, id } from "../data/schemas";
 
 function register(server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/projects",
+    path: "/users",
     config: {
-      description: "Fetch all projects",
-      tags: ["paginated", "list", "filterable"],
+      description: "Fetch all users",
+      tags: ["paginated", "list"],
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {
-          hackathon_id: id,
-        },
         query: pagination,
       },
     },
@@ -22,70 +19,58 @@ function register(server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathon_id}/projects",
+    path: "/users",
     config: {
-      description: "Create a new project",
+      description: "Create a new users",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {
-          hackathon_id: id,
-        },
-        payload: newProject,
+        payload: newUser,
       },
     },
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/users/{id}",
     config: {
-      description: "Delete a project",
+      description: "Delete a user",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {
-          hackathon_id: id,
-          id,
-        },
+        params: {id},
       },
     },
   });
 
   server.route({
     method: "PUT",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/users/{id}",
     config: {
-      description: "Edit project details",
+      description: "Edit user details",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        payload: project,
-        params: {
-          hackathon_id: id,
-          id,
-        },
+        payload: user,
+        params: {id},
       },
     },
   });
 
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/users/{id}",
     config: {
-      description: "Fetch details about a single project",
+      description: "Fetch details about a single user",
       tags: ["detail"],
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {
-          hackathon_id: id,
-          id,
-        },
+        params: id,
       },
     },
   });
@@ -94,7 +79,7 @@ function register(server, options, next) {
 }
 
 register.attributes = {
-  name: "projects",
+  name: "users",
   version: "1.0.0",
 };
 
