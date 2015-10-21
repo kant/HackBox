@@ -1,6 +1,7 @@
 import Joi from "joi";
 
-export const id = Joi.number().integer().positive().required();
+export const optionalId = Joi.number().integer().positive();
+export const id = optionalId.required();
 
 export const pagination = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100).default(10),
@@ -36,14 +37,21 @@ export const user = Joi.object().keys(Object.assign({id}, userBase));
   Project
 */
 const projectBase = {
+  owner_id: id,
+  venue_id: id,
+  video_id: optionalId,
   title: Joi.string().min(3).max(30).required(),
   tagline: Joi.string().min(3).max(60),
+  status: Joi.string(),
   description: Joi.string(),
-  owner_id: id,
-  url: Joi.string().uri(),
-  venue_id: id,
-  keywords: Joi.array().unique().items(Joi.string().min(1).max(30)),
-  project_image: Joi.string().uri()
+  image_url: Joi.string().uri(),
+  code_repo_url: Joi.string().uri(),
+  prototype_url: Joi.string().uri(),
+  supporting_files_url: Joi.string().uri(),
+  inspiration: Joi.string(),
+  how_it_will_work: Joi.string(),
+  needs_hackers: Joi.boolean(),
+  tags: Joi.array().unique().items(Joi.string().min(1).max(30))
 };
 export const newProject = Joi.object().keys(projectBase);
 export const project = Joi.object().keys(Object.assign({id}, projectBase));

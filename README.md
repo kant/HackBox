@@ -203,49 +203,56 @@ Is this what should exist? Should these be fixed, or editable?
 This is not meant to be a full DB schema, just trying to wrap my head around the data
 
 ```
-┌──────────────────────┐
-│ projects             │
-├────────────────────  │
-│ id                   │                                     ┌───────────────────┐
-│ title                │        ┌───────────────────┐        │ users             │
-│ tagline              │        │ hackathons        │        ├───────────────────┤
-│ status               │        ├───────────────────┤        │ id                │
-│ description          │        │ id                │        │ name              │
-│ owner_id             │        │ start_date        │        │ username          │
-│ venue_id             │        │ end_date          │        │ email             │
-│ stat_likes           │╲       │ num_participants  │        │ bio               │
-│ stat_shares          │───────┼│ num_cities        │        │ job_title         │
-│ stat_comments        │╱       │ num_countries     │        │ company_name      │
-│ stat_views           │        │ num_first_timers  │        │ registration_date │◇─┐
-│ stat_views_uniq      │        │ num_unique_skills │        │ photo             │  │
-│ stat_videoviews      │        │ num_projects      │        │ address_1         │  │
-│ stat_videoviews_uniq │        │ num_open_projects │        │ address_2         │  │
-│ resources            │        └───────────────────┘        │ city              │  │
-│ participant_ids []   │                  ┼                  │ state             │  │
-│ needs_hackers        │                  │                  │ country           │  │
-│ has_video            │                  │                  │ twitter           │  │
-└──────────────────────┘                  │                  │ facebook          │  │
-            ┼                             │                  │ linkedin          │  │
-            │                             │                  └───────────────────┘  │
-            │                             │                            ┼            │
-            │                             │                            │            │
-            │                             │    ┌───────────────────┐   │            │
-            │                             │    │ participants      │   │            │
-            │                             │   ╱├───────────────────┤╲  │            │
-            │                             └────│ user_id           │───┘            │
-            │                                 ╲│ hackathon_id      │╱               │
-            │                                  └───────────────────┘                │
-            │                                                                       │
-            │                                                                       │
-            │                                                                       │
-            │                     ┌───────────────────┐                             │
-            │                     │ comments          │                             │
-            │                     ├───────────────────┤                             │
-            │                    ╱│ id                │╲                            │
-            └─────────────────────│ text              │─────────────────────────────┘
-                                 ╲│ participant_id    │╱
-                                  │ created_date      │
-                                  └───────────────────┘
+   ┌──────────────────────┐
+   │ projects             │
+   ├──────────────────────┤
+   │ id                   │
+   │ owner_id             │
+   │ venue_id             │                                ┌───────────────────┐
+   │ video_id             │     ┌───────────────────┐      │ users             │
+   │ title                │     │ hackathons        │      ├───────────────────┤
+   │ tagline              │     ├───────────────────┤      │ id                │
+   │ status (need info)   │     │ id                │      │ name              │
+   │ description          │     │ start_date        │      │ username          │
+   │ image_url            │     │ end_date          │      │ email             │
+   │ code_repository_url  │╲    │ num_participants  │      │ bio               │
+┌─┼│ prototype_url        │────┼│ num_cities        │      │ job_title         │
+│  │ supporting_files     │╱    │ num_countries     │      │ company_name      │
+│  │ inspiration          │     │ num_first_timers  │  ┌──┼│ registration_date │◇─┐
+│  │ how_it_will_work     │     │ num_unique_skills │  │   │ photo             │  │
+│  │ needs_hackers        │     │ num_projects      │  │   │ address_1         │  │
+│  │ tags                 │     │ num_open_projects │  │   │ address_2         │  │
+│  │ stat_likes           │     └───────────────────┘  │   │ city              │  │
+│  │ stat_shares          │               ┼            │   │ state             │  │
+│  │ stat_comments        │               │            │   │ country           │  │
+│  │ stat_views           │               │            │   │ twitter           │  │
+│  │ stat_views_uniq      │               │            │   │ facebook          │  │
+│  │ stat_videoviews      │               │            │   │ linkedin          │  │
+│  │ stat_videoviews_uniq │               │            │   └───────────────────┘  │
+│  └──────────────────────┘               │            │             ◇            │
+│              ┼                         ╱│╲           │             │            │
+│              │                ┌───────────────────┐  │             │            │
+│              │                │ participants      │  │             │            │
+│              │                ├───────────────────┤╲ │             │            │
+│              │                │ user_id           │──┘             │            │
+│              │                │ hackathon_id      │╱               │            │
+│              │                └───────────────────┘                │            │
+│              │                                                     │            │
+│              │                ┌───────────────────┐                │            │
+│              │                │ comments          │                │            │
+│              │                ├───────────────────┤                │            │
+│              │               ╱│ id                │╲               │            │
+│              └────────────────│ text              │────────────────┘            │
+│                              ╲│ participant_id    │╱                            │
+│                               │ created_date      │                             │
+│                               └───────────────────┘                             │
+│                                                                                 │
+│                               ┌───────────────────┐                             │
+│                               │ members           │                             │
+│                              ╱├───────────────────┤╲                            │
+└───────────────────────────────│ user_id           │─────────────────────────────┘
+                               ╲│ project_id        │╱
+                                └───────────────────┘
 ```
 
 ## Running tests
