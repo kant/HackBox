@@ -9,7 +9,6 @@ lab.test("basic server setup", function(done) {
     method: "GET",
     url: "/hackathons?limit=12",
   }, function(response) {
-    console.log(response);
     server.stop(done);
   });
   assert(1 + 1, 2, "stub");

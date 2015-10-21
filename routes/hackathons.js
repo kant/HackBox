@@ -71,6 +71,7 @@ function register(server, options, next) {
       description: "Fetch details about a single hackathon",
       tags: ["detail"],
       handler(request, reply) {
+        console.log('HERE')
         const found = hackathons.find(event => event.id === request.params.id);
         if (found) {
           reply(found);
@@ -79,7 +80,7 @@ function register(server, options, next) {
         }
       },
       validate: {
-        params: id,
+        params: {id},
       },
     },
   });
