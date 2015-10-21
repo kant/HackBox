@@ -2,7 +2,7 @@ import Boom from "boom";
 import { hackathons } from "../data/mock-data";
 import { pagination, newHackathon, hackathon, id } from "../data/schemas";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
     path: "/hackathons",
@@ -13,9 +13,9 @@ function register(server, options, next) {
         reply(hackathons);
       },
       validate: {
-        query: pagination,
-      },
-    },
+        query: pagination
+      }
+    }
   });
 
   server.route({
@@ -28,9 +28,9 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        payload: newHackathon,
-      },
-    },
+        payload: newHackathon
+      }
+    }
   });
 
   server.route({
@@ -43,9 +43,9 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {id},
-      },
-    },
+        params: {id}
+      }
+    }
   });
 
   server.route({
@@ -59,9 +59,9 @@ function register(server, options, next) {
       },
       validate: {
         payload: hackathon,
-        params: {id},
-      },
-    },
+        params: {id}
+      }
+    }
   });
 
   server.route({
@@ -71,8 +71,7 @@ function register(server, options, next) {
       description: "Fetch details about a single hackathon",
       tags: ["detail"],
       handler(request, reply) {
-        console.log('HERE')
-        const found = hackathons.find(event => event.id === request.params.id);
+        const found = hackathons.find((event) => event.id === request.params.id);
         if (found) {
           reply(found);
         } else {
@@ -80,17 +79,17 @@ function register(server, options, next) {
         }
       },
       validate: {
-        params: {id},
-      },
-    },
+        params: {id}
+      }
+    }
   });
 
   next();
-}
+};
 
 register.attributes = {
   name: "hackathons",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

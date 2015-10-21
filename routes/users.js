@@ -1,7 +1,7 @@
 import Boom from "boom";
 import { pagination, newUser, user, id } from "../data/schemas";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
     path: "/users",
@@ -12,9 +12,9 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        query: pagination,
-      },
-    },
+        query: pagination
+      }
+    }
   });
 
   server.route({
@@ -26,9 +26,9 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        payload: newUser,
-      },
-    },
+        payload: newUser
+      }
+    }
   });
 
   server.route({
@@ -40,9 +40,9 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: {id},
-      },
-    },
+        params: {id}
+      }
+    }
   });
 
   server.route({
@@ -55,9 +55,9 @@ function register(server, options, next) {
       },
       validate: {
         payload: user,
-        params: {id},
-      },
-    },
+        params: {id}
+      }
+    }
   });
 
   server.route({
@@ -70,17 +70,17 @@ function register(server, options, next) {
         reply(Boom.notImplemented());
       },
       validate: {
-        params: id,
-      },
-    },
+        params: id
+      }
+    }
   });
 
   next();
-}
+};
 
 register.attributes = {
   name: "users",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

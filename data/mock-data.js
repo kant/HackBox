@@ -13,7 +13,7 @@ export const hackathons = [
     num_first_timers: 8902,
     num_unique_skills: 3417,
     num_projects: 3395,
-    num_open_projects: 1894,
+    num_open_projects: 1894
   },
   {
     id: 2,
@@ -26,8 +26,8 @@ export const hackathons = [
     num_first_timers: 23,
     num_unique_skills: 100,
     num_projects: 78,
-    num_open_projects: 73,
-  },
+    num_open_projects: 73
+  }
 ];
 
 export const projects = [
@@ -51,6 +51,6 @@ export const projects = [
     num_views: 211,
     num_videoviews: 122,
     num_uniques: 89,
-    num_uniqueviews: 89,
-  },
+    num_uniqueviews: 89
+  }
 ];

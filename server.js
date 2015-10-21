@@ -17,12 +17,12 @@ const port = process.env.PORT || 3000;
 
 server.connection({
   host: "0.0.0.0",
-  port: port,
   routes: {
     cors: {
-      credentials: true,
-    },
+      credentials: true
+    }
   },
+  port
 });
 
 server.register([
@@ -34,9 +34,9 @@ server.register([
     options: {
       reporters: [{
         reporter: GoodConsole,
-        events: { log: "*", response: "*" },
-      }],
-    },
+        events: { log: "*", response: "*" }
+      }]
+    }
   },
   HackathonRoutes,
   ParticipantRoutes,
@@ -44,15 +44,15 @@ server.register([
   UserRoutes,
   CommentRoutes,
   DataSetRoutes,
-  PaginationPlugin,
-], function(err) {
+  PaginationPlugin
+], (err) => {
   if (err) {
-    console.error(err);
+    throw err;
   }
 });
 
-server.start(function() {
-  console.info("api server started at " + server.info.uri);
+server.start(() => {
+  process.stdout.write(`api server started at ${server.info.uri}\n`);
 });
 
 module.exports = server;

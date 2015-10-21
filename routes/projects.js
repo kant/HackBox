@@ -1,10 +1,10 @@
 import Boom from "boom";
 import { pagination, newProject, project, id } from "../data/schemas";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/projects",
+    path: "/hackathon/{hackathonId}/projects",
     config: {
       description: "Fetch all projects",
       tags: ["paginated", "list", "filterable"],
@@ -13,16 +13,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
+          hackathonId: id
         },
-        query: pagination,
-      },
-    },
+        query: pagination
+      }
+    }
   });
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathon_id}/projects",
+    path: "/hackathon/{hackathonId}/projects",
     config: {
       description: "Create a new project",
       handler(request, reply) {
@@ -30,16 +30,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
+          hackathonId: id
         },
-        payload: newProject,
-      },
-    },
+        payload: newProject
+      }
+    }
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/hackathon/{hackathonId}/projects/{id}",
     config: {
       description: "Delete a project",
       handler(request, reply) {
@@ -47,16 +47,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          id,
-        },
-      },
-    },
+          hackathonId: id,
+          id
+        }
+      }
+    }
   });
 
   server.route({
     method: "PUT",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/hackathon/{hackathonId}/projects/{id}",
     config: {
       description: "Edit project details",
       handler(request, reply) {
@@ -65,16 +65,16 @@ function register(server, options, next) {
       validate: {
         payload: project,
         params: {
-          hackathon_id: id,
-          id,
-        },
-      },
-    },
+          hackathonId: id,
+          id
+        }
+      }
+    }
   });
 
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/projects/{id}",
+    path: "/hackathon/{hackathonId}/projects/{id}",
     config: {
       description: "Fetch details about a single project",
       tags: ["detail"],
@@ -83,19 +83,19 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          id,
-        },
-      },
-    },
+          hackathonId: id,
+          id
+        }
+      }
+    }
   });
 
   next();
-}
+};
 
 register.attributes = {
   name: "projects",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

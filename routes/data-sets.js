@@ -1,23 +1,23 @@
 import fixedData from "../data/fixed-data";
 import { paramCase, sentenceCase } from "change-case";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
     path: "/data-sets",
     config: {
       description: "Convenience method for fetching all data sets",
-      notes: "Useful when rendering filter search pages. try it: <a href=\"/data-sets\">/data-sets</a>",
+      notes: "For rendering filter search pages. try it: <a href=\"/data-sets\">/data-sets</a>",
       tags: ["convenience", "unsecured"],
       handler(request, reply) {
         reply(fixedData);
-      },
-    },
+      }
+    }
   });
 
   // create one per type
   for (const item in fixedData) { // eslint-disable-line guard-for-in
-    const url = "/data-sets/" + paramCase(item);
+    const url = `/data-sets/${paramCase(item)}`;
 
     server.route({
       method: "GET",
@@ -28,17 +28,17 @@ function register(server, options, next) {
         tags: ["convenience", "unsecured"],
         handler(request, reply) { // eslint-disable-line no-loop-func
           reply(fixedData[item]);
-        },
-      },
+        }
+      }
     });
   }
 
   next();
-}
+};
 
 register.attributes = {
   name: "data-sets",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

@@ -1,10 +1,10 @@
 import Boom from "boom";
 import { id, newComment } from "../data/schemas";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments",
+    path: "/hackathon/{hackathonId}/projects/{projectId}/comments",
     config: {
       description: "Fetch all comments on a project",
       tags: ["list"],
@@ -13,16 +13,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          project_id: id,
-        },
-      },
-    },
+          hackathonId: id,
+          projectId: id
+        }
+      }
+    }
   });
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments",
+    path: "/hackathon/{hackathonId}/projects/{projectId}/comments",
     config: {
       description: "Post a comment",
       handler(request, reply) {
@@ -30,17 +30,17 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          project_id: id,
+          hackathonId: id,
+          projectId: id
         },
-        payload: newComment,
-      },
-    },
+        payload: newComment
+      }
+    }
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathon_id}/projects/{project_id}/comments/{comment_id}",
+    path: "/hackathon/{hackathonId}/projects/{projectId}/comments/{commentId}",
     config: {
       description: "Delete a comment",
       handler(request, reply) {
@@ -48,20 +48,20 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          project_id: id,
-          comment_id: id,
-        },
-      },
-    },
+          hackathonId: id,
+          projectId: id,
+          commentId: id
+        }
+      }
+    }
   });
 
   next();
-}
+};
 
 register.attributes = {
   name: "comments",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

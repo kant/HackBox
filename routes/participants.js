@@ -1,10 +1,10 @@
 import Boom from "boom";
 import { pagination, id } from "../data/schemas";
 
-function register(server, options, next) {
+const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathon_id}/participants",
+    path: "/hackathon/{hackathonId}/participants",
     config: {
       description: "Fetch all participants",
       tags: ["list", "paginated", "filterable"],
@@ -13,16 +13,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
+          hackathonId: id
         },
-        query: pagination,
-      },
-    },
+        query: pagination
+      }
+    }
   });
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathon_id}/participants/{user_id}",
+    path: "/hackathon/{hackathonId}/participants/{userId}",
     config: {
       description: "Add user to hackathon",
       handler(request, reply) {
@@ -30,16 +30,16 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          user_id: id,
-        },
-      },
-    },
+          hackathonId: id,
+          userId: id
+        }
+      }
+    }
   });
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathon_id}/participants/{user_id}",
+    path: "/hackathon/{hackathonId}/participants/{userId}",
     config: {
       description: "Remove a user from a project",
       handler(request, reply) {
@@ -47,19 +47,19 @@ function register(server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
-          user_id: id,
-        },
-      },
-    },
+          hackathonId: id,
+          userId: id
+        }
+      }
+    }
   });
 
   next();
-}
+};
 
 register.attributes = {
   name: "participants",
-  version: "1.0.0",
+  version: "1.0.0"
 };
 
 export default { register };

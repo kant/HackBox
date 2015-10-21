@@ -1,6 +1,3 @@
 {
-  "extends": "airbnb",
-  "rules": {
-    "quotes": [2, "double"]
-  }
+	"extends": "defaults/configurations/walmart/es6-node"
 }

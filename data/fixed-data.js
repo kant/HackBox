@@ -10,7 +10,7 @@ const customerTypes = [
   {id: 9, name: "Tech for Good"},
   {id: 10, name: "Advertisers"},
   {id: 11, name: "Industries"},
-  {id: 12, name: "Other"},
+  {id: 12, name: "Other"}
 ];
 
 const productTypes = [
@@ -22,7 +22,7 @@ const productTypes = [
   {id: 6, name: "Dynamics"},
   {id: 7, name: "3rd Party Platforms"},
   {id: 8, name: "Misc"},
-  {id: 9, name: "Other"},
+  {id: 9, name: "Other"}
 ];
 
 const expertiseTypes = [
@@ -34,7 +34,7 @@ const expertiseTypes = [
   {id: 6, name: "Python"},
   {id: 7, name: "Cortana"},
   {id: 8, name: "iOS"},
-  {id: 9, name: "Skype"},
+  {id: 9, name: "Skype"}
 ];
 
 const projectTypes = [
@@ -57,7 +57,7 @@ const projectTypes = [
   {id: 17, name: "Machine Learning"},
   {id: 18, name: "Mobile"},
   {id: 19, name: "Intune"},
-  {id: 20, name: "Yammer"},
+  {id: 20, name: "Yammer"}
 ];
 
 const participantTypes = [
@@ -79,7 +79,7 @@ const participantTypes = [
   {id: 16, name: "HW Engineering"},
   {id: 17, name: "HR"},
   {id: 18, name: "Legal & Corporate Affairs"},
-  {id: 19, name: "Finance"},
+  {id: 19, name: "Finance"}
 ];
 
 const countryList = [
@@ -102,7 +102,7 @@ const countryList = [
   {id: 17, name: "Switzerland"},
   {id: 18, name: "Taiwan"},
   {id: 19, name: "S4"},
-  {id: 20, name: "TechReady"},
+  {id: 20, name: "TechReady"}
 ];
 
 export default {
@@ -111,5 +111,5 @@ export default {
   expertiseTypes,
   projectTypes,
   participantTypes,
-  countryList,
+  countryList
 };
