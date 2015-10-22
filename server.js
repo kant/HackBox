@@ -4,6 +4,7 @@ import GoodConsole from "good-console";
 import Vision from "vision";
 import Inert from "inert";
 import Lout from "lout";
+import Bell from "bell";
 import PaginationPlugin from "./plugins/paginate";
 import HackathonRoutes from "./routes/hackathons";
 import ProjectRoutes from "./routes/projects";
@@ -30,6 +31,7 @@ server.register([
   Inert,
   Vision,
   Lout,
+  Bell,
   {
     register: Good,
     options: {
