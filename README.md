@@ -1,4 +1,4 @@
-# Hackathon API
+# HackBox API
 
 This is a node.js api server written using [hapi](http://hapijs.com) framework. 
 
