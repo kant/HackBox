@@ -4,7 +4,7 @@ import { pagination, newProject, project, id } from "../data/schemas";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathonId}/projects",
+    path: "/hackathons/{hackathonId}/projects",
     config: {
       description: "Fetch all projects",
       tags: ["paginated", "list", "filterable"],
@@ -22,7 +22,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathonId}/projects",
+    path: "/hackathons/{hackathonId}/projects",
     config: {
       description: "Create a new project",
       handler(request, reply) {
@@ -39,7 +39,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{id}",
     config: {
       description: "Delete a project",
       handler(request, reply) {
@@ -56,7 +56,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "PUT",
-    path: "/hackathon/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{id}",
     config: {
       description: "Edit project details",
       handler(request, reply) {
@@ -74,7 +74,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{id}",
     config: {
       description: "Fetch details about a single project",
       tags: ["detail"],
@@ -92,7 +92,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathonId}/projects/{id}/likes",
+    path: "/hackathons/{hackathonId}/projects/{id}/likes",
     config: {
       description: "Like a project. No body or query params required.",
       tags: ["action", "stats"],
@@ -110,7 +110,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathonId}/projects/{id}/likes",
+    path: "/hackathons/{hackathonId}/projects/{id}/likes",
     config: {
       description: "Unlike a project. No body or query params required.",
       tags: ["action", "stats"],
@@ -128,7 +128,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathonId}/projects/{id}/shares",
+    path: "/hackathons/{hackathonId}/projects/{id}/shares",
     config: {
       description: "Track share click on a project. No body or query params required.",
       tags: ["action", "stats"],

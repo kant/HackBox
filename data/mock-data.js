@@ -5,6 +5,9 @@ export const hackathons = [
   {
     id: 1,
     name: "Hack the planet",
+    slug: "hack-the-planet",
+    description: "Yep, hack the planet!",
+    logo_url: "http://example.com/hack.gif",
     start_date: new Date(yesterday),
     end_date: new Date(fiveDaysFromNow),
     num_participants: 13539,
@@ -18,6 +21,9 @@ export const hackathons = [
   {
     id: 2,
     name: "Hack the planet, again!",
+    slug: "hack-the-planet-again",
+    description: "No really, I'm serious... hack the planet!",
+    logo_url: "http://example.com/uberhack.gif",
     start_date: new Date(yesterday),
     end_date: new Date(fiveDaysFromNow),
     num_participants: 105,

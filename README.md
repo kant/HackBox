@@ -78,8 +78,8 @@ GET    /hackathons/projects/{id}
 
 // manage project members
 // owner is fixed
-POST   /hackathons/projects/{id}/members/{user_id}
-DELETE /hackathons/projects/{id}/members/{user_id}
+POST   /hackathons/{id}/projects/{id}/members/{user_id}
+DELETE /hackathons/{id}/projects/{id}/members/{user_id}
 
 // project comments
 GET    /hackathons/{id}/projects/{id}/comments/ (list, possibly paginated?)

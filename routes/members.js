@@ -4,9 +4,9 @@ import { id, newComment } from "../data/schemas";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/comments",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/members",
     config: {
-      description: "Fetch all comments on a project",
+      description: "Fetch all members of a project",
       tags: ["list"],
       handler(request, reply) {
         reply(Boom.notImplemented());
@@ -22,16 +22,17 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/comments",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/members/{memberId}",
     config: {
-      description: "Post a comment",
+      description: "Add a member to a projects",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
       validate: {
         params: {
           hackathonId: id,
-          projectId: id
+          projectId: id,
+          memberId: id
         },
         payload: newComment
       }
@@ -40,9 +41,9 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/comments/{commentId}",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/members/{memberId}",
     config: {
-      description: "Delete a comment",
+      description: "Remove a member from a team",
       handler(request, reply) {
         reply(Boom.notImplemented());
       },
@@ -50,7 +51,7 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id,
-          commentId: id
+          memberId: id
         }
       }
     }
@@ -60,7 +61,7 @@ const register = function (server, options, next) {
 };
 
 register.attributes = {
-  name: "comments",
+  name: "members",
   version: "1.0.0"
 };
 

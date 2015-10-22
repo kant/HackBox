@@ -14,6 +14,8 @@ export const pagination = Joi.object().keys({
 const hackathonBase = {
   name: Joi.string().min(3).max(30).trim().required(),
   slug: Joi.string().lowercase().regex(/^[a-z0-9\-]*$/).trim().required(),
+  description: Joi.string().min(3).max(300).trim().required(),
+  logo_url: Joi.string().uri(),
   start_date: Joi.date().required(),
   end_date: Joi.date().min(Joi.ref("start_date")).required()
 };

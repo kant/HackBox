@@ -4,7 +4,7 @@ import { pagination, id } from "../data/schemas";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
-    path: "/hackathon/{hackathonId}/participants",
+    path: "/hackathons/{hackathonId}/participants",
     config: {
       description: "Fetch all participants",
       tags: ["list", "paginated", "filterable"],
@@ -22,7 +22,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathon/{hackathonId}/participants/{userId}",
+    path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
       description: "Add user to hackathon",
       handler(request, reply) {
@@ -39,7 +39,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathon/{hackathonId}/participants/{userId}",
+    path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
       description: "Remove a user from a project",
       handler(request, reply) {
