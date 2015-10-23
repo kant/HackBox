@@ -53,7 +53,6 @@ if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
   # Install kudu sync
   echo Installing Kudu Sync
   npm install kudusync -g --silent
-  npm install
   exitWithMessageOnError "npm failed"
 
   if [[ ! -n "$KUDU_SERVICE" ]]; then
@@ -112,6 +111,7 @@ selectNodeVersion
 
 # 3. Install npm packages
 if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+  echo "FOUND PACKAGE.JSON TRYING TO INSTALL"
   cd "$DEPLOYMENT_TARGET"
   eval $NPM_CMD install --production
   exitWithMessageOnError "npm failed"
