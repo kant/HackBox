@@ -1,6 +1,27 @@
 const yesterday = new Date(Date.now() - 86400);
 const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
 
+export const users = [
+  {
+    name: "Henrik Joreteg",
+    username: "HenrikJoreteg",
+    email: "henrik@joreteg.com",
+    bio: "Some JS dev",
+    job_title: "JS Developer",
+    company_name: "Formidable",
+    registration_date: new Date(),
+    photo_url: "https://static.joreteg.com/henrik_medium.jpg",
+    address_1: "2508 Crane Dr.",
+    address_2: "",
+    city: "West Richland",
+    state: "WA",
+    country: "USA",
+    twitter: "HenrikJoreteg",
+    facebook: "HenrikJoreteg",
+    linkedin: "HenrikJoreteg"
+  }
+];
+
 export const hackathons = [
   {
     id: 1,
@@ -9,14 +30,7 @@ export const hackathons = [
     description: "Yep, hack the planet!",
     logo_url: "http://example.com/hack.gif",
     start_date: new Date(yesterday),
-    end_date: new Date(fiveDaysFromNow),
-    num_participants: 13539,
-    num_cities: 165,
-    num_countries: 82,
-    num_first_timers: 8902,
-    num_unique_skills: 3417,
-    num_projects: 3395,
-    num_open_projects: 1894
+    end_date: new Date(fiveDaysFromNow)
   },
   {
     id: 2,
@@ -25,14 +39,7 @@ export const hackathons = [
     description: "No really, I'm serious... hack the planet!",
     logo_url: "http://example.com/uberhack.gif",
     start_date: new Date(yesterday),
-    end_date: new Date(fiveDaysFromNow),
-    num_participants: 105,
-    num_cities: 25,
-    num_countries: 8,
-    num_first_timers: 23,
-    num_unique_skills: 100,
-    num_projects: 78,
-    num_open_projects: 73
+    end_date: new Date(fiveDaysFromNow)
   }
 ];
 
