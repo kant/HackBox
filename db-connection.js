@@ -27,6 +27,7 @@ if (dbConnection) {
   };
 }
 
+process.stdout.write(JSON.stringify(config, null, 2));
 const db = knex(config);
 
 export default db;
