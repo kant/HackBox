@@ -237,16 +237,15 @@ This is not meant to be a full DB schema, just trying to wrap my head around the
 │              │                │ user_id           │──┘            │            │
 │              │                │ hackathon_id      │╱              │            │
 │              │                └───────────────────┘               │            │
-│              │                                                    │            │
 │              │                ┌───────────────────┐               │            │
 │              │                │ comments          │               │            │
 │              │                ├───────────────────┤               │            │
 │              │               ╱│ id                │╲              │            │
-│              └────────────────│ text              │───────────────┘            │
-│                              ╲│ participant_id    │╱                           │
+│              └────────────────│ user_id           │───────────────┘            │
+│                              ╲│ project_id        │╱                           │
+│                               │ text              │                            │
 │                               │ created_date      │                            │
 │                               └───────────────────┘                            │
-│                                                                                │
 │                               ┌───────────────────┐                            │
 │                               │ members           │                            │
 │                              ╱├───────────────────┤╲                           │

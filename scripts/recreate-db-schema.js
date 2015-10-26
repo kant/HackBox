@@ -1,4 +1,4 @@
-/*eslint max-statements: [0,0]*/
+/*eslint max-statements: [0,0], no-process-exit: 0*/
 // we've turned off max statements rule for this file
 import db from "../db-connection";
 
@@ -47,16 +47,22 @@ Promise.all([
       t.string("status");
       t.text("description");
       t.string("image_url");
-      t.string("code_respository_url");
+      t.string("code_repo_url");
       t.string("prototype_url");
-      t.string("supporting_files");
+      t.string("supporting_files_url");
       t.text("inspiration");
       t.text("how_it_will_work");
       t.boolean("needs_hackers").defaultTo(false);
+      t.string("tags");
+      // we'll wait to see how this is supposed to work
+      // t.integer("venue_id").references("id").inTable("venues");
+      t.integer("venue_id");
+      t.integer("video_id");
     }),
     db.schema.createTable("comments", (t) => {
       t.increments("id").primary();
       t.integer("user_id").references("id").inTable("users");
+      t.integer("project_id").references("id").inTable("projects");
       t.text("text");
       t.dateTime("created_date");
     }),
@@ -67,12 +73,13 @@ Promise.all([
     }),
     db.schema.createTable("members", (t) => {
       t.integer("user_id").references("id").inTable("users");
-      t.integer("project_id").references("id").inTable("hackathons");
+      t.integer("project_id").references("id").inTable("projects");
       t.dateTime("joined_date").defaultTo(new Date());
     })
   ]);
 }).then(() => {
   process.stdout.write("tables re-created");
+  process.exit(0);
 }).catch((err) => {
   if (err) {
     throw err;

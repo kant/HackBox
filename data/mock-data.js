@@ -19,12 +19,47 @@ export const users = [
     twitter: "HenrikJoreteg",
     facebook: "HenrikJoreteg",
     linkedin: "HenrikJoreteg"
+  },
+  {
+    name: "Dr. Seuss",
+    username: "GreenEggsAndHam",
+    email: "dr@seuss.com",
+    bio: "I do not like green eggs and ham.",
+    job_title: "Author",
+    company_name: "Whoville Inc.",
+    registration_date: new Date(),
+    photo_url: "https://placehold.it/150x150",
+    address_1: "3 Whoville Street",
+    address_2: "",
+    city: "Whoville",
+    state: "WA",
+    country: "USA",
+    twitter: "GreenEggsAndHam",
+    facebook: "GreenEggsAndHam",
+    linkedin: "GreenEggsAndHam"
+  },
+  {
+    name: "Sam I Am",
+    username: "SamIAm",
+    email: "sam@iam.com",
+    bio: "Persistant creature",
+    job_title: "Nagging friend",
+    company_name: "Whoville Inc.",
+    registration_date: new Date(),
+    photo_url: "https://placehold.it/150x150",
+    address_1: "3 Whoville Street",
+    address_2: "",
+    city: "Whoville",
+    state: "WA",
+    country: "USA",
+    twitter: "SamIAm",
+    facebook: "SamIAm",
+    linkedin: "SamIAm"
   }
 ];
 
 export const hackathons = [
   {
-    id: 1,
     name: "Hack the planet",
     slug: "hack-the-planet",
     description: "Yep, hack the planet!",
@@ -33,7 +68,6 @@ export const hackathons = [
     end_date: new Date(fiveDaysFromNow)
   },
   {
-    id: 2,
     name: "Hack the planet, again!",
     slug: "hack-the-planet-again",
     description: "No really, I'm serious... hack the planet!",
@@ -45,8 +79,7 @@ export const hackathons = [
 
 export const projects = [
   {
-    id: 1,
-    owner_id: 47,
+    owner_id: 2,
     venue_id: 23,
     video_id: 1231,
     title: "bnews app",
@@ -61,5 +94,52 @@ export const projects = [
     how_it_will_work: "Scrape news, make interactive.",
     needs_hackers: false,
     tags: ["Bing", "News", "Bingcubator", "ASGEA"]
+  }
+];
+
+export const members = [
+  {
+    user_id: 1,
+    project_id: 1
+  },
+  {
+    user_id: 2,
+    project_id: 1
+  }
+];
+
+export const comments = [
+  {
+    text: "Try them and you may, I say.",
+    user_id: 1,
+    project_id: 1
+  },
+  {
+    text: "Sam, if you will let me be I will try them and you will see.",
+    user_id: 1,
+    project_id: 1
+  }
+];
+
+export const participants = [
+  {
+    user_id: 1,
+    hackathon_id: 1
+  },
+  {
+    user_id: 2,
+    hackathon_id: 1
+  },
+  {
+    user_id: 3,
+    hackathon_id: 1
+  },
+  {
+    user_id: 2,
+    hackathon_id: 2
+  },
+  {
+    user_id: 3,
+    hackathon_id: 2
   }
 ];
