@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { hackathons } from "../data/mock-data";
-import { pagination, newHackathon, hackathon, id } from "../data/schemas";
+import { pagination, newHackathon, hackathon, id } from "../data/validation";
 
 const register = function (server, options, next) {
   server.route({

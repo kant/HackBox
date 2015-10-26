@@ -1,5 +1,5 @@
 import Boom from "boom";
-import { pagination, newProject, project, id } from "../data/schemas";
+import { pagination, newProject, project, id } from "../data/validation";
 
 const register = function (server, options, next) {
   server.route({

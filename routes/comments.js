@@ -1,5 +1,5 @@
 import Boom from "boom";
-import { id, newComment } from "../data/schemas";
+import { id, newComment } from "../data/validation";
 
 const register = function (server, options, next) {
   server.route({
