@@ -2,7 +2,7 @@
 
 # ----------------------
 # KUDU Deployment Script
-# Version: 1.0.2
+# Version: 0.1.11
 # ----------------------
 
 # Helpers
@@ -77,17 +77,13 @@ selectNodeVersion () {
       NODE_EXE=`cat "$DEPLOYMENT_TEMP/__nodeVersion.tmp"`
       exitWithMessageOnError "getting node version failed"
     fi
-    
-    if [[ -e "$DEPLOYMENT_TEMP/.tmp" ]]; then
-      NPM_JS_PATH=`cat "$DEPLOYMENT_TEMP/__npmVersion.tmp"`
-      exitWithMessageOnError "getting npm version failed"
-    fi
 
     if [[ ! -n "$NODE_EXE" ]]; then
       NODE_EXE=node
     fi
 
-    NPM_CMD="\"$NODE_EXE\" \"$NPM_JS_PATH\""
+    # Manually setting npm version to npm@3.1.0
+    NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\3.1.0\\node_modules\\npm\\bin\\npm-cli.js\""
   else
     NPM_CMD=npm
     NODE_EXE=node
@@ -111,7 +107,6 @@ selectNodeVersion
 
 # 3. Install npm packages
 if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
-  echo "FOUND PACKAGE.JSON TRYING TO INSTALL"
   cd "$DEPLOYMENT_TARGET"
   eval $NPM_CMD install --production
   exitWithMessageOnError "npm failed"
