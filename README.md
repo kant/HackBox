@@ -270,17 +270,6 @@ This is not meant to be a full DB schema, just trying to wrap my head around the
                                 └───────────────────┘
 ```
 
-## DB connections 
-
-This API uses [knex.js](http://knexjs.org) to manage database connections. 
-
-All db connections are all configured via environment variables. The following options exist:
-
-`DB_CONNECTION_JSON`: if present, this will be passed as the entire connection config passed to [knex.js](http://knexjs.org/#Installation-client) 
-`DB_CONNECTION_STRING`: will be passed as the connection string portion, can also be paired with `DB_CONNECTION_TYPE` if desired, but `DB_CONNECTION_TYPE` will default to `"mysql"` if not defined.
-
-**You can also avoid setting any of those.** This will use a local Sqlite3 file-based database. This is only intended for making things easy when developing locally. If using this option you'll notice a `devdb.sqlite` file get created (it's already ignored in `.gitignore`) so feel free to delete/rebuild at will.
-
 ## Running tests
 
 `npm test`

@@ -2,7 +2,6 @@ import knex from "knex";
 import Boom from "boom";
 import { db } from "./config";
 
-process.stdout.write(JSON.stringify(db, null, 2));
 const client = knex(db);
 
 export default client;
