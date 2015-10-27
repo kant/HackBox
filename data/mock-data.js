@@ -80,8 +80,6 @@ export const hackathons = [
 export const projects = [
   {
     owner_id: 2,
-    venue_id: 23,
-    video_id: 1231,
     title: "bnews app",
     tagline: "Where the news can be fun",
     status: "active",
@@ -93,7 +91,9 @@ export const projects = [
     inspiration: "Realized that news tend to be really boring.",
     how_it_will_work: "Scrape news, make interactive.",
     needs_hackers: false,
-    tags: ["Bing", "News", "Bingcubator", "ASGEA"]
+    tags: ["Bing", "News", "Bingcubator", "ASGEA"].join(","),
+    venue_id: 23,
+    video_id: 1231
   }
 ];
 

@@ -3,17 +3,11 @@ var data = require("../data/mock-data");
 
 exports.seed = function (knex, Promise) {
   return Promise.join(
-    knex("hackathons").del(),
-    knex("hackathons").insert(data.hackathons),
-    knex("projects"),
-    knex("projects").insert(data.projects),
-    knex("users"),
-    knex("users").insert(data.users),
-    knex("participants"),
-    knex("participants").insert(data.participants),
-    knex("members"),
-    knex("members").insert(data.members),
-    knex("comments"),
-    knex("comments").insert(data.comments)
+    knex("users").del().insert(data.users),
+    knex("hackathons").del().insert(data.hackathons),
+    knex("projects").del().insert(data.projects),
+    knex("participants").del().insert(data.participants),
+    knex("members").del().insert(data.members),
+    knex("comments").del().insert(data.comments)
   );
 };

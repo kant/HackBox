@@ -31,7 +31,7 @@ exports.up = function (knex) {
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
-      t.integer("owner_id").references("id").inTable("users");
+      t.integer("owner_id").unsigned().references("id").inTable("users");
       t.string("title");
       t.string("tagline");
       t.string("status");
@@ -45,26 +45,26 @@ exports.up = function (knex) {
       t.boolean("needs_hackers").defaultTo(false);
       t.string("tags");
       // we'll wait to see how this is supposed to work
-      // t.integer("venue_id").references("id").inTable("venues");
+      // t.integer("venue_id").unsigned().references("id").inTable("venues");
       t.integer("venue_id");
       t.integer("video_id");
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
-      t.integer("user_id").references("id").inTable("users");
-      t.integer("project_id").references("id").inTable("projects");
+      t.integer("user_id").unsigned().references("id").inTable("users");
+      t.integer("project_id").unsigned().references("id").inTable("projects");
       t.text("text");
       t.dateTime("created_date");
     })
     .createTable("participants", (t) => {
-      t.integer("user_id").references("id").inTable("users");
-      t.integer("hackathon_id").references("id").inTable("hackathons");
-      t.dateTime("joined_date").defaultTo(new Date());
+      t.integer("user_id").unsigned().references("id").inTable("users");
+      t.integer("hackathon_id").unsigned().references("id").inTable("hackathons");
+      t.dateTime("joined_date");
     })
     .createTable("members", (t) => {
-      t.integer("user_id").references("id").inTable("users");
-      t.integer("project_id").references("id").inTable("projects");
-      t.dateTime("joined_date").defaultTo(new Date());
+      t.integer("user_id").unsigned().references("id").inTable("users");
+      t.integer("project_id").unsigned().references("id").inTable("projects");
+      t.dateTime("joined_date");
     });
 };
 
