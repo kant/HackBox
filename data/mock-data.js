@@ -80,6 +80,7 @@ export const hackathons = [
 export const projects = [
   {
     owner_id: 2,
+    hackathon_id: 1,
     title: "bnews app",
     tagline: "Where the news can be fun",
     status: "active",

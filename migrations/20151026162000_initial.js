@@ -31,7 +31,8 @@ exports.up = function (knex) {
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
-      t.integer("owner_id").unsigned().references("id").inTable("users");
+      t.integer("owner_id").unsigned().references("users.id");
+      t.integer("hackathon_id").unsigned().references("hackathon.id");
       t.string("title");
       t.string("tagline");
       t.string("status");
@@ -51,19 +52,19 @@ exports.up = function (knex) {
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
-      t.integer("user_id").unsigned().references("id").inTable("users");
-      t.integer("project_id").unsigned().references("id").inTable("projects");
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("project_id").unsigned().references("projects.id");
       t.text("text");
       t.dateTime("created_date");
     })
     .createTable("participants", (t) => {
-      t.integer("user_id").unsigned().references("id").inTable("users");
-      t.integer("hackathon_id").unsigned().references("id").inTable("hackathons");
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.dateTime("joined_date");
     })
     .createTable("members", (t) => {
-      t.integer("user_id").unsigned().references("id").inTable("users");
-      t.integer("project_id").unsigned().references("id").inTable("projects");
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("project_id").unsigned().references("projects.id");
       t.dateTime("joined_date");
     });
 };

@@ -224,30 +224,30 @@ This is not meant to be a full DB schema, just trying to wrap my head around the
    ├──────────────────────┤     ├───────────────────┤     ├───────────────────┤
    │ id                   │     │ id                │     │ id                │
    │ owner_id             │     │ name              │     │ name              │
-   │ venue_id             │  ┌─┼│ slug              │     │ username          │
-   │ video_id             │  │  │ description       │     │ email             │
-   │ title                │  │  │ logo_url          │     │ bio               │
-   │ tagline              │  │  │ start_date        │     │ job_title         │
-   │ status (need info)   │  │  └───────────────────┘     │ company_name      │
-   │ description          │  │            ┼            ┌─┼│ registration_date │◇─┐
-   │ image_url            │  │            │            │  │ photo             │  │
-   │ code_repository_url  │╲ │            │            │  │ address_1         │  │
-┌─┼│ prototype_url        │──┘            │            │  │ address_2         │  │
-│  │ supporting_files     │╱              │            │  │ city              │  │
-│  │ inspiration          │               │            │  │ state             │  │
-│  │ how_it_will_work     │               │            │  │ country           │  │
-│  │ needs_hackers        │               │            │  │ twitter           │  │
-│  │ tags                 │               │            │  │ facebook          │  │
-│  │ stat_likes           │               │            │  │ linkedin          │  │
-│  │ stat_shares          │               │            │  └───────────────────┘  │
-│  │ stat_comments        │               │            │            ◇            │
+   │ hackathon_id         │  ┌─┼│ slug              │     │ username          │
+   │ venue_id             │  │  │ description       │     │ email             │
+   │ video_id             │  │  │ logo_url          │     │ bio               │
+   │ title                │  │  │ start_date        │     │ job_title         │
+   │ tagline              │  │  └───────────────────┘     │ company_name      │
+   │ status (need info)   │  │            ┼            ┌─┼│ registration_date │◇─┐
+   │ description          │  │            │            │  │ photo             │  │
+   │ image_url            │  │            │            │  │ address_1         │  │
+   │ code_repository_url  │╲ │            │            │  │ address_2         │  │
+┌─┼│ prototype_url        │──┘            │            │  │ city              │  │
+│  │ supporting_files     │╱              │            │  │ state             │  │
+│  │ inspiration          │               │            │  │ country           │  │
+│  │ how_it_will_work     │               │            │  │ twitter           │  │
+│  │ needs_hackers        │               │            │  │ facebook          │  │
+│  │ tags                 │               │            │  │ linkedin          │  │
+│  │ stat_likes           │               │            │  └───────────────────┘  │
+│  │ stat_shares          │               │            │            ◇            │
+│  │ stat_comments        │               │            │            │            │
 │  │ stat_views           │               │            │            │            │
 │  │ stat_views_uniq      │               │            │            │            │
 │  │ stat_videoviews      │               │            │            │            │
 │  │ stat_videoviews_uniq │               │            │            │            │
-│  └──────────────────────┘               │            │            │            │
-│              ┼                         ╱│╲           │            │            │
-│              │                ┌───────────────────┐  │            │            │
+│  └──────────────────────┘              ╱│╲           │            │            │
+│              ┼                ┌───────────────────┐  │            │            │
 │              │                │ participants      │  │            │            │
 │              │                ├───────────────────┤╲ │            │            │
 │              │                │ user_id           │──┘            │            │
