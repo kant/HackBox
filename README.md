@@ -30,15 +30,31 @@ You can see the list of routes by running the server as described above and visi
 
 - Get this configured to the point where it could be deployed by anybody from GitHub using a [Deploy to Azure button](http://www.bradygaster.com/post/the-deploy-to-azure-button).
 
-## Linting setup and config
+## Linting setup
 
 Currently using [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
+
+## How configs are handled
+
+Any time you need access to config items within code simply require the `/.config.js` file at the project root.
+
+It will pull in the configuration file from the `config` directory with the same name as the current value of the `NODE_ENV` envronment variable. If `NODE_ENV` is not defined, `./config/development.json` will be used.
+
+Please note that all sensitive data is expected to be passed via environment variables rather than checked into this codebase.
+
+To support this, the config reading module will replace any strings in the config that look like this: `$HELLO_WORLD` with the corresponding value from `process.env`. If the value doesn't exist, the module will throw an error letting you know what's missing.
+
+This allows us to check-in all the config files, allows configs to have arbitrary structure, and allows all non-sensitive configuration changes to be checked into the repo.
+
+To repeat: **please avoid putting any sensitive data** into this code repository. 
 
 ## Running scripts
 
 Run `npm run` to see all available scripts.
 
-`npm run lint` will run linting tests on the whole project
+`npm run lint` will run linting tests on the whole project.
+
+`npm run init-db` will create and seed a local SQLite3 database to use for development.
 
 
 ## RESTful routes

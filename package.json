@@ -32,10 +32,10 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "rebuild-schema": "babel-node scripts/recreate-db-schema",
     "start": "node server.js",
     "test": "lab -c -l --transform lab-transform.js -r console -o stdout -r html -o coverage.html",
-    "dev-fixtures": "babel-node scripts/dev-fixtures",
-    "reset-dev-fixtures": "npm run rebuild-schema && npm run dev-fixtures"
+    "migrate": "knex migrate:latest",
+    "seed-db": "knex seed:run",
+    "init-db": "npm run migrate && knex seed:run"
   }
 }

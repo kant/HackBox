@@ -10,8 +10,6 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["paginated", "list"],
       handler(request, reply) {
-        // write out headers so we can see what auth headers we get
-        process.stdout.write(JSON.stringify(request.headers, null, 2) + "\n");
         reply(hackathons);
       },
       validate: {

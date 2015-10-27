@@ -1,0 +1,18 @@
+{
+  "db": {
+    "client": "mysql",
+    "connection": {
+      "database": "hackbox-api-staging",
+      "host": "$DB_CONNECTION_HOST",
+      "user": "$DB_CONNECTION_USER",
+      "password": "$DB_CONNECTION_PASSWORD"
+    },
+    "pool": {
+      "min": 2,
+      "max": 10
+    },
+    "migrations": {
+      "tableName": "knex_migrations"
+    }
+  }
+}

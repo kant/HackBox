@@ -1,36 +1,11 @@
 import knex from "knex";
 import Boom from "boom";
+import { db } from "./config";
 
-const dbConnection = process.env.DB_CONNECTION_JSON;
-const dbConnectionString = process.env.DB_CONNECTION_STRING;
-let config;
+process.stdout.write(JSON.stringify(db, null, 2));
+const client = knex(db);
 
-// allow for a full JSON connection config if present
-if (dbConnection) {
-  config = JSON.parse(dbConnection);
-} else if (dbConnectionString) {
-  // allow customization of client and
-  // connection string via environment variables
-  // if they are present.
-  config = {
-    client: process.env.DB_TYPE || "mysql",
-    connection: process.env.DB_CONNECTION_STRING
-  };
-} else {
-  // if none of those things exist, fallback to a
-  // sqlite db (just for local dev)
-  config = {
-    client: "sqlite3",
-    connection: {
-      filename: "./devdb.sqlite"
-    }
-  };
-}
-
-process.stdout.write(JSON.stringify(config, null, 2));
-const db = knex(config);
-
-export default db;
+export default client;
 
 export const getOr404 = (promise, label = "resource") => {
   return promise.then((rows) => {
