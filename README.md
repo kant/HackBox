@@ -103,6 +103,13 @@ POST   /hackathons/{id}/projects/{id}/comments/
 DELETE /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
 PUT    /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
 
+// project likes/shares/stats
+POST   /hackathons/{id}/projects/{id}/likes
+DELETE /hackathons/{id}/projects/{id}/likes
+POST   /hackathons/{id}/projects/{id}/views
+POST   /hackathons/{id}/projects/{id}/shares
+
+
 ```
 
 ## CORS
@@ -214,60 +221,67 @@ Is this what should exist? Should these be fixed, or editable?
 
 ## basic structure
 
-**note this is quite rough** 
-
-This is not meant to be a full DB schema, just trying to wrap my head around the data
 
 ```
-   ┌──────────────────────┐     ┌───────────────────┐     ┌───────────────────┐
-   │ projects             │     │ hackathons        │     │ users             │
-   ├──────────────────────┤     ├───────────────────┤     ├───────────────────┤
-   │ id                   │     │ id                │     │ id                │
-   │ owner_id             │     │ name              │     │ name              │
-   │ hackathon_id         │  ┌─┼│ slug              │     │ username          │
-   │ venue_id             │  │  │ description       │     │ email             │
-   │ video_id             │  │  │ logo_url          │     │ bio               │
-   │ title                │  │  │ start_date        │     │ job_title         │
-   │ tagline              │  │  └───────────────────┘     │ company_name      │
-   │ status (need info)   │  │            ┼            ┌─┼│ registration_date │◇─┐
-   │ description          │  │            │            │  │ photo             │  │
-   │ image_url            │  │            │            │  │ address_1         │  │
-   │ code_repository_url  │╲ │            │            │  │ address_2         │  │
-┌─┼│ prototype_url        │──┘            │            │  │ city              │  │
-│  │ supporting_files     │╱              │            │  │ state             │  │
-│  │ inspiration          │               │            │  │ country           │  │
-│  │ how_it_will_work     │               │            │  │ twitter           │  │
-│  │ needs_hackers        │               │            │  │ facebook          │  │
-│  │ tags                 │               │            │  │ linkedin          │  │
-│  │ stat_likes           │               │            │  └───────────────────┘  │
-│  │ stat_shares          │               │            │            ◇            │
-│  │ stat_comments        │               │            │            │            │
-│  │ stat_views           │               │            │            │            │
-│  │ stat_views_uniq      │               │            │            │            │
-│  │ stat_videoviews      │               │            │            │            │
-│  │ stat_videoviews_uniq │               │            │            │            │
-│  └──────────────────────┘              ╱│╲           │            │            │
-│              ┼                ┌───────────────────┐  │            │            │
-│              │                │ participants      │  │            │            │
-│              │                ├───────────────────┤╲ │            │            │
-│              │                │ user_id           │──┘            │            │
-│              │                │ hackathon_id      │╱              │            │
-│              │                └───────────────────┘               │            │
-│              │                ┌───────────────────┐               │            │
-│              │                │ comments          │               │            │
-│              │                ├───────────────────┤               │            │
-│              │               ╱│ id                │╲              │            │
-│              └────────────────│ user_id           │───────────────┘            │
-│                              ╲│ project_id        │╱                           │
-│                               │ text              │                            │
-│                               │ created_date      │                            │
-│                               └───────────────────┘                            │
-│                               ┌───────────────────┐                            │
-│                               │ members           │                            │
-│                              ╱├───────────────────┤╲                           │
-└───────────────────────────────│ user_id           │────────────────────────────┘
-                               ╲│ project_id        │╱
-                                └───────────────────┘
+┌──────────────────────┐     ┌───────────────────┐    ┌───────────────────┐
+│ projects             │     │ hackathons        │    │ users             │
+├──────────────────────┤     ├───────────────────┤    ├───────────────────┤
+│ id                   │     │ id                │    │ id                │
+│ owner_id             │     │ name              │    │ email             │
+│ hackathon_id         │     │ slug              │    │ display_name      │
+│ venue_id             │     │ location (text)   │    │ super_user (bool) │
+│ video_id             │     │ description       │    │ created_at        │
+│ title                │  ┌─┼│ logo_url          │    │ updated_at        │
+│ tagline              │  │  │ start_date        │    │ meta (JSON)       │
+│ status (need info)   │  │  │ end_date          │    │ profile (JSON):   │
+│ description          │  │  │ contact_name      │    │   (not enforced)  │
+│ image_url            │  │  │ contact_email     │    │   first_name      │
+│ code_repository_url  │╲ │  │ created_at        │    │   preferred_first │
+│ prototype_url        │──┘  │ updated_at        │ ┌─┼│   last_name       │
+│ supporting_files     │╱    └───────────────────┘ │  │   username        │
+│ inspiration          │               ┼           │  │   bio             │
+│ how_it_will_work     │               │           │  │   job_title       │
+│ needs_hackers        │              ╱│╲          │  │   company_name    │
+│ tags                 │     ┌───────────────────┐ │  │   discipline      │
+│ created_at           │     │ participants      │ │  │   profession      │
+│ updated_at           │     ├───────────────────┤╲│  │   area            │
+│ roles_needed         │     │ user_id           │─┘  │   reports_to      │
+│ skills_needed        │     │ hackathon_id      │╱   │   photo           │
+│ views                │     └───────────────────┘    │   city            │
+│ meta (JSON)          │                              │   state           │
+│                      │     ┌───────────────────┐    │   country         │
+└──────────────────────┘     │ comments          │    │   twitter         │
+            ┼                ├───────────────────┤    └───────────────────┘
+            │               ╱│  id               │╲             ┼
+            ├────────────────│  user_id          │──────────────┤
+            │               ╲│  project_id       │╱             │
+            │                │  text             │              │
+            │                │  created_at       │              │
+            │                └───────────────────┘              │
+            │                ┌───────────────────┐              │
+            │                │ members           │              │
+            │               ╱├───────────────────┤╲             │
+            ├────────────────│ user_id           │──────────────│
+            │               ╲│ project_id        │╱             │
+            │                └───────────────────┘              │
+            │                ┌───────────────────┐              │
+            │                │ likes             │              │
+            │               ╱├───────────────────┤╲             │
+            ├────────────────│ user_id           │──────────────┤
+            │               ╲│ project_id        │╱             │
+            │                └───────────────────┘              │
+            │                ┌───────────────────┐              │
+            │                │ shares            │              │
+            │               ╱├───────────────────┤╲             │
+            ├────────────────│ user_id           │──────────────┤
+            │               ╲│ project_id        │╱             │
+            │                └───────────────────┘              │
+            │                ┌───────────────────┐              │
+            │                │ views             │              │
+            │               ╱├───────────────────┤╲             │
+            └────────────────│ user_id           │──────────────┘
+                            ╲│ project_id        │╱
+                             └───────────────────┘
 ```
 
 ## Running tests

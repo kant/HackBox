@@ -3,58 +3,70 @@ const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
 
 export const users = [
   {
-    name: "Henrik Joreteg",
-    username: "HenrikJoreteg",
+    display_name: "Henrik Joreteg",
     email: "henrik@joreteg.com",
-    bio: "Some JS dev",
-    job_title: "JS Developer",
-    company_name: "Formidable",
-    registration_date: new Date(),
-    photo_url: "https://static.joreteg.com/henrik_medium.jpg",
-    address_1: "2508 Crane Dr.",
-    address_2: "",
-    city: "West Richland",
-    state: "WA",
-    country: "USA",
-    twitter: "HenrikJoreteg",
-    facebook: "HenrikJoreteg",
-    linkedin: "HenrikJoreteg"
+    created_at: new Date(),
+    updated_at: new Date(),
+    super_user: true,
+    json_profile: JSON.stringify({
+      bio: "Some JS dev",
+      job_title: "JS Developer",
+      company_name: "Formidable",
+      photo_url: "https://static.joreteg.com/henrik_medium.jpg",
+      address_1: "2508 Crane Dr.",
+      address_2: "",
+      city: "West Richland",
+      state: "WA",
+      country: "USA",
+      twitter: "HenrikJoreteg",
+      facebook: "HenrikJoreteg",
+      linkedin: "HenrikJoreteg"
+    }),
+    json_meta: JSON.stringify({})
   },
   {
-    name: "Dr. Seuss",
-    username: "GreenEggsAndHam",
+    display_name: "Dr. Seuss",
     email: "dr@seuss.com",
-    bio: "I do not like green eggs and ham.",
-    job_title: "Author",
-    company_name: "Whoville Inc.",
-    registration_date: new Date(),
-    photo_url: "https://placehold.it/150x150",
-    address_1: "3 Whoville Street",
-    address_2: "",
-    city: "Whoville",
-    state: "WA",
-    country: "USA",
-    twitter: "GreenEggsAndHam",
-    facebook: "GreenEggsAndHam",
-    linkedin: "GreenEggsAndHam"
+    created_at: new Date(),
+    updated_at: new Date(),
+    super_user: false,
+    json_profile: JSON.stringify({
+      bio: "I do not like green eggs and ham.",
+      job_title: "Author",
+      company_name: "Whoville Inc.",
+      photo_url: "https://placehold.it/150x150",
+      address_1: "3 Whoville Street",
+      address_2: "",
+      city: "Whoville",
+      state: "WA",
+      country: "USA",
+      twitter: "GreenEggsAndHam",
+      facebook: "GreenEggsAndHam",
+      linkedin: "GreenEggsAndHam"
+    }),
+    json_meta: JSON.stringify({})
   },
   {
-    name: "Sam I Am",
-    username: "SamIAm",
+    display_name: "Sam I Am",
     email: "sam@iam.com",
-    bio: "Persistant creature",
-    job_title: "Nagging friend",
-    company_name: "Whoville Inc.",
-    registration_date: new Date(),
-    photo_url: "https://placehold.it/150x150",
-    address_1: "3 Whoville Street",
-    address_2: "",
-    city: "Whoville",
-    state: "WA",
-    country: "USA",
-    twitter: "SamIAm",
-    facebook: "SamIAm",
-    linkedin: "SamIAm"
+    created_at: new Date(),
+    updated_at: new Date(),
+    super_user: false,
+    json_profile: JSON.stringify({
+      bio: "Persistant creature",
+      job_title: "Nagging friend",
+      company_name: "Whoville Inc.",
+      photo_url: "https://placehold.it/150x150",
+      address_1: "3 Whoville Street",
+      address_2: "",
+      city: "Whoville",
+      state: "WA",
+      country: "USA",
+      twitter: "SamIAm",
+      facebook: "SamIAm",
+      linkedin: "SamIAm"
+    }),
+    json_meta: JSON.stringify({})
   }
 ];
 
@@ -64,16 +76,26 @@ export const hackathons = [
     slug: "hack-the-planet",
     description: "Yep, hack the planet!",
     logo_url: "http://example.com/hack.gif",
-    start_date: new Date(yesterday),
-    end_date: new Date(fiveDaysFromNow)
+    start_at: new Date(yesterday),
+    end_at: new Date(fiveDaysFromNow),
+    contact_name: "Hacker #42",
+    contact_email: "hackthe@planet.com",
+    created_at: new Date(),
+    updated_at: new Date(),
+    json_meta: JSON.stringify({})
   },
   {
     name: "Hack the planet, again!",
     slug: "hack-the-planet-again",
     description: "No really, I'm serious... hack the planet!",
     logo_url: "http://example.com/uberhack.gif",
-    start_date: new Date(yesterday),
-    end_date: new Date(fiveDaysFromNow)
+    start_at: new Date(yesterday),
+    end_at: new Date(fiveDaysFromNow),
+    contact_name: "Evilpacket",
+    contact_email: "l337@hackerz.com",
+    created_at: new Date(),
+    updated_at: new Date(),
+    json_meta: JSON.stringify({})
   }
 ];
 
@@ -93,8 +115,10 @@ export const projects = [
     how_it_will_work: "Scrape news, make interactive.",
     needs_hackers: false,
     tags: ["Bing", "News", "Bingcubator", "ASGEA"].join(","),
-    venue_id: 23,
-    video_id: 1231
+    video_id: 1231,
+    created_at: new Date(),
+    updated_at: new Date(),
+    json_meta: JSON.stringify({})
   }
 ];
 

@@ -3,22 +3,13 @@ exports.up = function (knex) {
   return knex.schema
     .createTable("users", (t) => {
       t.increments("id").primary();
-      t.string("name");
-      t.string("username");
+      t.string("display_name");
       t.string("email");
       t.text("bio");
-      t.string("job_title");
-      t.string("company_name");
-      t.dateTime("registration_date");
-      t.string("photo_url");
-      t.string("address_1");
-      t.string("address_2");
-      t.string("city");
-      t.string("state");
-      t.string("country");
-      t.string("twitter");
-      t.string("facebook");
-      t.string("linkedin");
+      t.timestamps();
+      t.boolean("super_user").defaultTo(false);
+      t.text("json_profile");
+      t.text("json_meta");
     })
     .createTable("hackathons", (t) => {
       t.increments("id").primary();
@@ -26,8 +17,12 @@ exports.up = function (knex) {
       t.string("slug");
       t.text("description");
       t.string("logo_url");
-      t.dateTime("start_date");
-      t.dateTime("end_date");
+      t.dateTime("start_at");
+      t.dateTime("end_at");
+      t.string("contact_name");
+      t.string("contact_email");
+      t.timestamps();
+      t.text("json_meta");
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
@@ -45,27 +40,26 @@ exports.up = function (knex) {
       t.text("how_it_will_work");
       t.boolean("needs_hackers").defaultTo(false);
       t.string("tags");
-      // we'll wait to see how this is supposed to work
-      // t.integer("venue_id").unsigned().references("id").inTable("venues");
-      t.integer("venue_id");
       t.integer("video_id");
+      t.timestamps();
+      t.text("json_meta");
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.text("text");
-      t.dateTime("created_date");
+      t.dateTime("created_at");
     })
     .createTable("participants", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
-      t.dateTime("joined_date");
+      t.dateTime("joined_at");
     })
     .createTable("members", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.dateTime("joined_date");
+      t.dateTime("joined_at");
     });
 };
 

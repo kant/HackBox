@@ -16,12 +16,12 @@ const hackathonBase = {
   slug: Joi.string().lowercase().regex(/^[a-z0-9\-]*$/).trim(),
   description: Joi.string().min(3).max(300).trim(),
   logo_url: Joi.string().uri().default("http://placehold.it/150x150"),
-  start_date: Joi.date(),
-  end_date: Joi.date().min(Joi.ref("start_date"))
+  start_at: Joi.date(),
+  end_at: Joi.date().min(Joi.ref("start_at"))
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "description", "logo_url", "start_date", "end_date");
+  .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at");
 export const hackathon = newHackathon.keys({id});
 
 /*

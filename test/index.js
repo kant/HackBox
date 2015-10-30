@@ -29,8 +29,8 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     slug: "bingcubator-hack-2025",
     description: "Yo!",
     logo_url: "http://example.com/hack.gif",
-    start_date: new Date(),
-    end_date: new Date(new Date(Date.now() + 86400 * 5))
+    start_at: new Date(),
+    end_at: new Date(new Date(Date.now() + 86400 * 5))
   };
 
   ensure({
