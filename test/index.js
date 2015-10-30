@@ -30,7 +30,10 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     description: "Yo!",
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(),
-    end_at: new Date(new Date(Date.now() + 86400 * 5))
+    end_at: new Date(new Date(Date.now() + 86400 * 5)),
+    meta: {
+      some_key: "some_value"
+    }
   };
 
   ensure({
@@ -43,7 +46,10 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     return ensure({
       method: "GET",
       url: "/hackathons/3",
-      schema: hackathon
+      schema: hackathon,
+      test(result) {
+        assert.equal(result.meta.some_key, "some_value", "make sure meta keys are persisted");
+      }
     });
   })
   .then(() => {

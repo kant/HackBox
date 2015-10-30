@@ -17,7 +17,8 @@ const hackathonBase = {
   description: Joi.string().min(3).max(300).trim(),
   logo_url: Joi.string().uri().default("http://placehold.it/150x150"),
   start_at: Joi.date(),
-  end_at: Joi.date().min(Joi.ref("start_at"))
+  end_at: Joi.date().min(Joi.ref("start_at")),
+  meta: Joi.object().default({})
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
