@@ -9,5 +9,6 @@ var environmentAwareDbConfig = require("./config").db;
 module.exports = {
   development: environmentAwareDbConfig,
   staging: environmentAwareDbConfig,
-  production: environmentAwareDbConfig
+  production: environmentAwareDbConfig,
+  test: environmentAwareDbConfig
 };

@@ -34,6 +34,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node server.js",
+    "pretest": "rm -f test.sqlite3 && NODE_ENV=test npm run init-db",
     "test": "lab -c -l --transform lab-transform.js -r console -o stdout -r html -o coverage.html",
     "migrate": "knex migrate:latest",
     "seed-db": "knex seed:run",

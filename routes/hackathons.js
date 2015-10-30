@@ -1,6 +1,6 @@
 import Boom from "boom";
-import { hackathons } from "../data/mock-data";
-import { pagination, newHackathon, hackathon, id } from "../data/validation";
+import { pagination, newHackathon, hackathonUpdate, id } from "../data/validation";
+import db, { resolveOr404 } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -10,7 +10,10 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["paginated", "list"],
       handler(request, reply) {
-        reply(hackathons);
+        reply(db.select()
+          .table("hackathons")
+          .limit(request.query.limit)
+          .offset(request.query.offset));
       },
       validate: {
         query: pagination
@@ -25,7 +28,15 @@ const register = function (server, options, next) {
       description: "Create a new hackathon",
       tags: ["admin"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const query = db("hackathons").insert(request.payload);
+
+        query.then((result) => {
+          const getQuery = db("hackathons").where({id: result[0]});
+          reply(resolveOr404(getQuery)).code(201);
+        })
+        .catch((err) => {
+          reply(err);
+        });
       },
       validate: {
         payload: newHackathon
@@ -40,7 +51,19 @@ const register = function (server, options, next) {
       description: "Delete a hackathon",
       tags: ["admin"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const query = db("hackathons")
+          .where({id: request.params.id})
+          .del();
+
+        const response = query.then((result) => {
+          if (result === 0) {
+            return Boom.notFound(`Hackathon id ${request.params.id} not found`);
+          } else {
+            return request.generateResponse().code(204);
+          }
+        });
+
+        reply(response);
       },
       validate: {
         params: {id}
@@ -55,10 +78,12 @@ const register = function (server, options, next) {
       description: "Edit hackathon details",
       tags: ["admin"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        reply(db("hackathons")
+          .where({id: request.params.id})
+          .update(request.payload));
       },
       validate: {
-        payload: hackathon,
+        payload: hackathonUpdate,
         params: {id}
       }
     }
@@ -71,12 +96,11 @@ const register = function (server, options, next) {
       description: "Fetch details about a single hackathon",
       tags: ["detail"],
       handler(request, reply) {
-        const found = hackathons.find((event) => event.id === request.params.id);
-        if (found) {
-          reply(found);
-        } else {
-          reply(Boom.notFound());
-        }
+        const query = db("hackathons")
+          .select()
+          .where({id: request.params.id});
+
+        reply(resolveOr404(query, "hackathon"));
       },
       validate: {
         params: {id}

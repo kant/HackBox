@@ -12,15 +12,17 @@ export const pagination = Joi.object().keys({
   Hackathons
 */
 const hackathonBase = {
-  name: Joi.string().min(3).max(30).trim().required(),
-  slug: Joi.string().lowercase().regex(/^[a-z0-9\-]*$/).trim().required(),
-  description: Joi.string().min(3).max(300).trim().required(),
-  logo_url: Joi.string().uri(),
-  start_date: Joi.date().required(),
-  end_date: Joi.date().min(Joi.ref("start_date")).required()
+  name: Joi.string().min(3).max(30).trim(),
+  slug: Joi.string().lowercase().regex(/^[a-z0-9\-]*$/).trim(),
+  description: Joi.string().min(3).max(300).trim(),
+  logo_url: Joi.string().uri().default("http://placehold.it/150x150"),
+  start_date: Joi.date(),
+  end_date: Joi.date().min(Joi.ref("start_date"))
 };
-export const newHackathon = Joi.object().keys(hackathonBase);
-export const hackathon = Joi.object().keys(Object.assign({id}, hackathonBase));
+export const hackathonUpdate = Joi.object(hackathonBase);
+export const newHackathon = Joi.object(hackathonBase)
+  .requiredKeys("name", "slug", "description", "logo_url", "start_date", "end_date");
+export const hackathon = newHackathon.keys({id});
 
 /*
   Participants
@@ -32,8 +34,8 @@ const userBase = {
   email: Joi.string().email().required(),
   username: Joi.string().min(1).max(30).trim().required()
 };
-export const newUser = Joi.object().keys(userBase);
-export const user = Joi.object().keys(Object.assign({id}, userBase));
+export const newUser = Joi.object(userBase);
+export const user = newUser.keys({id});
 
 /*
   Project
@@ -55,8 +57,8 @@ const projectBase = {
   needs_hackers: Joi.boolean(),
   tags: Joi.array().unique().items(Joi.string().min(1).max(30))
 };
-export const newProject = Joi.object().keys(projectBase);
-export const project = Joi.object().keys(Object.assign({id}, projectBase));
+export const newProject = Joi.object(projectBase);
+export const project = newProject.keys({id});
 
 /*
   Project
@@ -66,4 +68,4 @@ const commentBase = {
   user_id: id
 };
 export const newComment = Joi.object().keys(commentBase);
-export const comment = Joi.object().keys(Object.assign({id}, commentBase));
+export const comment = newComment.keys({id});
