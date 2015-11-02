@@ -101,14 +101,36 @@ export const hackathons = [
 
 export const projects = [
   {
+    owner_id: 1,
+    hackathon_id: 1,
+    title: "Yo!",
+    tagline: "Yo your friends.",
+    status: "active",
+    description: "Yup, that's all there is to it.",
+    image_url: "https://placehold.it/150x150",
+    code_repo_url: "http://example.com",
+    prototype_url: "http://example.com",
+    supporting_files_url: "http://example.com/files",
+    inspiration: "Why not?!",
+    how_it_will_work: "Push a button, send a Yo!",
+    needs_hackers: false,
+    tags: ["Yo", "Social"].join(","),
+    video_id: 47,
+    created_at: new Date(),
+    updated_at: new Date(),
+    json_meta: JSON.stringify({
+      is_awesome: true
+    })
+  },
+  {
     owner_id: 2,
     hackathon_id: 1,
     title: "bnews app",
     tagline: "Where the news can be fun",
     status: "active",
     description: "",
-    image_url: "https: //onehackassets.blob.core.windows.net/images/_processed/af3f1438-f31a-e511-ab0e-00155d5066d7.JPG",
-    code_repo_url: "https: //onehack2015.azurewebsites.net/project/AF3F1438-F31A-E511-AB0E-00155D5066D7",
+    image_url: "https://onehackassets.blob.core.windows.net/images/_processed/af3f1438-f31a-e511-ab0e-00155d5066d7.JPG",
+    code_repo_url: "https://onehack2015.azurewebsites.net/project/AF3F1438-F31A-E511-AB0E-00155D5066D7",
     prototype_url: "http://example.com",
     supporting_files_url: "http://example.com/files",
     inspiration: "Realized that news tend to be really boring.",

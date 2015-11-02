@@ -1,5 +1,7 @@
+/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, newProject, project, id } from "../data/validation";
+import db, { resolveOr404 } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -9,7 +11,13 @@ const register = function (server, options, next) {
       description: "Fetch all projects",
       tags: ["paginated", "list", "filterable"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const query = db.select()
+          .table("projects")
+          .where({hackathon_id: request.params.hackathonId})
+          .limit(request.query.limit)
+          .offset(request.query.offset);
+
+        reply(query);
       },
       validate: {
         params: {
@@ -26,7 +34,19 @@ const register = function (server, options, next) {
     config: {
       description: "Create a new project",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const payload = request.payload;
+
+        payload.hackathon_id = request.params.hackathonId;
+
+        const query = db("projects").insert(payload);
+
+        query.then((result) => {
+          const getQuery = db("projects").where({id: result[0]});
+          reply(resolveOr404(getQuery)).code(201);
+        })
+        .catch((err) => {
+          reply(err);
+        });
       },
       validate: {
         params: {
@@ -39,16 +59,30 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathons/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Delete a project",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const { hackathonId, projectId } = request.params;
+
+        const query = db("projects")
+          .where({hackathon_id: hackathonId, projectId})
+          .del();
+
+        const response = query.then((result) => {
+          if (result === 0) {
+            return Boom.notFound(`Project id ${projectId} not found in hackathon ${hackathonId}`);
+          } else {
+            return request.generateResponse().code(204);
+          }
+        });
+
+        reply(response);
       },
       validate: {
         params: {
-          hackathonId: id,
-          id
+          hackathon_id: id,
+          projectId: id
         }
       }
     }
@@ -56,7 +90,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "PUT",
-    path: "/hackathons/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Edit project details",
       handler(request, reply) {
@@ -66,7 +100,7 @@ const register = function (server, options, next) {
         payload: project,
         params: {
           hackathonId: id,
-          id
+          projectId: id
         }
       }
     }
@@ -74,17 +108,21 @@ const register = function (server, options, next) {
 
   server.route({
     method: "GET",
-    path: "/hackathons/{hackathonId}/projects/{id}",
+    path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Fetch details about a single project",
       tags: ["detail"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const query = db("projects")
+          .select()
+          .where({id: request.params.projectId});
+
+        reply(resolveOr404(query, "project"));
       },
       validate: {
         params: {
           hackathonId: id,
-          id
+          projectId: id
         }
       }
     }
@@ -92,7 +130,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{id}/likes",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
     config: {
       description: "Like a project. No body or query params required.",
       tags: ["action", "stats"],
@@ -102,7 +140,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id,
-          id
+          projectId: id
         }
       }
     }
@@ -110,7 +148,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "DELETE",
-    path: "/hackathons/{hackathonId}/projects/{id}/likes",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
     config: {
       description: "Unlike a project. No body or query params required.",
       tags: ["action", "stats"],
@@ -120,7 +158,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id,
-          id
+          projectId: id
         }
       }
     }
@@ -128,7 +166,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{id}/shares",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/shares",
     config: {
       description: "Track share click on a project. No body or query params required.",
       tags: ["action", "stats"],
@@ -138,7 +176,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id,
-          id
+          projectId: id
         }
       }
     }

@@ -29,7 +29,7 @@ export const hackathon = newHackathon.keys({id});
   Participants
 */
 const userBase = {
-  name: Joi.string().min(3).max(60).trim().required(),
+  name: Joi.string().min(1).max(60).trim().required(),
   phone: Joi.string().regex(/^[0-9\(\) \+]*$/).trim().required(),
   title: Joi.string().min(0).max(30).trim().required(),
   email: Joi.string().email().required(),
@@ -45,8 +45,8 @@ const projectBase = {
   owner_id: id,
   venue_id: id,
   video_id: optionalId,
-  title: Joi.string().min(3).max(30).required(),
-  tagline: Joi.string().min(3).max(60),
+  title: Joi.string().min(1).max(30).required(),
+  tagline: Joi.string().min(1).max(60),
   status: Joi.string(),
   description: Joi.string(),
   image_url: Joi.string().uri(),
@@ -56,7 +56,8 @@ const projectBase = {
   inspiration: Joi.string(),
   how_it_will_work: Joi.string(),
   needs_hackers: Joi.boolean(),
-  tags: Joi.array().unique().items(Joi.string().min(1).max(30))
+  tags: Joi.array().unique().items(Joi.string().min(1).max(30)),
+  meta: Joi.object().default({})
 };
 export const newProject = Joi.object(projectBase);
 export const project = newProject.keys({id});
@@ -65,7 +66,7 @@ export const project = newProject.keys({id});
   Project
 */
 const commentBase = {
-  body: Joi.string().min(3).max(2000),
+  body: Joi.string().min(1).max(2000),
   user_id: id
 };
 export const newComment = Joi.object().keys(commentBase);

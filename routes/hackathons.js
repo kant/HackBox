@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, newHackathon, hackathonUpdate, id } from "../data/validation";
-import db, { expandResult, stringifyKeys, resolveOr404 } from "../db-connection";
+import db, { expandResult, resolveOr404 } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -10,11 +10,12 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["paginated", "list"],
       handler(request, reply) {
-        reply(db.select()
+        const query = db.select()
           .table("hackathons")
           .limit(request.query.limit)
-          .offset(request.query.offset)
-          .then(expandResult));
+          .offset(request.query.offset);
+
+        reply(query);
       },
       validate: {
         query: pagination
@@ -29,8 +30,7 @@ const register = function (server, options, next) {
       description: "Create a new hackathon",
       tags: ["admin"],
       handler(request, reply) {
-        const payload = stringifyKeys(request.payload);
-        const query = db("hackathons").insert(payload);
+        const query = db("hackathons").insert(request.payload);
 
         query.then((result) => {
           const getQuery = db("hackathons").where({id: result[0]});
@@ -80,10 +80,9 @@ const register = function (server, options, next) {
       description: "Edit hackathon details",
       tags: ["admin"],
       handler(request, reply) {
-        const payload = stringifyKeys(request.payload);
         reply(db("hackathons")
           .where({id: request.params.id})
-          .update(payload));
+          .update(request.payload));
       },
       validate: {
         payload: hackathonUpdate,
@@ -101,8 +100,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const query = db("hackathons")
           .select()
-          .where({id: request.params.id})
-          .then(expandResult);
+          .where({id: request.params.id});
 
         reply(resolveOr404(query, "hackathon"));
       },

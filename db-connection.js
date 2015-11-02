@@ -15,32 +15,3 @@ export const resolveOr404 = (promise, label = "resource") => {
     }
   });
 };
-
-export const expandResult = (obj) => {
-  if (Array.isArray(obj)) {
-    obj.forEach(expandResult);
-  } else {
-    for (const key in obj) {
-      const split = key.split("json_");
-      if (split.length === 2) {
-        obj[split[1]] = JSON.parse(obj[key]);
-        delete obj[key];
-      }
-    }
-  }
-  return obj;
-};
-
-export const stringifyKeys = (obj) => {
-  if (Array.isArray(obj)) {
-    obj.forEach(stringifyKeys);
-  } else {
-    for (const key in obj) {
-      if (key === "meta" || key === "profile") {
-        obj[`json_${key}`] = JSON.stringify(obj[key]);
-        delete obj[key];
-      }
-    }
-  }
-  return obj;
-};

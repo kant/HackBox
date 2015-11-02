@@ -30,7 +30,7 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     description: "Yo!",
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(),
-    end_at: new Date(new Date(Date.now() + 86400 * 5)),
+    end_at: new Date(Date.now() + 86400 * 5),
     meta: {
       some_key: "some_value"
     }

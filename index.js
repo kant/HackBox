@@ -6,6 +6,7 @@ import Inert from "inert";
 import Lout from "lout";
 import Bell from "bell";
 import PaginationPlugin from "./plugins/paginate";
+import ExpandMetaPlugin from "./plugins/expand-meta";
 import HackathonRoutes from "./routes/hackathons";
 import ProjectRoutes from "./routes/projects";
 import ParticipantRoutes from "./routes/participants";
@@ -48,7 +49,8 @@ server.register([
   MemberRoutes,
   CommentRoutes,
   DataSetRoutes,
-  PaginationPlugin
+  PaginationPlugin,
+  ExpandMetaPlugin
 ], (err) => {
   if (err) {
     throw err;
