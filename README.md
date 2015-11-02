@@ -4,14 +4,6 @@ This is a node.js api server written using [hapi](http://hapijs.com) framework.
 
 It's written in ES6 transpiled with Babel to allow full ES6 support. In order to use all of the ES6 features we're using [babel.js](https://babeljs.io) transpiler via the [require hook](https://babeljs.io/docs/usage/require/) as can be seen in index.js.
 
-## Questions
-
-1. Can one user ever be on multiple projects in the same hackathon?
-2. Can the owner of a project change?
-3. Do projects ever exist outside of a hackathon, or in multiple hackathons? (I'm assuming not)
-4. I mentioned previously that if open sourcing this project is a goal, we may want to use the [knex](http://knexjs.org/) SQL builder because it's quite popular and supports more databases than any other such node.js library that I'm aware of. Unfortunately there's no official SQL Server support. Azure supports MySQL and that *is* supported. Should we use MySQL?
-5. In the same vein as #4 auth should ideally also be pluggable/flexible. To that end, I'd suggest the [Hapi.js "bell" library](https://github.com/hapijs/bell) which supports Microsoft Live auth, which is what we'd use here, but would also make it easy for people to use other auth providers like: GitHub, Google, Twitter, etc. It deals with normalizing user profiles between providers, and it would let us leverage existing Live profiles without having to do the manual DB dump/sync that was described. 
-
 ## Running Locally
 
 ```
@@ -26,13 +18,13 @@ The API is set up to generate its own documentation based on metadata provided w
 
 You can see the list of routes by running the server as described above and visiting: `/docs` in a browser. 
 
-## Hairbrained Ideas/Suggestions
-
-- Get this configured to the point where it could be deployed by anybody from GitHub using a [Deploy to Azure button](http://www.bradygaster.com/post/the-deploy-to-azure-button).
-
 ## Linting setup
 
 Currently using [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
+
+## Ops setup and deploy
+
+This is deployed on Azure but is meant to be as flexible/configurable as possible. It's a secondary goal to make it configured to the point where it could be deployed by anybody from GitHub using a [Deploy to Azure button](http://www.bradygaster.com/post/the-deploy-to-azure-button).
 
 ## How configs are handled
 
