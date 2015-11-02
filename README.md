@@ -18,6 +18,16 @@ The API is set up to generate its own documentation based on metadata provided w
 
 You can see the list of routes by running the server as described above and visiting: `/docs` in a browser. 
 
+## On route configs
+
+As much as possible the routes are strictly validated. That means each API endpoint will only let data through that passes validation for that route. 
+
+All routes should have validation rules for anything it expects to trust.
+
+Note that we've set a global server config that will strip unkown keys from the JSON payloads of requests.
+
+So if you're seeing things go missing from request payloads, it's because they're not being validated and therefore, ignored.
+
 ## Linting setup
 
 Currently using [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
