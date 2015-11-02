@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, newProject, project, id } from "../data/validation";
+import { pagination, newProject, projectUpdate, id } from "../data/validation";
 import db, { resolveOr404 } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -36,6 +36,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const payload = request.payload;
 
+        // always set the hackathon_id from the URL
         payload.hackathon_id = request.params.hackathonId;
 
         const query = db("projects").insert(payload);
@@ -66,7 +67,10 @@ const register = function (server, options, next) {
         const { hackathonId, projectId } = request.params;
 
         const query = db("projects")
-          .where({hackathon_id: hackathonId, projectId})
+          .where({
+            id: projectId,
+            hackathon_id: hackathonId
+          })
           .del();
 
         const response = query.then((result) => {
@@ -81,7 +85,7 @@ const register = function (server, options, next) {
       },
       validate: {
         params: {
-          hackathon_id: id,
+          hackathonId: id,
           projectId: id
         }
       }
@@ -94,10 +98,19 @@ const register = function (server, options, next) {
     config: {
       description: "Edit project details",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const { hackathonId, projectId } = request.params;
+
+        const query = db("projects")
+          .where({
+            id: projectId,
+            hackathon_id: hackathonId
+          })
+          .update(request.payload);
+
+        reply(query);
       },
       validate: {
-        payload: project,
+        payload: projectUpdate,
         params: {
           hackathonId: id,
           projectId: id

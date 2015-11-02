@@ -42,10 +42,8 @@ export const user = newUser.keys({id});
   Project
 */
 const projectBase = {
-  owner_id: id,
-  venue_id: id,
   video_id: optionalId,
-  title: Joi.string().min(1).max(30).required(),
+  title: Joi.string().min(1).max(30),
   tagline: Joi.string().min(1).max(60),
   status: Joi.string(),
   description: Joi.string(),
@@ -59,7 +57,9 @@ const projectBase = {
   tags: Joi.array().unique().items(Joi.string().min(1).max(30)),
   meta: Joi.object().default({})
 };
-export const newProject = Joi.object(projectBase);
+export const projectUpdate = Joi.object(projectBase);
+export const newProject = Joi.object(projectBase)
+  .requiredKeys("title", "tagline", "description", "needs_hackers");
 export const project = newProject.keys({id});
 
 /*

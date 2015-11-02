@@ -23,6 +23,11 @@ server.connection({
   routes: {
     cors: {
       credentials: true
+    },
+    validate: {
+      options: {
+        stripUnknown: true
+      }
     }
   },
   port

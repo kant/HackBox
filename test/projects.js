@@ -6,7 +6,6 @@ import ensure from "./helpers";
 
 const lab = exports.lab = Lab.script();
 
-/*
 lab.test("fetch projects", (done) => {
   ensure({
     method: "GET",
@@ -18,13 +17,13 @@ lab.test("fetch projects", (done) => {
 lab.test("fetch a specific project", (done) => {
   ensure({
     method: "GET",
-    url: "/hackathons/1/project/1",
+    url: "/hackathons/1/projects/1",
     hasPagination: false,
     schema: project
   }, done);
 });
 
-lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
+lab.test("CRUD a project", {timeout: 2000}, (done) => {
   const properties = {
     owner_id: 1,
     hackathon_id: 1,
@@ -39,11 +38,11 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     inspiration: "Because... yoyos!",
     how_it_will_work: "Play with yoyos.",
     needs_hackers: true,
-    tags: ["Yoyo", "Social"].join(","),
+    tags: ["Yoyo", "Social"],
     video_id: 49,
-    json_meta: JSON.stringify({
+    meta: {
       is_awesome: true
-    })
+    }
   };
 
   ensure({
@@ -95,4 +94,3 @@ lab.test("CRUD a hackathon", {timeout: 2000}, (done) => {
     }, done);
   });
 });
-*/

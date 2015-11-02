@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, newHackathon, hackathonUpdate, id } from "../data/validation";
-import db, { expandResult, resolveOr404 } from "../db-connection";
+import db, { resolveOr404 } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
