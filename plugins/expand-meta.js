@@ -52,14 +52,22 @@ const stringifyKeys = (obj) => {
   return obj;
 };
 
+const isDocs = (path) => {
+  return path.indexOf("/docs") === 0;
+};
+
 const register = function (server, options, next) {
   server.ext("onPreResponse", (request, reply) => {
-    expandResult(request.response.source);
+    if (!isDocs(request.url.path)) {
+      expandResult(request.response.source);
+    }
     return reply.continue();
   });
 
   server.ext("onPreHandler", (request, reply) => {
-    stringifyKeys(request.payload);
+    if (!isDocs(request.url.path)) {
+      stringifyKeys(request.payload);
+    }
     return reply.continue();
   });
 
