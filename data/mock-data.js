@@ -157,12 +157,12 @@ export const members = [
 
 export const comments = [
   {
-    text: "Try them and you may, I say.",
+    body: "Try them and you may, I say.",
     user_id: 1,
     project_id: 1
   },
   {
-    text: "Sam, if you will let me be I will try them and you will see.",
+    body: "Sam, if you will let me be I will try them and you will see.",
     user_id: 1,
     project_id: 1
   }

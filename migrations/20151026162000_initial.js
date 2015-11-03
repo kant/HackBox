@@ -48,8 +48,8 @@ exports.up = function (knex) {
       t.increments("id").primary();
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.text("text");
-      t.dateTime("created_at");
+      t.text("body");
+      t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("participants", (t) => {
       t.integer("user_id").unsigned().references("users.id");
