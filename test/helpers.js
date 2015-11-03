@@ -1,3 +1,4 @@
+/*eslint no-console:0, max-statements: [0,0]*/
 // This is a helper for writing tests with some
 // logical defaults and simplified checks for looking
 // for things like pagination, etc.
