@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, newProject, projectUpdate, id } from "../data/validation";
-import db, { resolveOr404 } from "../db-connection";
+import db, { resolveOr404, ensureHackathon } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -11,13 +11,16 @@ const register = function (server, options, next) {
       description: "Fetch all projects",
       tags: ["paginated", "list", "filterable"],
       handler(request, reply) {
-        const query = db.select()
-          .table("projects")
-          .where({hackathon_id: request.params.hackathonId})
-          .limit(request.query.limit)
-          .offset(request.query.offset);
+        const { hackathonId } = request.params;
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db.select()
+            .table("projects")
+            .where({hackathon_id: request.params.hackathonId})
+            .limit(request.query.limit)
+            .offset(request.query.offset);
+        });
 
-        reply(query);
+        reply(response);
       },
       validate: {
         params: {
@@ -34,20 +37,21 @@ const register = function (server, options, next) {
     config: {
       description: "Create a new project",
       handler(request, reply) {
+        const { hackathonId } = request.params;
         const payload = request.payload;
 
         // always set the hackathon_id from the URL
         payload.hackathon_id = request.params.hackathonId;
 
-        const query = db("projects").insert(payload);
-
-        query.then((result) => {
-          const getQuery = db("projects").where({id: result[0]});
-          reply(resolveOr404(getQuery)).code(201);
-        })
-        .catch((err) => {
-          reply(err);
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db("projects").insert(payload);
+        }).then((result) => {
+          return db("projects").where({id: result[0]});
+        }).then((result) => {
+          return request.generateResponse(result).code(201);
         });
+
+        reply(response);
       },
       validate: {
         params: {
@@ -66,14 +70,9 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
-        const query = db("projects")
-          .where({
-            id: projectId,
-            hackathon_id: hackathonId
-          })
-          .del();
-
-        const response = query.then((result) => {
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db("projects").where({id: projectId, hackathon_id: hackathonId}).del();
+        }).then((result) => {
           if (result === 0) {
             return Boom.notFound(`Project id ${projectId} not found in hackathon ${hackathonId}`);
           } else {
@@ -100,14 +99,13 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
-        const query = db("projects")
-          .where({
-            id: projectId,
-            hackathon_id: hackathonId
-          })
-          .update(request.payload);
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db("projects")
+            .where({id: projectId, hackathon_id: hackathonId})
+            .update(request.payload);
+        });
 
-        reply(query);
+        reply(response);
       },
       validate: {
         payload: projectUpdate,
@@ -126,11 +124,13 @@ const register = function (server, options, next) {
       description: "Fetch details about a single project",
       tags: ["detail"],
       handler(request, reply) {
-        const query = db("projects")
-          .select()
-          .where({id: request.params.projectId});
+        const { hackathonId, projectId } = request.params;
 
-        reply(resolveOr404(query, "project"));
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db("projects").where({id: projectId});
+        });
+
+        reply(resolveOr404(response, "project"));
       },
       validate: {
         params: {
