@@ -1,6 +1,7 @@
+/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, id } from "../data/validation";
-import db, { resolveOr404 } from "../db-connection";
+import db, { ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -10,23 +11,22 @@ const register = function (server, options, next) {
       description: "Fetch all participants",
       tags: ["list", "paginated", "filterable"],
       handler(request, reply) {
-        const query = db.select()
-          .table("participants")
-          .where({hackathon_id: request.params.hackathonId})
-          .limit(request.query.limit)
-          .offset(request.query.offset);
+        const { hackathonId } = request.params;
 
-        query.then((results) => {
+        const response = ensureHackathon(hackathonId).then(() => {
+          return db("participants")
+            .where({hackathon_id: hackathonId})
+            .limit(request.query.limit)
+            .offset(request.query.offset);
+        }).then((results) => {
           if (results.length === 0) {
-            return reply([]);
+            return [];
           }
-
-          const userQuery = db("users");
-          results.forEach((result) => {
-            userQuery.orWhere({id: result.user_id});
-          });
-          reply(userQuery);
+          const userIds = results.map((participant) => participant.user_id);
+          return db("users").whereIn("id", userIds);
         });
+
+        reply(response);
       },
       validate: {
         params: {
@@ -44,38 +44,27 @@ const register = function (server, options, next) {
       description: "Add user to hackathon",
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
+
         const participant = {
           user_id: userId,
           hackathon_id: hackathonId
-        }
+        };
 
-        // existence checks
-        const userQuery = db("users").where({id: userId});
-        const hackathonQuery = db("hackathons").where({id: userId});
-
-        // participant check
-        const participantQuery = db("participants").where(participant);
-
-        Promise.all([
-          userQuery,
-          hackathonQuery,
-          participantQuery
-        ]).then(([userResult, hackathonResult, projectResult, memberResult]) => {
-          if (userResult.length === 0) {
-            return reply(Boom.notFound(`No user with id ${userId} was found`));
+        const response = Promise.all([
+          ensureHackathon(hackathonId),
+          ensureUser(userId),
+          db("participants").where(participant)
+        ]).then((results) => {
+          if (results[2] > 0) {
+            throw Boom.preconditionFailed(`User ${userId} is in hackahton ${hackathonId}`);
           }
-          if (hackathonResult.length === 0) {
-            return reply(Boom.notFound(`No hackathon with id ${hackathonId} was found`));
-          }
-          if (participantQuery.length > 0) {
-            return reply(Boom.preconditionFailed(`User ${userId} is in hackahton ${hackathonId}`));
-          }
-          db("participants")
-            .insert(participant)
-            .then(() => {
-              reply(userResult[0]).code(201);
-            });
+        }).then(() => {
+          return db("participants").insert(participant);
+        }).then(() => {
+          return request.generateResponse().code(204);
         });
+
+        reply(response);
       },
       validate: {
         params: {
@@ -92,18 +81,21 @@ const register = function (server, options, next) {
     config: {
       description: "Remove a user from a project",
       handler(request, reply) {
+        const { hackathonId, userId } = request.params;
+
         const participant = {
-          user_id: request.params.userId,
-          hackathon_id: request.params.hackathonId,
+          user_id: userId,
+          hackathon_id: hackathonId
         };
 
-        const query = db("participants").where(participant).del();
-        const response = query.then((result) => {
-          if (result === 0) {
-            return Boom.notFound(`Participant id ${request.params.id} not found`);
-          } else {
-            return request.generateResponse().code(204);
-          }
+        const response = Promise.all([
+          ensureHackathon(hackathonId),
+          ensureUser(userId),
+          ensureParticipant(hackathonId, userId)
+        ]).then(() => {
+          return db("participants").where(participant).del();
+        }).then(() => {
+          return request.generateResponse().code(204);
         });
 
         reply(response);

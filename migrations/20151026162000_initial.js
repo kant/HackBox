@@ -54,13 +54,12 @@ exports.up = function (knex) {
     .createTable("participants", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
-      t.dateTime("joined_at");
+      t.dateTime("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("members", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.integer("hackathon_id").unsigned().references("hackathons.id");
-      t.dateTime("joined_at");
+      t.dateTime("joined_at").defaultTo(knex.fn.now());
     });
 };
 

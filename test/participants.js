@@ -18,7 +18,7 @@ lab.test("CRUD a participant", {timeout: 2000}, (done) => {
   ensure({
     method: "POST",
     url: `/hackathons/1/participants/${USER_ID}`,
-    statusCode: 201
+    statusCode: 204
   })
   .then(() => {
     return ensure({

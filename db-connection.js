@@ -32,3 +32,19 @@ export const ensureProject = (hackathonId, id) => {
     }
   });
 };
+
+export const ensureParticipant = (hackathonId, userId) => {
+  return client("participants").where({user_id: userId, hackathon_id: hackathonId}).then((rows) => {
+    if (rows.length === 0) {
+      throw Boom.notFound(`User id ${userId} was not found in hackathon ${hackathonId}.`);
+    }
+  });
+};
+
+export const ensureUser = (userId) => {
+  return client("users").where({id: userId}).then((rows) => {
+    if (rows.length === 0) {
+      throw Boom.notFound(`User id ${userId} was not found.`);
+    }
+  });
+};

@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { id } from "../data/validation";
-import db from "../db-connection";
+import db, { ensureProject, ensureHackathon, ensureParticipant } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -11,22 +11,18 @@ const register = function (server, options, next) {
       description: "Fetch all members of a project",
       tags: ["list"],
       handler(request, reply) {
-        const query = db("members").where({
-          hackathon_id: request.params.hackathonId,
-          project_id: request.params.projectId
+        const { hackathonId, projectId } = request.params;
+
+        const result = Promise.all([
+          ensureHackathon(hackathonId),
+          ensureProject(hackathonId, projectId),
+          db("members").where({project_id: projectId}).select("user_id")
+        ]).then((results) => {
+          const memberIds = results[2].map((member) => member.user_id);
+          return db("users").whereIn("id", memberIds);
         });
 
-        query.then((results) => {
-          if (results.length === 0) {
-            return reply([]);
-          }
-
-          const userQuery = db("users");
-          results.forEach((result) => {
-            userQuery.orWhere({id: result.user_id});
-          });
-          reply(userQuery);
-        });
+        reply(result);
       },
       validate: {
         params: {
@@ -46,42 +42,26 @@ const register = function (server, options, next) {
         const { userId, hackathonId, projectId } = request.params;
         const member = {
           user_id: userId,
-          hackathon_id: hackathonId,
           project_id: projectId
         };
 
-        // existence checks
-        const userQuery = db("users").where({id: userId});
-        const hackathonQuery = db("hackathons").where({id: userId});
-        const projectQuery = db("projects").where({id: projectId});
-
-        // membership check
-        const memberQuery = db("members").where(member);
-
-        Promise.all([
-          userQuery,
-          hackathonQuery,
-          projectQuery,
-          memberQuery
-        ]).then(([userResult, hackathonResult, projectResult, memberResult]) => {
-          if (userResult.length === 0) {
-            return reply(Boom.notFound(`No user with id ${userId} was found`));
+        const response = Promise.all([
+          ensureHackathon(hackathonId),
+          ensureProject(hackathonId, projectId),
+          ensureParticipant(hackathonId, userId),
+          db("members").where(member)
+        ]).then((result) => {
+          // if user already a member, throw
+          if (result[3].length > 0) {
+            throw Boom.preconditionFailed(`User ${userId} is already in project ${projectId}`);
           }
-          if (hackathonResult.length === 0) {
-            return reply(Boom.notFound(`No hackathon with id ${hackathonId} was found`));
-          }
-          if (projectResult.length === 0) {
-            return reply(Boom.notFound(`No project with id ${projectId} was found`));
-          }
-          if (memberResult.length > 0) {
-            return reply(Boom.preconditionFailed(`User ${userId} is in project ${projectId}`));
-          }
-          db("members")
-            .insert(member)
-            .then(() => {
-              reply(userResult[0]).code(201);
-            });
+        }).then(() => {
+          return db("members").insert(member);
+        }).then(() => {
+          return request.generateResponse().code(204);
         });
+
+        reply(response);
       },
       validate: {
         params: {
@@ -99,13 +79,17 @@ const register = function (server, options, next) {
     config: {
       description: "Remove a member from a team",
       handler(request, reply) {
-        const member = {
-          user_id: request.params.userId,
-          hackathon_id: request.params.hackathonId,
-          project_id: request.params.projectId
-        };
-        const query = db("members").where(member).del();
-        const response = query.then((result) => {
+        const { hackathonId, projectId, userId } = request.params;
+
+        const response = Promise.all([
+          ensureHackathon(hackathonId),
+          ensureProject(hackathonId, projectId)
+        ]).then(() => {
+          return db("members").where({
+            user_id: userId,
+            project_id: projectId
+          }).del();
+        }).then((result) => {
           if (result === 0) {
             return Boom.notFound(`Member id ${request.params.id} not found`);
           } else {
