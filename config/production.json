@@ -1,18 +1,8 @@
 {
   "db": {
-    "client": "mysql",
+    "client": "sqlite3",
     "connection": {
-      "database": "hackbox-api",
-      "host": "$DB_CONNECTION_HOST",
-      "user": "$DB_CONNECTION_USER",
-      "password": "$DB_CONNECTION_PASSWORD"
-    },
-    "pool": {
-      "min": 2,
-      "max": 10
-    },
-    "migrations": {
-      "tableName": "knex_migrations"
+      "filename": "./prod-test.sqlite3"
     }
   }
 }
