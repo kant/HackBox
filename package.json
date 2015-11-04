@@ -30,13 +30,12 @@
     "lab": "^6.2.0"
   },
   "engines": {
-    "node": "4.x.x"
+    "node": "4.2.1"
   },
   "scripts": {
     "init-db": "npm run migrate && knex seed:run",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
-    "postinstall": "rm -f prod-test.sqlite3 && npm run init-db",
     "pretest": "rm -f test.sqlite3 && NODE_ENV=test npm run init-db",
     "seed-db": "knex seed:run",
     "start": "node server.js",
