@@ -36,7 +36,7 @@
     "init-db": "npm run migrate && knex seed:run",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
-    "postinstall": "knex migrate:rollback && npm run init-db",
+    "postinstall": "rm -f prod-test.sqlite3 && npm run init-db",
     "pretest": "rm -f test.sqlite3 && NODE_ENV=test npm run init-db",
     "seed-db": "knex seed:run",
     "start": "node server.js",
