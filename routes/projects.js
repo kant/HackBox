@@ -141,60 +141,6 @@ const register = function (server, options, next) {
     }
   });
 
-  server.route({
-    method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
-    config: {
-      description: "Like a project. No body or query params required.",
-      tags: ["action", "stats"],
-      handler(request, reply) {
-        reply(Boom.notImplemented());
-      },
-      validate: {
-        params: {
-          hackathonId: id,
-          projectId: id
-        }
-      }
-    }
-  });
-
-  server.route({
-    method: "DELETE",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
-    config: {
-      description: "Unlike a project. No body or query params required.",
-      tags: ["action", "stats"],
-      handler(request, reply) {
-        reply(Boom.notImplemented());
-      },
-      validate: {
-        params: {
-          hackathonId: id,
-          projectId: id
-        }
-      }
-    }
-  });
-
-  server.route({
-    method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/shares",
-    config: {
-      description: "Track share click on a project. No body or query params required.",
-      tags: ["action", "stats"],
-      handler(request, reply) {
-        reply(Boom.notImplemented());
-      },
-      validate: {
-        params: {
-          hackathonId: id,
-          projectId: id
-        }
-      }
-    }
-  });
-
   next();
 };
 

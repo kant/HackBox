@@ -14,6 +14,7 @@ import UserRoutes from "./routes/users";
 import MemberRoutes from "./routes/members";
 import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
+import StatsRoutes from "./routes/shares-likes-views";
 
 const server = new Hapi.Server({ debug: { request: ["error"] } });
 const port = process.env.PORT || 3000;
@@ -54,6 +55,7 @@ server.register([
   MemberRoutes,
   CommentRoutes,
   DataSetRoutes,
+  StatsRoutes,
   PaginationPlugin,
   ExpandMetaPlugin
 ], (err) => {

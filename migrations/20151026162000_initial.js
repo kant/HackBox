@@ -60,6 +60,21 @@ exports.up = function (knex) {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.dateTime("joined_at").defaultTo(knex.fn.now());
+    })
+    .createTable("likes", (t) => {
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("project_id").unsigned().references("projects.id");
+      t.dateTime("created_at").defaultTo(knex.fn.now());
+    })
+    .createTable("views", (t) => {
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("project_id").unsigned().references("projects.id");
+      t.dateTime("created_at").defaultTo(knex.fn.now());
+    })
+    .createTable("shares", (t) => {
+      t.integer("user_id").unsigned().references("users.id");
+      t.integer("project_id").unsigned().references("projects.id");
+      t.dateTime("created_at").defaultTo(knex.fn.now());
     });
 };
 

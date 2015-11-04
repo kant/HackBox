@@ -94,3 +94,33 @@ lab.test("CRUD a project", {timeout: 2000}, (done) => {
     }, done);
   });
 });
+
+lab.test("like/view/share project routes", (done) => {
+  ensure({
+    method: "POST",
+    url: "/hackathons/1/projects/1/likes",
+    hasPagination: false,
+    statusCode: 204
+  }).then(() => {
+    return ensure({
+      method: "POST",
+      url: "/hackathons/1/projects/1/likes",
+      hasPagination: false,
+      statusCode: 412
+    });
+  }).then(() => {
+    return ensure({
+      method: "POST",
+      url: "/hackathons/1/projects/1/shares",
+      hasPagination: false,
+      statusCode: 204
+    });
+  }).then(() => {
+    return ensure({
+      method: "POST",
+      url: "/hackathons/1/projects/1/views",
+      hasPagination: false,
+      statusCode: 204
+    }, done);
+  });
+});
