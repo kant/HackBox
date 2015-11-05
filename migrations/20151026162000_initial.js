@@ -27,7 +27,7 @@ exports.up = function (knex) {
     .createTable("projects", (t) => {
       t.increments("id").primary();
       t.integer("owner_id").unsigned().references("users.id");
-      t.integer("hackathon_id").unsigned().references("hackathon.id");
+      t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.string("title");
       t.string("tagline");
       t.string("status");
@@ -80,6 +80,9 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
+    .dropTableIfExists("shares")
+    .dropTableIfExists("views")
+    .dropTableIfExists("likes")
     .dropTableIfExists("participants")
     .dropTableIfExists("comments")
     .dropTableIfExists("members")

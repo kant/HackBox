@@ -109,8 +109,6 @@ selectNodeVersion
 if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   cd "$DEPLOYMENT_TARGET"
   eval $NPM_CMD install --production
-  # manually run SQLITE install command
-  eval $NPM_CMD install -g sqlite3
   # manually run init-db command
   eval $NPM_CMD run init-db
   exitWithMessageOnError "npm failed"
