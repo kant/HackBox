@@ -1,4 +1,5 @@
 /*eslint max-statements: [0,0], filenames/filenames: [2, "^.*$"]*/
+
 exports.up = function (knex) {
   return knex.schema
     .createTable("users", (t) => {
@@ -54,27 +55,27 @@ exports.up = function (knex) {
     .createTable("participants", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
-      t.dateTime("joined_at").defaultTo(knex.fn.now());
+      t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("members", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.dateTime("joined_at").defaultTo(knex.fn.now());
+      t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("likes", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.dateTime("created_at").defaultTo(knex.fn.now());
+      t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("views", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.dateTime("created_at").defaultTo(knex.fn.now());
+      t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("shares", (t) => {
       t.integer("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
-      t.dateTime("created_at").defaultTo(knex.fn.now());
+      t.timestamp("created_at").defaultTo(knex.fn.now());
     });
 };
 

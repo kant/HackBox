@@ -2,12 +2,15 @@ require("babel/register");
 var data = require("../data/mock-data");
 
 exports.seed = function (knex, Promise) {
-  return Promise.join(
-    knex("users").del().insert(data.users),
-    knex("hackathons").del().insert(data.hackathons),
-    knex("projects").del().insert(data.projects),
-    knex("participants").del().insert(data.participants),
-    knex("members").del().insert(data.members),
-    knex("comments").del().insert(data.comments)
-  );
+  return knex("users").del().insert(data.users).then(() => {
+    return knex("hackathons").del().insert(data.hackathons);
+  }).then(() => {
+    return knex("projects").del().insert(data.projects);
+  }).then(() => {
+    return knex("participants").del().insert(data.participants);
+  }).then(() => {
+    return knex("members").del().insert(data.members);
+  }).then(() => {
+    return knex("comments").del().insert(data.comments);
+  });
 };

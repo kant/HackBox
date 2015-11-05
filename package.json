@@ -33,7 +33,7 @@
     "node": "4.2.1"
   },
   "scripts": {
-    "init-db": "knex migrate:rollback && npm run migrate && knex seed:run",
+    "init-db": "knex migrate:rollback && npm run migrate && npm run seed-db",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
     "pretest": "rm -f test.sqlite3 && NODE_ENV=test npm run init-db",
