@@ -29,11 +29,11 @@ export const hackathon = newHackathon.keys({id});
   Participants
 */
 const userBase = {
-  name: Joi.string().min(1).max(60).trim().required(),
-  phone: Joi.string().regex(/^[0-9\(\) \+]*$/).trim().required(),
-  title: Joi.string().min(0).max(30).trim().required(),
-  email: Joi.string().email().required(),
-  username: Joi.string().min(1).max(30).trim().required()
+  // name: Joi.string().min(1).max(60).trim().required(),
+  // phone: Joi.string().regex(/^[0-9\(\) \+]*$/).trim().required(),
+  // title: Joi.string().min(0).max(30).trim().required(),
+  // email: Joi.string().email().required(),
+  // username: Joi.string().min(1).max(30).trim().required()
 };
 export const newUser = Joi.object(userBase);
 export const user = newUser.keys({id});

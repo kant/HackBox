@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, newUser, user, id } from "../data/validation";
-
+import db, { resolveOr404 } from "../db-connection";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
@@ -9,7 +9,12 @@ const register = function (server, options, next) {
       description: "Fetch all users",
       tags: ["paginated", "list"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+
+        const query = db("users")
+          .limit(request.query.limit)
+          .offset(request.query.offset)
+
+          reply(query);
       },
       validate: {
         query: pagination
@@ -21,12 +26,18 @@ const register = function (server, options, next) {
     method: "POST",
     path: "/users",
     config: {
-      description: "Create a new users",
+      description: "Create a new user",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const response = db("users").insert(request.payload).then((result) => {
+          return db("users").where({id: result[0]});
+        }).then((result) => {
+          return request.generateResponse(result).code(201);
+        });
+
+        reply(response);
       },
       validate: {
-        payload: newUser
+        // payload: newUser
       }
     }
   });
@@ -37,7 +48,17 @@ const register = function (server, options, next) {
     config: {
       description: "Delete a user",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+
+        const { userId } = request.params.id;
+        const response = db("users").where({id: request.params.id}).del().then((result) => {
+          if (result === 0) {
+            return Boom.notFound(`User id ${request.params.id} not found`);
+          } else {
+            return request.generateResponse().code(204);
+          }
+        });
+
+        reply(response);
       },
       validate: {
         params: {id}
@@ -51,7 +72,16 @@ const register = function (server, options, next) {
     config: {
       description: "Edit user details",
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const { userId } = request.params;
+        const response = ensureHackathon(userId).then(() => {
+          return db("users")
+            .where({id: userId})
+            .update(request.payload);
+        }).then(() => {
+          return db("userid").where({id: userId});
+        });
+
+        reply(response);
       },
       validate: {
         payload: user,
@@ -67,10 +97,14 @@ const register = function (server, options, next) {
       description: "Fetch details about a single user",
       tags: ["detail"],
       handler(request, reply) {
-        reply(Boom.notImplemented());
+        const query = db("users")
+          .select()
+          .where({id: request.params.id});
+
+        reply(resolveOr404(query, "user"));
       },
       validate: {
-        params: id
+        params: {id}
       }
     }
   });
