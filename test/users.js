@@ -13,44 +13,49 @@ lab.test("fetch all users", (done) => {
   }, done);
 });
 
-// lab.test("CRUD a participant", {timeout: 2000}, (done) => {
-//   const USER_ID = 2;
-//   ensure({
-//     method: "POST",
-//     url: `/hackathons/1/participants/${USER_ID}`,
-//     statusCode: 204
-//   })
-//   .then(() => {
-//     return ensure({
-//       method: "GET",
-//       url: `/hackathons/1/participants`,
-//       hasPagination: true,
-//       test(result) {
-//         assert.ok(
-//           result.data.some((participant) => participant.id === USER_ID),
-//           "make sure added users is listed in results"
-//         );
-//       }
-//     });
-//   })
-//   .then(() => {
-//     return ensure({
-//       method: "DELETE",
-//       url: `/hackathons/1/participants/${USER_ID}`,
-//       statusCode: 204
-//     });
-//   })
-//   .then(() => {
-//     return ensure({
-//       method: "GET",
-//       url: `/hackathons/1/participants`,
-//       hasPagination: true,
-//       test(result) {
-//         assert.ok(
-//           !result.data.some((participant) => participant.id === USER_ID),
-//           "make sure added user is not listed in results"
-//         );
-//       }
-//     }, done);
-//   });
-// });
+lab.test("CRUD a user", {timeout: 2000}, (done) => {
+  const USER_ID = 4;
+
+  const properties = {
+      display_name:"Jane Foo",
+      email:"jane.foo@microsoft.com",
+      bio:"Elite coder",
+  }
+
+  ensure({
+    method: "POST",
+    url: `/users`,
+    payload: properties,
+    statusCode: 201
+  })
+  .then(() => {
+    return ensure({
+      method: "GET",
+      url: `/users/${USER_ID}`,
+      hasPagination: false,
+      test(result) {
+        assert.equal(result.email, properties.email, "ensure properites persisteted");
+      }
+    });
+  })
+  .then(() => {
+    return ensure({
+      method: "DELETE",
+      url: `/users/${USER_ID}`,
+      statusCode: 204
+    });
+  })
+  .then(() => {
+    return ensure({
+      method: "GET",
+      url: `/users`,
+      hasPagination: true,
+      test(result) {
+        assert.ok(
+          !result.data.some((user) => user.id === USER_ID),
+          "make sure deleted user is not listed in results"
+        );
+      }
+    }, done);
+  });
+});

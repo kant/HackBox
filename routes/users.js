@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, newUser, user, id } from "../data/validation";
-import db from "../db-connection";
+import db, { resolveOr404 } from "../db-connection";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
@@ -26,7 +26,7 @@ const register = function (server, options, next) {
     method: "POST",
     path: "/users",
     config: {
-      description: "Create a new users",
+      description: "Create a new user",
       handler(request, reply) {
         const response = db("users").insert(request.payload).then((result) => {
           return db("users").where({id: result[0]});
@@ -37,7 +37,7 @@ const register = function (server, options, next) {
         reply(response);
       },
       validate: {
-        payload: newUser
+        // payload: newUser
       }
     }
   });
@@ -48,14 +48,17 @@ const register = function (server, options, next) {
     config: {
       description: "Delete a user",
       handler(request, reply) {
-        const { userId } = request.params;
-        const response = db("users").where({id: userId}).del().then((result) => {
+
+        const { userId } = request.params.id;
+        const response = db("users").where({id: request.params.id}).del().then((result) => {
           if (result === 0) {
-            return Boom.notFound(`User id ${userId} not found`);
+            return Boom.notFound(`User id ${request.params.id} not found`);
           } else {
             return request.generateResponse().code(204);
           }
         });
+
+        reply(response);
       },
       validate: {
         params: {id}
@@ -101,7 +104,7 @@ const register = function (server, options, next) {
         reply(resolveOr404(query, "user"));
       },
       validate: {
-        params: id
+        params: {id}
       }
     }
   });
