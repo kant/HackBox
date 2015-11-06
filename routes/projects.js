@@ -48,7 +48,7 @@ const register = function (server, options, next) {
         }).then((result) => {
           return db("projects").where({id: result[0]});
         }).then((result) => {
-          return request.generateResponse(result).code(201);
+          return request.generateResponse(result[0]).code(201);
         });
 
         reply(response);
@@ -98,11 +98,19 @@ const register = function (server, options, next) {
       description: "Edit project details",
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const projectObj = {
+          id: projectId,
+          hackathon_id: hackathonId
+        };
 
         const response = ensureHackathon(hackathonId).then(() => {
           return db("projects")
-            .where({id: projectId, hackathon_id: hackathonId})
+            .where(projectObj)
             .update(request.payload);
+        }).then(() => {
+          return db("projects").where(projectObj);
+        }).then((result) => {
+          return result[0];
         });
 
         reply(response);

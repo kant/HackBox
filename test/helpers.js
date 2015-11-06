@@ -56,7 +56,7 @@ export default (opts, t) => {
 
     if (opts.schema) {
       const result = Joi.validate(parsed, paginationSchema, {allowUnknown: opts.allowUnknown});
-      t.ok(!result.err, `matches schema, response:\n${JSON.stringify(parsed, null, 2)}`);
+      t.ok(!result.err, "matches schema");
     }
 
     t.equal(response.statusCode, opts.statusCode, `status code is ${opts.statusCode}`);

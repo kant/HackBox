@@ -32,7 +32,7 @@ const register = function (server, options, next) {
         const response = db("hackathons").insert(request.payload).then((result) => {
           return db("hackathons").where({id: result[0]});
         }).then((result) => {
-          return request.generateResponse(result).code(201);
+          return request.generateResponse(result[0]).code(201);
         });
 
         reply(response);
@@ -84,6 +84,8 @@ const register = function (server, options, next) {
             .update(request.payload);
         }).then(() => {
           return db("hackathons").where({id: hackathonId});
+        }).then((result) => {
+          return result[0];
         });
 
         reply(response);

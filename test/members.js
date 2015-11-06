@@ -18,7 +18,7 @@ test("fetch members for a project", (t) => {
   }, t);
 });
 
-const USER_ID = 11;
+const USER_ID = 3;
 
 test("add a user to a project", (t) => {
   ensure({

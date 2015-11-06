@@ -150,7 +150,7 @@ export const members = [
     project_id: 1
   },
   {
-    user_id: 11,
+    user_id: 2,
     project_id: 1
   }
 ];
@@ -174,19 +174,19 @@ export const participants = [
     hackathon_id: 1
   },
   {
-    user_id: 11,
+    user_id: 2,
     hackathon_id: 1
   },
   {
-    user_id: 21,
+    user_id: 3,
     hackathon_id: 1
   },
   {
-    user_id: 11,
-    hackathon_id: 11
+    user_id: 2,
+    hackathon_id: 2
   },
   {
-    user_id: 21,
-    hackathon_id: 11
+    user_id: 3,
+    hackathon_id: 2
   }
 ];
