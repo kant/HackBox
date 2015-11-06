@@ -1,56 +1,57 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
-import Lab from "lab";
-import assert from "assert";
+import test from "tape";
 import ensure from "./helpers";
 
-const lab = exports.lab = Lab.script();
+const NEW_USER_ID = 2;
 
-lab.test("fetch participants for a hackathon", (done) => {
+test("fetch participants for a hackathon", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/participants",
     hasPagination: true
-  }, done);
+  }, t);
 });
 
-lab.test("CRUD a participant", {timeout: 2000}, (done) => {
-  const USER_ID = 2;
+test("add a new participant", (t) => {
   ensure({
     method: "POST",
-    url: `/hackathons/1/participants/${USER_ID}`,
+    url: `/hackathons/1/participants/${NEW_USER_ID}`,
     statusCode: 204
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/hackathons/1/participants`,
-      hasPagination: true,
-      test(result) {
-        assert.ok(
-          result.data.some((participant) => participant.id === USER_ID),
-          "make sure added users is listed in results"
-        );
-      }
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "DELETE",
-      url: `/hackathons/1/participants/${USER_ID}`,
-      statusCode: 204
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/hackathons/1/participants`,
-      hasPagination: true,
-      test(result) {
-        assert.ok(
-          !result.data.some((participant) => participant.id === USER_ID),
-          "make sure added user is not listed in results"
-        );
-      }
-    }, done);
-  });
+  }, t);
+});
+
+test("participant is in list", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/participants`,
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        result.data.some((participant) => participant.id === NEW_USER_ID),
+        "make sure added users is listed in results"
+      );
+    }
+  }, t);
+});
+
+test("remove participant", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/1/participants/${NEW_USER_ID}`,
+    statusCode: 204
+  }, t);
+});
+
+test("participant is not in list", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/participants`,
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        !result.data.some((participant) => participant.id === NEW_USER_ID),
+        "make sure added user is not listed in results"
+      );
+    }
+  }, t);
 });

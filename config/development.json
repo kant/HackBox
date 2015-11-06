@@ -4,5 +4,9 @@
     "connection": {
       "filename": "./dev.sqlite3"
     }
+  },
+  "logEvents": {
+    "log": "*",
+    "response": "*"
   }
 }

@@ -14,5 +14,9 @@
     "migrations": {
       "tableName": "knex_migrations"
     }
+  },
+  "logEvents": {
+    "log": "*",
+    "response": "*"
   }
 }

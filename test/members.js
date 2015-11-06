@@ -1,63 +1,63 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
-import Lab from "lab";
+import test from "tape";
 import Joi from "joi";
-import assert from "assert";
 import ensure from "./helpers";
 import { user } from "../data/validation";
 
-const lab = exports.lab = Lab.script();
-
-lab.test("fetch members for a project", (done) => {
+test("fetch members for a project", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/1/members",
     hasPagination: false,
     test(result) {
-      assert.ok(result.length, "make sure we get some results");
+      t.ok(result.length, "make sure we get some results");
       result.forEach((item) => {
-        assert.ok(Joi.validate(item, user), "each result should be a user");
+        t.ok(Joi.validate(item, user), "each result should be a user");
       });
     }
-  }, done);
+  }, t);
 });
 
-lab.test("CRUD a member", {timeout: 2000}, (done) => {
-  const USER_ID = 3;
+const USER_ID = 11;
 
+test("add a user to a project", (t) => {
   ensure({
     method: "POST",
     url: `/hackathons/1/projects/1/members/${USER_ID}`,
     statusCode: 204
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/hackathons/1/projects/1/members`,
-      test(result) {
-        assert.ok(
-          result.some((member) => member.id === USER_ID),
-          "make sure added user is listed in results"
-        );
-      }
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "DELETE",
-      url: `/hackathons/1/projects/1/members/${USER_ID}`,
-      statusCode: 204
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/hackathons/1/projects/1/members`,
-      test(result) {
-        assert.ok(
-          !result.some((member) => member.id === USER_ID),
-          "make sure added user is not listed in results"
-        );
-      }
-    }, done);
-  });
+  }, t);
+});
+
+test("new user is listed as member", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects/1/members`,
+    test(result) {
+      t.ok(
+        result.some((member) => member.id === USER_ID),
+        "make sure added user is listed in results"
+      );
+    }
+  }, t);
+});
+
+test("remove new member", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/1/projects/1/members/${USER_ID}`,
+    statusCode: 204
+  }, t);
+});
+
+test("new member is gone from list", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects/1/members`,
+    test(result) {
+      t.ok(
+        !result.some((member) => member.id === USER_ID),
+        "make sure added user is not listed in results"
+      );
+    }
+  }, t);
 });

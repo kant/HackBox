@@ -7,6 +7,7 @@ import Lout from "lout";
 import Bell from "bell";
 import PaginationPlugin from "./plugins/paginate";
 import ExpandMetaPlugin from "./plugins/expand-meta";
+import DbPlugin from "./plugins/database";
 import HackathonRoutes from "./routes/hackathons";
 import ProjectRoutes from "./routes/projects";
 import ParticipantRoutes from "./routes/participants";
@@ -15,8 +16,9 @@ import MemberRoutes from "./routes/members";
 import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
 import StatsRoutes from "./routes/shares-likes-views";
+import config from "./config";
 
-const server = new Hapi.Server({ debug: { request: ["error"] } });
+const server = new Hapi.Server();
 const port = process.env.PORT || 3000;
 
 server.connection({
@@ -44,10 +46,11 @@ server.register([
     options: {
       reporters: [{
         reporter: GoodConsole,
-        events: { log: "*", response: "*" }
+        events: config.logEvents
       }]
     }
   },
+  DbPlugin,
   HackathonRoutes,
   ParticipantRoutes,
   ProjectRoutes,

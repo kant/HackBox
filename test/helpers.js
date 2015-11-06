@@ -2,12 +2,11 @@
 // This is a helper for writing tests with some
 // logical defaults and simplified checks for looking
 // for things like pagination, etc.
-import assert from "assert";
 import server from "../index";
 import Joi from "joi";
 import { pagination as paginationSchema } from "../data/validation";
 
-export default (opts, done) => {
+export default (opts, t) => {
   const defaults = {
     method: "GET",
     statusCode: 200,
@@ -35,55 +34,37 @@ export default (opts, done) => {
     injectConfig.payload = opts.payload;
   }
 
-  return new Promise((resolve) => {
-    server.inject(injectConfig, (response) => {
-      let parsed;
+  server.inject(injectConfig, (response) => {
+    let parsed;
 
-      try {
-        assert.doesNotThrow(() => {
-          const { payload } = response;
-          if (payload) {
-            parsed = JSON.parse(payload);
-          } else if (!opts.bodyEmpty) {
-            throw new Error("paylod body should not be empty");
-          }
-        }, "gets a JSON parseable payload");
-
-        if (opts.hasPagination) {
-          const result = Joi.validate(parsed, paginationSchema, {allowUnknown: true});
-          assert(!result.err, "has pagination");
-        } else if (parsed) {
-          assert(!parsed.hasOwnProperty("limit"), "should not have property: \"limit\"");
-          assert(!parsed.hasOwnProperty("offset"), "should not have property: \"offset\"");
-        }
-
-        if (opts.schema) {
-          const result = Joi.validate(parsed, paginationSchema, {allowUnknown: opts.allowUnknown});
-          assert(!result.err, `matches schema, response:\n${JSON.stringify(parsed, null, 2)}`);
-        }
-
-        assert.equal(response.statusCode, opts.statusCode, `status code is ${opts.statusCode}`);
-
-        if (opts.test) {
-          opts.test(parsed);
-        }
-      } catch (err) {
-        console.log(`${injectConfig.method}: ${injectConfig.url}`);
-        console.log(JSON.stringify(injectConfig, null, 2));
-
-        console.log("RESPONSE:");
-        console.log(JSON.stringify(parsed, null, 2));
-
-        throw err;
+    t.doesNotThrow(() => {
+      const { payload } = response;
+      if (payload) {
+        parsed = JSON.parse(payload);
+      } else if (!opts.bodyEmpty) {
+        throw new Error("paylod body should not be empty");
       }
+    }, "gets a JSON parseable payload");
 
-      server.stop(() => {
-        if (done) {
-          done();
-        } else {
-          resolve();
-        }
-      });
-    });
+    if (opts.hasPagination) {
+      const result = Joi.validate(parsed, paginationSchema, {allowUnknown: true});
+      t.ok(!result.err, "has pagination");
+    } else if (parsed) {
+      t.ok(!parsed.hasOwnProperty("limit"), "should not have property: \"limit\"");
+      t.ok(!parsed.hasOwnProperty("offset"), "should not have property: \"offset\"");
+    }
+
+    if (opts.schema) {
+      const result = Joi.validate(parsed, paginationSchema, {allowUnknown: opts.allowUnknown});
+      t.ok(!result.err, `matches schema, response:\n${JSON.stringify(parsed, null, 2)}`);
+    }
+
+    t.equal(response.statusCode, opts.statusCode, `status code is ${opts.statusCode}`);
+
+    if (opts.test) {
+      opts.test(parsed);
+    }
+
+    t.end();
   });
 };

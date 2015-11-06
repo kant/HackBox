@@ -1,61 +1,61 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
-import Lab from "lab";
-import assert from "assert";
+import test from "tape";
 import ensure from "./helpers";
 
-const lab = exports.lab = Lab.script();
+const userProperties = {
+  display_name: "Jane Foo",
+  email: "jane.foo@microsoft.com",
+  bio: "Elite coder"
+};
 
-lab.test("fetch all users", (done) => {
+const USER_ID = 4;
+
+test("fetch all users", (t) => {
   ensure({
     method: "GET",
     url: "/users",
     hasPagination: true
-  }, done);
+  }, t);
 });
 
-lab.test("CRUD a user", {timeout: 2000}, (done) => {
-  const USER_ID = 4;
-
-  const properties = {
-      display_name:"Jane Foo",
-      email:"jane.foo@microsoft.com",
-      bio:"Elite coder",
-  }
-
+test("create new user", (t) => {
   ensure({
     method: "POST",
     url: `/users`,
-    payload: properties,
+    payload: userProperties,
     statusCode: 201
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/users/${USER_ID}`,
-      hasPagination: false,
-      test(result) {
-        assert.equal(result.email, properties.email, "ensure properites persisteted");
-      }
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "DELETE",
-      url: `/users/${USER_ID}`,
-      statusCode: 204
-    });
-  })
-  .then(() => {
-    return ensure({
-      method: "GET",
-      url: `/users`,
-      hasPagination: true,
-      test(result) {
-        assert.ok(
-          !result.data.some((user) => user.id === USER_ID),
-          "make sure deleted user is not listed in results"
-        );
-      }
-    }, done);
-  });
+  }, t);
+});
+
+test("get created user", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users/${USER_ID}`,
+    hasPagination: false,
+    test(result) {
+      t.equal(result.email, userProperties.email, "ensure properites persisteted");
+    }
+  }, t);
+});
+
+test("delete user", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/users/${USER_ID}`,
+    statusCode: 204
+  }, t);
+});
+
+test("user is not in list", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users`,
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        !result.data.some((user) => user.id === USER_ID),
+        "make sure deleted user is not listed in results"
+      );
+    }
+  }, t);
 });
