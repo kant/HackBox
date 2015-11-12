@@ -17,6 +17,7 @@ import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
 import StatsRoutes from "./routes/shares-likes-views";
 import config from "./config";
+import AuthPlugin from "./plugins/auth";
 
 const server = new Hapi.Server();
 const port = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ server.connection({
 });
 
 server.register([
+  AuthPlugin,
   Inert,
   Vision,
   Lout,

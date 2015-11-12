@@ -8,6 +8,9 @@ const register = function (server, options, next) {
     config: {
       description: "Fetch all users",
       tags: ["paginated", "list"],
+      auth: {
+        strategy:'bearer'
+      },
       handler(request, reply) {
 
         const query = db("users")
