@@ -9,12 +9,12 @@ const register = function(plugin, options, next) {
         plugin.auth.strategy('bearer', 'bearerAuth', {
             validateFunction: validate
         })
+        next()
       })
 }
 
 register.attributes = {
     "name": "authentication",
     "description": "This is the authentication provider",
-
 }
 export default { register };
