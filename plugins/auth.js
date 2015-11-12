@@ -1,7 +1,14 @@
 import BearerAuthorization from 'hapi-auth-bearer-simple'
+import aad from 'azure-ad-jwt'
 
-const validate = function(token, callback) {
-    callback(null, true, null);
+const validate = function(token, next) {
+    aad.verify(token, null, (err, result) => {
+      if (result) {
+        next(null, true, {});
+      } else {
+        next(null, false, null);
+      }
+    });
 }
 
 const register = function(plugin, options, next) {
