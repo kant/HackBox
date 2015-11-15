@@ -1,9 +1,10 @@
 import BearerAuthorization from 'hapi-auth-bearer-simple'
 import aad from 'azure-ad-jwt'
 
-const validate = function(token, next) {
+export const validate = function(token, next) {
     aad.verify(token, null, (err, result) => {
       if (result) {
+        // verify issuer, clientId (app) and user
         next(null, true, {});
       } else {
         next(null, false, null);
