@@ -5,7 +5,7 @@ const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVGZNNXBPW
 
 test("it should fail without bearer token", (t) => {
   validate(null, (err, valid, profile) => {
-    t.equal(valid, false);
+    t.equal(valid, false, "invalid token should fail");
     t.end();
   });
 });
