@@ -23,12 +23,12 @@ const server = new Hapi.Server();
 const port = process.env.PORT || 3000;
 const authEnabled = process.env.AUTH_ENABLED || false;
 
-const getAuthConfig = function(isEnabled) {
-  if(isEnabled) {
-     return {strategy:"bearer"}
+const getAuthConfig = function (isEnabled) {
+  if (isEnabled) {
+    return { strategy: "bearer" };
   }
   return false;
-}
+};
 
 server.connection({
   host: "0.0.0.0",

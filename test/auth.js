@@ -1,10 +1,10 @@
 import test from "tape";
 import {validate} from "../plugins/auth";
 
-const token = "some token";
+// const token = "some token";
 
 test("it should fail without bearer token", (t) => {
-  validate(null, (err, valid, profile) => {
+  validate(null, (err, valid) => {
     t.equal(valid, false, "invalid token should fail");
     t.end();
   });

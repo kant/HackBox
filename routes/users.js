@@ -1,5 +1,5 @@
 import Boom from "boom";
-import { pagination, newUser, user, id } from "../data/validation";
+import { pagination, user, id } from "../data/validation";
 import db, { resolveOr404 } from "../db-connection";
 const register = function (server, options, next) {
   server.route({
@@ -12,9 +12,9 @@ const register = function (server, options, next) {
 
         const query = db("users")
           .limit(request.query.limit)
-          .offset(request.query.offset)
+          .offset(request.query.offset);
 
-          reply(query);
+        reply(query);
       },
       validate: {
         query: pagination
@@ -48,8 +48,6 @@ const register = function (server, options, next) {
     config: {
       description: "Delete a user",
       handler(request, reply) {
-
-        const { userId } = request.params.id;
         const response = db("users").where({id: request.params.id}).del().then((result) => {
           if (result === 0) {
             return Boom.notFound(`User id ${request.params.id} not found`);
@@ -73,11 +71,10 @@ const register = function (server, options, next) {
       description: "Edit user details",
       handler(request, reply) {
         const { userId } = request.params;
-        const response = ensureHackathon(userId).then(() => {
-          return db("users")
-            .where({id: userId})
-            .update(request.payload);
-        }).then(() => {
+        const response = db("users")
+          .where({id: userId})
+          .update(request.payload)
+        .then(() => {
           return db("userid").where({id: userId});
         });
 
