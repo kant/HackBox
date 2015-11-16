@@ -50,7 +50,12 @@ server.register([
   AuthPlugin,
   Inert,
   Vision,
-  HapiSwagger,
+  {
+    register: HapiSwagger,
+    options: {
+      protocol: config.https ? "https" : "http"
+    }
+  },
   Bell,
   {
     register: Good,

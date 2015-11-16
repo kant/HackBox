@@ -8,5 +8,6 @@
   "logEvents": {
     "log": "*",
     "response": "*"
-  }
+  },
+  "https": false
 }
