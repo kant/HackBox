@@ -37,7 +37,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
     config: {
       description: "Like a project. No body or query params required.",
-      tags: ["action", "stats"],
+      tags: ["api", "action", "stats"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -78,7 +78,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/likes",
     config: {
       description: "Unlike a project. No body or query params required.",
-      tags: ["action", "stats"],
+      tags: ["api", "action", "stats"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -113,7 +113,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/shares",
     config: {
       description: "Track share click on a project. No body or query params required.",
-      tags: ["action", "stats"],
+      tags: ["api", "action", "stats"],
       handler: trackEvent("shares"),
       validate: {
         params: {
@@ -129,7 +129,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/views",
     config: {
       description: "Track views of a project. No body or query params required.",
-      tags: ["action", "stats"],
+      tags: ["api", "action", "stats"],
       handler: trackEvent("views"),
       validate: {
         params: {

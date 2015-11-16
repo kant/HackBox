@@ -3,7 +3,6 @@ import Good from "good";
 import GoodConsole from "good-console";
 import Vision from "vision";
 import Inert from "inert";
-import Lout from "lout";
 import Bell from "bell";
 import PaginationPlugin from "./plugins/paginate";
 import ExpandMetaPlugin from "./plugins/expand-meta";
@@ -18,6 +17,7 @@ import CommentRoutes from "./routes/comments";
 import StatsRoutes from "./routes/shares-likes-views";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
+import HapiSwagger from "hapi-swagger";
 
 const server = new Hapi.Server();
 const port = process.env.PORT || 3000;
@@ -50,7 +50,7 @@ server.register([
   AuthPlugin,
   Inert,
   Vision,
-  Lout,
+  HapiSwagger,
   Bell,
   {
     register: Good,

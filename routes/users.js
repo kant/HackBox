@@ -7,7 +7,7 @@ const register = function (server, options, next) {
     path: "/users",
     config: {
       description: "Fetch all users",
-      tags: ["paginated", "list"],
+      tags: ["api", "paginated", "list"],
       handler(request, reply) {
 
         const query = db("users")
@@ -27,6 +27,7 @@ const register = function (server, options, next) {
     path: "/users",
     config: {
       description: "Create a new user",
+      tags: ["api"],
       handler(request, reply) {
         const response = db("users").insert(request.payload).then((result) => {
           return db("users").where({id: result[0]});
@@ -47,6 +48,7 @@ const register = function (server, options, next) {
     path: "/users/{id}",
     config: {
       description: "Delete a user",
+      tags: ["api"],
       handler(request, reply) {
         const response = db("users").where({id: request.params.id}).del().then((result) => {
           if (result === 0) {
@@ -69,6 +71,7 @@ const register = function (server, options, next) {
     path: "/users/{id}",
     config: {
       description: "Edit user details",
+      tags: ["api"],
       handler(request, reply) {
         const { userId } = request.params;
         const response = db("users")
@@ -92,7 +95,7 @@ const register = function (server, options, next) {
     path: "/users/{id}",
     config: {
       description: "Fetch details about a single user",
-      tags: ["detail"],
+      tags: ["api", "detail"],
       handler(request, reply) {
         const query = db("users")
           .select()

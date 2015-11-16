@@ -8,7 +8,7 @@ const register = function (server, options, next) {
     path: "/hackathons",
     config: {
       description: "Fetch all hackathons",
-      tags: ["paginated", "list"],
+      tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const query = db("hackathons")
           .limit(request.query.limit)
@@ -27,7 +27,7 @@ const register = function (server, options, next) {
     path: "/hackathons",
     config: {
       description: "Create a new hackathon",
-      tags: ["admin"],
+      tags: ["api", "admin"],
       handler(request, reply) {
         const response = db("hackathons").insert(request.payload).then((result) => {
           return db("hackathons").where({id: result[0]});
@@ -48,7 +48,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}",
     config: {
       description: "Delete a hackathon",
-      tags: ["admin"],
+      tags: ["api", "admin"],
       handler(request, reply) {
         const { hackathonId } = request.params;
 
@@ -75,7 +75,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}",
     config: {
       description: "Edit hackathon details",
-      tags: ["admin"],
+      tags: ["api", "admin"],
       handler(request, reply) {
         const { hackathonId } = request.params;
         const response = ensureHackathon(hackathonId).then(() => {
@@ -104,7 +104,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{id}",
     config: {
       description: "Fetch details about a single hackathon",
-      tags: ["detail"],
+      tags: ["api", "detail"],
       handler(request, reply) {
         const query = db("hackathons")
           .select()

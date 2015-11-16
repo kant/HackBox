@@ -53,7 +53,7 @@ const stringifyKeys = (obj) => {
 };
 
 const isDocs = (path) => {
-  return path.indexOf("/docs") === 0;
+  return path.indexOf("/documentation") === 0;
 };
 
 const register = function (server, options, next) {

@@ -9,7 +9,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/members",
     config: {
       description: "Fetch all members of a project",
-      tags: ["list"],
+      tags: ["api", "list"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -38,6 +38,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/members/{userId}",
     config: {
       description: "Add a member to a projects",
+      tags: ["api"],
       handler(request, reply) {
         const { userId, hackathonId, projectId } = request.params;
         const member = {
@@ -78,6 +79,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/members/{userId}",
     config: {
       description: "Remove a member from a team",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId, userId } = request.params;
 

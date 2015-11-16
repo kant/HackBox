@@ -9,7 +9,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects",
     config: {
       description: "Fetch all projects",
-      tags: ["paginated", "list", "filterable"],
+      tags: ["api", "paginated", "list", "filterable"],
       handler(request, reply) {
         const { hackathonId } = request.params;
         const response = ensureHackathon(hackathonId).then(() => {
@@ -36,6 +36,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects",
     config: {
       description: "Create a new project",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId } = request.params;
         const payload = request.payload;
@@ -67,6 +68,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Delete a project",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -96,6 +98,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Edit project details",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
         const projectObj = {
@@ -130,7 +133,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
       description: "Fetch details about a single project",
-      tags: ["detail"],
+      tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 

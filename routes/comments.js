@@ -9,7 +9,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/comments",
     config: {
       description: "Fetch all comments on a project",
-      tags: ["list"],
+      tags: ["api", "list"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -41,6 +41,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/comments",
     config: {
       description: "Post a comment",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
@@ -75,6 +76,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects/{projectId}/comments/{commentId}",
     config: {
       description: "Delete a comment",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId, commentId } = request.params;
 

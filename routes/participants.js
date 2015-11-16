@@ -9,7 +9,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/participants",
     config: {
       description: "Fetch all participants",
-      tags: ["list", "paginated", "filterable"],
+      tags: ["api", "list", "paginated", "filterable"],
       handler(request, reply) {
         const { hackathonId } = request.params;
 
@@ -42,6 +42,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
       description: "Add user to hackathon",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
 
@@ -80,6 +81,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
       description: "Remove a user from a project",
+      tags: ["api"],
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
 

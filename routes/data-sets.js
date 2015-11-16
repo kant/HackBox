@@ -8,7 +8,7 @@ const register = function (server, options, next) {
     config: {
       description: "Convenience method for fetching all data sets",
       notes: "For rendering filter search pages. try it: <a href=\"/data-sets\">/data-sets</a>",
-      tags: ["convenience", "unsecured"],
+      tags: ["api", "convenience", "unsecured"],
       handler(request, reply) {
         reply(fixedData);
       }
@@ -25,7 +25,7 @@ const register = function (server, options, next) {
       config: {
         description: `Fetch all ${sentenceCase(item)}.`,
         notes: `try it: <a href="${url}">${url}</a>`,
-        tags: ["convenience", "unsecured"],
+        tags: ["api", "convenience", "unsecured"],
         handler(request, reply) { // eslint-disable-line no-loop-func
           reply(fixedData[item]);
         }
