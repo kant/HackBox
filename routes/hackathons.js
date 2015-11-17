@@ -1,3 +1,4 @@
+/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, newHackathon, hackathonUpdate, id } from "../data/validation";
 import db, { paginate, resolveOr404, ensureHackathon } from "../db-connection";
@@ -78,7 +79,7 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const { payload } = request;
         const response = ensureHackathon(hackathonId).then(() => {
-          payload.updated_at = new Date()
+          payload.updated_at = new Date();
           return db("hackathons")
             .where({id: hackathonId})
             .update(payload);

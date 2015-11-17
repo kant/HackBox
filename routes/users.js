@@ -30,6 +30,8 @@ const register = function (server, options, next) {
         const response = db("users").insert(request.payload).then((result) => {
           return db("users").where({id: result[0]});
         }).then((result) => {
+          return result[0];
+        }).then((result) => {
           return request.generateResponse(result).code(201);
         });
 
@@ -77,6 +79,9 @@ const register = function (server, options, next) {
           .update(request.payload)
         .then(() => {
           return db("userid").where({id: userId});
+        })
+        .then((result) => {
+          return result[0];
         });
 
         reply(response);

@@ -8,7 +8,7 @@ const userProperties = {
   bio: "Elite coder"
 };
 
-const USER_ID = 4;
+let userId;
 
 test("fetch all users", (t) => {
   ensure({
@@ -23,17 +23,20 @@ test("create new user", (t) => {
     method: "POST",
     url: `/users`,
     payload: userProperties,
-    statusCode: 201
+    statusCode: 201,
+    test(result) {
+      userId = result.id;
+    }
   }, t);
 });
 
 test("get created user", (t) => {
   ensure({
     method: "GET",
-    url: `/users/${USER_ID}`,
+    url: `/users/${userId}`,
     hasPagination: false,
     test(result) {
-      t.equal(result.email, userProperties.email, "ensure properites persisteted");
+      t.equal(result.email, userProperties.email, "ensure properites persisted");
     }
   }, t);
 });
@@ -41,7 +44,7 @@ test("get created user", (t) => {
 test("delete user", (t) => {
   ensure({
     method: "DELETE",
-    url: `/users/${USER_ID}`,
+    url: `/users/${userId}`,
     statusCode: 204
   }, t);
 });
@@ -53,7 +56,7 @@ test("user is not in list", (t) => {
     hasPagination: true,
     test(result) {
       t.ok(
-        !result.data.some((user) => user.id === USER_ID),
+        !result.data.some((user) => user.id === userId),
         "make sure deleted user is not listed in results"
       );
     }

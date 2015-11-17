@@ -116,11 +116,13 @@ const register = function (server, options, next) {
           id: projectId,
           hackathon_id: hackathonId
         };
+        const { payload } = request;
+        payload.updated_at = new Date();
 
         const response = ensureHackathon(hackathonId).then(() => {
           return db("projects")
             .where(projectObj)
-            .update(request.payload);
+            .update(payload);
         }).then(() => {
           return db("projects").where(projectObj);
         }).then((result) => {
