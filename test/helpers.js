@@ -4,7 +4,7 @@
 // for things like pagination, etc.
 import server from "../index";
 import Joi from "joi";
-import { pagination as paginationSchema } from "../data/validation";
+import { paginationResults } from "../data/validation";
 
 export default (opts, t) => {
   const defaults = {
@@ -48,7 +48,7 @@ export default (opts, t) => {
     }, "gets a JSON parseable payload");
 
     if (opts.hasPagination) {
-      const result = Joi.validate(parsed, paginationSchema, {allowUnknown: true});
+      const result = Joi.validate(parsed, paginationResults, {allowUnknown: true});
       t.ok(!result.err, "has pagination");
     } else if (parsed) {
       t.ok(!parsed.hasOwnProperty("limit"), "should not have property: \"limit\"");
@@ -56,7 +56,7 @@ export default (opts, t) => {
     }
 
     if (opts.schema) {
-      const result = Joi.validate(parsed, paginationSchema, {allowUnknown: opts.allowUnknown});
+      const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
       t.ok(!result.err, "matches schema");
     }
 

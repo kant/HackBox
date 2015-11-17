@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, newHackathon, hackathonUpdate, id } from "../data/validation";
-import db, { resolveOr404, ensureHackathon } from "../db-connection";
+import db, { paginate, resolveOr404, ensureHackathon } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -10,11 +10,9 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
-        const query = db("hackathons")
-          .limit(request.query.limit)
-          .offset(request.query.offset);
-
-        reply(query);
+        const dbQuery = db("hackathons");
+        const { limit, offset } = request.query;
+        reply(paginate(dbQuery, limit, offset));
       },
       validate: {
         query: pagination

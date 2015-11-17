@@ -3,10 +3,18 @@ import Joi from "joi";
 export const optionalId = Joi.number().integer().positive();
 export const id = optionalId.required();
 
+/*
+  Pagination
+*/
 export const pagination = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100).default(10),
   offset: Joi.number().integer().min(0).default(0)
 });
+
+export const paginationResults = pagination.keys({
+  total_count: Joi.number().integer().min(0),
+  result_count: Joi.number().integer().min(0)
+}).requiredKeys("limit", "offset", "total_count", "result_count");
 
 /*
   Hackathons
