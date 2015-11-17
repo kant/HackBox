@@ -4,6 +4,7 @@ require("./hackathons");
 require("./members");
 require("./participants");
 require("./projects");
+require("./project-search");
 require("./users");
 require("./auth");
 

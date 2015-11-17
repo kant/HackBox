@@ -11,6 +11,7 @@
     "bookshelf": "^0.8.2",
     "boom": "^2.9.0",
     "change-case": "^2.3.0",
+    "faker": "^3.0.1",
     "good": "^6.4.0",
     "good-console": "^5.1.0",
     "hapi": "^10.5.0",
@@ -20,6 +21,7 @@
     "joi": "^6.9.1",
     "jsonwebtoken": "^5.4.1",
     "knex": "^0.8.6",
+    "lodash.sample": "^3.1.0",
     "mysql": "^2.9.0",
     "sqlite3": "^3.1.0",
     "vision": "^3.0.0"

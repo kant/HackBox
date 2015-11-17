@@ -76,10 +76,12 @@ const register = function (server, options, next) {
       tags: ["api", "admin"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const { payload } = request;
         const response = ensureHackathon(hackathonId).then(() => {
+          payload.updated_at = new Date()
           return db("hackathons")
             .where({id: hackathonId})
-            .update(request.payload);
+            .update(payload);
         }).then(() => {
           return db("hackathons").where({id: hackathonId});
         }).then((result) => {

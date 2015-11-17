@@ -1,12 +1,17 @@
+import sample from "lodash.sample";
+import faker from "faker";
+
 const yesterday = new Date(Date.now() - 86400);
 const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
+
+let count;
 
 export const users = [
   {
     display_name: "Henrik Joreteg",
     email: "henrik@joreteg.com",
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     super_user: true,
     json_profile: JSON.stringify({
       bio: "Some JS dev",
@@ -27,8 +32,8 @@ export const users = [
   {
     display_name: "Dr. Seuss",
     email: "dr@seuss.com",
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     super_user: false,
     json_profile: JSON.stringify({
       bio: "I do not like green eggs and ham.",
@@ -49,8 +54,8 @@ export const users = [
   {
     display_name: "Sam I Am",
     email: "sam@iam.com",
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     super_user: false,
     json_profile: JSON.stringify({
       bio: "Persistant creature",
@@ -70,6 +75,33 @@ export const users = [
   }
 ];
 
+count = 50;
+while (count--) {
+  users.push(Object.assign({}, users[2], {
+    display_name: faker.name.findName(),
+    email: faker.internet.email(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    super_user: false,
+    json_profile: JSON.stringify({
+      bio: faker.name.jobTitle(),
+      job_title: faker.name.jobTitle(),
+      company_name: faker.company.companyName(),
+      photo_url: faker.image.avatar(),
+      address_1: faker.address.streetName(),
+      address_2: faker.address.secondaryAddress(),
+      city: faker.address.city(),
+      state: faker.address.stateAbbr(),
+      country: faker.address.country(),
+      twitter: faker.internet.userName(),
+      facebook: faker.internet.userName(),
+      linkedin: faker.internet.userName()
+    }),
+    json_meta: JSON.stringify({})
+  }));
+}
+
+
 export const hackathons = [
   {
     name: "Hack the planet",
@@ -80,8 +112,8 @@ export const hackathons = [
     end_at: new Date(fiveDaysFromNow),
     contact_name: "Hacker #42",
     contact_email: "hackthe@planet.com",
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     json_meta: JSON.stringify({})
   },
   {
@@ -93,11 +125,12 @@ export const hackathons = [
     end_at: new Date(fiveDaysFromNow),
     contact_name: "Evilpacket",
     contact_email: "l337@hackerz.com",
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     json_meta: JSON.stringify({})
   }
 ];
+
 
 export const projects = [
   {
@@ -116,8 +149,8 @@ export const projects = [
     needs_hackers: false,
     tags: ["Yo", "Social"].join(","),
     video_id: 47,
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     json_meta: JSON.stringify({
       is_awesome: true
     })
@@ -138,11 +171,30 @@ export const projects = [
     needs_hackers: false,
     tags: ["Bing", "News", "Bingcubator", "ASGEA"].join(","),
     video_id: 1231,
-    created_at: new Date(),
-    updated_at: new Date(),
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
     json_meta: JSON.stringify({})
   }
 ];
+
+const tagset = ["Office", "News", "Bingcubator", "Azure", "Edge", "Windows 10"];
+count = 50;
+while (count--) {
+  projects.push(Object.assign({}, projects[1], {
+    owner_id: 1,
+    hackathon_id: 2,
+    title: faker.name.title(),
+    description: faker.lorem.paragraphs(),
+    tagline: faker.company.catchPhrase(),
+    inspiration: faker.lorem.paragraph(),
+    how_it_will_work: faker.lorem.paragraph(),
+    needs_hackers: count % 2 === 0,
+    tags: sample(tagset, 3).join(),
+    video_id: count,
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent()
+  }));
+}
 
 export const members = [
   {

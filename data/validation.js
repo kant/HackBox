@@ -7,7 +7,7 @@ export const id = optionalId.required();
   Pagination
 */
 export const pagination = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100).default(10),
+  limit: Joi.number().integer().min(1).max(100).default(25),
   offset: Joi.number().integer().min(0).default(0)
 });
 

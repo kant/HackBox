@@ -15,12 +15,14 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const response = ensureHackathon(hackathonId).then(() => {
           const { query } = request;
-          const dbQuery = db("projects");
+          const dbQuery = db("projects").orderBy("created_at", "desc");
 
           if (query.search) {
             dbQuery
               .where("title", "like", `%${query.search}%`)
               .orWhere("tags", "like", `%${query.search}%`)
+              .orWhere("expertise", "like", `%${query.search}%`)
+              .orWhere("roles", "like", `%${query.search}%`)
               .orWhere("tagline", "like", `%${query.search}%`);
           }
 
