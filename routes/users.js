@@ -1,6 +1,6 @@
 import Boom from "boom";
 import { pagination, user, id } from "../data/validation";
-import db, { resolveOr404 } from "../db-connection";
+import db, { paginate, resolveOr404 } from "../db-connection";
 const register = function (server, options, next) {
   server.route({
     method: "GET",
@@ -9,12 +9,10 @@ const register = function (server, options, next) {
       description: "Fetch all users",
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
+        const { limit, offset } = request.query;
+        const query = db("users");
 
-        const query = db("users")
-          .limit(request.query.limit)
-          .offset(request.query.offset);
-
-        reply(query);
+        reply(paginate(query, limit, offset));
       },
       validate: {
         query: pagination

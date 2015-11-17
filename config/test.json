@@ -6,5 +6,6 @@
     }
   },
   "logEvents": {},
+  "serverDebug": true,
   "https": false
 }

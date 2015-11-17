@@ -4,7 +4,6 @@ import GoodConsole from "good-console";
 import Vision from "vision";
 import Inert from "inert";
 import Bell from "bell";
-import PaginationPlugin from "./plugins/paginate";
 import ExpandMetaPlugin from "./plugins/expand-meta";
 import DbPlugin from "./plugins/database";
 import HackathonRoutes from "./routes/hackathons";
@@ -19,7 +18,12 @@ import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
 
-const server = new Hapi.Server();
+let serverOpts = {};
+if (config.serverDebug) {
+  serverOpts = { debug: { request: ["error"] } };
+}
+
+const server = new Hapi.Server(serverOpts);
 const port = process.env.PORT || 3000;
 const authEnabled = process.env.AUTH_ENABLED || false;
 
@@ -75,7 +79,6 @@ server.register([
   CommentRoutes,
   DataSetRoutes,
   StatsRoutes,
-  PaginationPlugin,
   ExpandMetaPlugin
 ], (err) => {
   if (err) {

@@ -19,5 +19,6 @@
     "log": "*",
     "response": "*"
   },
+  "serverDebug": false,
   "https": true
 }

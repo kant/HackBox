@@ -111,7 +111,7 @@ test("like a project", (t) => {
   }, t);
 });
 
-test("cannot like same projet twice", (t) => {
+test("cannot like same project twice", (t) => {
   ensure({
     method: "POST",
     url: "/hackathons/1/projects/1/likes",

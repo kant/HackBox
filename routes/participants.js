@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, id } from "../data/validation";
-import db, { ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
+import db, { paginate, ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -14,16 +14,23 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
 
         const response = ensureHackathon(hackathonId).then(() => {
-          return db("participants")
-            .where({hackathon_id: hackathonId})
-            .limit(request.query.limit)
-            .offset(request.query.offset);
+          const { limit, offset } = request.query;
+          const query = db("participants").where({hackathon_id: hackathonId});
+
+          return paginate(query, limit, offset);
         }).then((results) => {
-          if (results.length === 0) {
-            return [];
+          // if it's empty, stop here
+          if (results.data.length === 0) {
+            return results;
           }
-          const userIds = results.map((participant) => participant.user_id);
-          return db("users").whereIn("id", userIds);
+
+
+          // if not, query for users and populate with user data instead
+          const userIds = results.data.map((participant) => participant.user_id);
+          return db("users").whereIn("id", userIds).then((userResults) => {
+            results.data = userResults;
+            return results;
+          });
         });
 
         reply(response);

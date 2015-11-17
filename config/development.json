@@ -9,5 +9,6 @@
     "log": "*",
     "response": "*"
   },
+  "serverDebug": true,
   "https": false
 }

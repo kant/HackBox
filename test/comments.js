@@ -30,9 +30,10 @@ test("get the new comment", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/1/comments",
+    hasPagination: true,
     test(result) {
       t.ok(
-        result.some((comment) => {
+        result.data.some((comment) => {
           if (comment.body === properties.body) {
             // track which one was our ID
             commentId = comment.id;
@@ -57,9 +58,10 @@ test("new comment is not listed in results", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/1/projects/1/comments`,
+    hasPagination: true,
     test(result) {
       t.ok(
-        !result.some((comment) => comment.id === commentId),
+        !result.data.some((comment) => comment.id === commentId),
         "make sure added comment is no longer listed"
       );
     }

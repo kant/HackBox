@@ -1,6 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import knex from "knex";
 import Boom from "boom";
+import assert from "assert";
 import { db } from "./config";
 
 const client = knex(db);
@@ -48,3 +49,24 @@ export const ensureUser = (userId) => {
     }
   });
 };
+
+export const paginate = (query, limit, offset) => {
+  assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
+  assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
+  return Promise.all([
+    query.clone().count(),
+    query
+      .limit(limit)
+      .offset(offset)
+  ]).then((res) => {
+    const data = res[1];
+    return {
+      offset,
+      limit,
+      result_count: data.length,
+      total_count: res[0][0]["count(*)"],
+      data
+    };
+  });
+};
+

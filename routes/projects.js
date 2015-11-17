@@ -1,7 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, newProject, projectUpdate, id } from "../data/validation";
-import db, { resolveOr404, ensureHackathon } from "../db-connection";
+import db, { paginate, resolveOr404, ensureHackathon } from "../db-connection";
+import Joi from "joi";
 
 const register = function (server, options, next) {
   server.route({
@@ -13,11 +14,17 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const response = ensureHackathon(hackathonId).then(() => {
-          return db.select()
-            .table("projects")
-            .where({hackathon_id: request.params.hackathonId})
-            .limit(request.query.limit)
-            .offset(request.query.offset);
+          const { query } = request;
+          const dbQuery = db("projects");
+
+          if (query.search) {
+            dbQuery
+              .where("title", "like", `%${query.search}%`)
+              .orWhere("tags", "like", `%${query.search}%`)
+              .orWhere("tagline", "like", `%${query.search}%`);
+          }
+
+          return paginate(dbQuery, query.limit, query.offset);
         });
 
         reply(response);
@@ -26,7 +33,9 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id
         },
-        query: pagination
+        query: pagination.keys({
+          search: Joi.string()
+        })
       }
     }
   });

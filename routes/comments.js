@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { id, newComment } from "../data/validation";
-import db, { ensureHackathon, ensureProject } from "../db-connection";
+import { id, newComment, pagination } from "../data/validation";
+import db, { paginate, ensureHackathon, ensureProject } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -12,6 +12,7 @@ const register = function (server, options, next) {
       tags: ["api", "list"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const { limit, offset } = request.query;
 
         const commentsQuery = db("comments").where({
           project_id: projectId
@@ -20,7 +21,7 @@ const register = function (server, options, next) {
         const result = Promise.all([
           ensureHackathon(hackathonId),
           ensureProject(hackathonId, projectId),
-          commentsQuery
+          paginate(commentsQuery, limit, offset)
         ]).then((results) => {
           return results[2];
         });
@@ -31,7 +32,8 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
-        }
+        },
+        query: pagination
       }
     }
   });

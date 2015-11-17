@@ -11,7 +11,8 @@ export default (opts, t) => {
     method: "GET",
     statusCode: 200,
     allowUnknown: true,
-    bodyEmpty: false
+    bodyEmpty: false,
+    hasPagination: false
   };
 
   // fill in defaults
