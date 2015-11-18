@@ -37,7 +37,7 @@ test("create a new project", (t) => {
     inspiration: "Because... yoyos!",
     how_it_will_work: "Play with yoyos.",
     needs_hackers: true,
-    tags: ["Yoyo", "Social"],
+    tags: ["Yoyo", "Social"].join(),
     video_id: 49,
     meta: {
       is_awesome: true
@@ -58,18 +58,12 @@ test("create a new project", (t) => {
   }, t);
 });
 
-test("new project is listed in results", (t) => {
+test("new project is GET-able", (t) => {
   ensure({
     method: "GET",
-    url: "/hackathons/1/projects",
+    url: `/hackathons/1/projects/${createdProjectId}`,
     schema: project,
-    hasPagination: true,
-    test(result) {
-      t.ok(
-        result.data.some((projectData) => projectData.id === createdProjectId),
-        "new project is included"
-      );
-    }
+    statusCode: 200
   }, t);
 });
 

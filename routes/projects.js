@@ -21,8 +21,6 @@ const register = function (server, options, next) {
             dbQuery
               .where("title", "like", `%${query.search}%`)
               .orWhere("tags", "like", `%${query.search}%`)
-              .orWhere("expertise", "like", `%${query.search}%`)
-              .orWhere("roles", "like", `%${query.search}%`)
               .orWhere("tagline", "like", `%${query.search}%`);
           }
 
@@ -54,6 +52,8 @@ const register = function (server, options, next) {
 
         // always set the hackathon_id from the URL
         payload.hackathon_id = request.params.hackathonId;
+        payload.created_at = new Date();
+        payload.updated_at = new Date();
 
         const response = ensureHackathon(hackathonId).then(() => {
           return db("projects").insert(payload);

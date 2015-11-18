@@ -8,7 +8,7 @@ exports.up = function (knex) {
       t.string("email");
       t.text("bio");
       t.timestamp("created_at").defaultTo(knex.fn.now());
-      t.timestamp("updated_at").defaultTo(knex.fn.now());
+      t.timestamp("updated_at");
       t.boolean("super_user").defaultTo(false);
       t.text("json_profile");
       t.text("json_meta");
@@ -24,7 +24,7 @@ exports.up = function (knex) {
       t.string("contact_name");
       t.string("contact_email");
       t.timestamp("created_at").defaultTo(knex.fn.now());
-      t.timestamp("updated_at").defaultTo(knex.fn.now());
+      t.timestamp("updated_at");
       t.text("json_meta");
     })
     .createTable("projects", (t) => {
@@ -45,7 +45,7 @@ exports.up = function (knex) {
       t.string("tags");
       t.integer("video_id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
-      t.timestamp("updated_at").defaultTo(knex.fn.now());
+      t.timestamp("updated_at");
       t.text("json_meta");
     })
     .createTable("comments", (t) => {

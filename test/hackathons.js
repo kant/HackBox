@@ -3,6 +3,8 @@ import test from "tape";
 import ensure from "./helpers";
 import { hackathon } from "../data/validation";
 
+let hackathonId;
+
 test("fetch hackathon list", (t) => {
   ensure({
     method: "GET",
@@ -39,6 +41,7 @@ test("create a hackathon", (t) => {
     statusCode: 201,
     payload: properties,
     test(result) {
+      hackathonId = result.id;
       const value = result.meta && result.meta.some_key;
       t.equal(value, "some_value", "make sure meta keys are persisted");
     }
@@ -48,7 +51,7 @@ test("create a hackathon", (t) => {
 test("get newly created hackathon", (t) => {
   ensure({
     method: "GET",
-    url: "/hackathons/3",
+    url: `/hackathons/${hackathonId}`,
     schema: hackathon
   }, t);
 });
@@ -56,7 +59,7 @@ test("get newly created hackathon", (t) => {
 test("update newly created hackathon", (t) => {
   ensure({
     method: "PUT",
-    url: "/hackathons/3",
+    url: `/hackathons/${hackathonId}`,
     payload: {
       name: "Bingcubator Hack 2015",
       slug: "bingcubator-hack-2015"
@@ -71,7 +74,7 @@ test("update newly created hackathon", (t) => {
 test("delete newly created hackathon", (t) => {
   ensure({
     method: "DELETE",
-    url: "/hackathons/3",
+    url: `/hackathons/${hackathonId}`,
     statusCode: 204
   }, t);
 });
@@ -79,7 +82,7 @@ test("delete newly created hackathon", (t) => {
 test("make sure it was deleted", (t) => {
   ensure({
     method: "GET",
-    url: "/hackathons/3",
+    url: `/hackathons/${hackathonId}`,
     statusCode: 404
   }, t);
 });
