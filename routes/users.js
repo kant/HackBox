@@ -21,6 +21,24 @@ const register = function (server, options, next) {
   });
 
   server.route({
+    method: "GET",
+    path: "/auth-test",
+    config: {
+      description: "Temporary",
+      auth: {
+        strategy: "bearer",
+        mode: "try"
+      },
+      handler(request, reply) {
+        reply(request.auth);
+      },
+      validate: {
+        query: pagination
+      }
+    }
+  });
+
+  server.route({
     method: "POST",
     path: "/users",
     config: {

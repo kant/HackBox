@@ -5,7 +5,7 @@ export const validate = function (token, next) {
   aad.verify(token, null, (err, result) => {
     if (result) {
       // verify issuer, clientId (app) and user
-      return next(null, true, {});
+      return next(null, true, result);
     } else {
       return next(null, false, null);
     }
