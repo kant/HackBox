@@ -20,10 +20,10 @@ export const paginationResults = pagination.keys({
   Hackathons
 */
 const hackathonBase = {
-  name: Joi.string().min(3).max(30).trim(),
-  slug: Joi.string().lowercase().regex(/^[a-z0-9\-]*$/).trim(),
-  description: Joi.string().min(3).max(300).trim(),
-  logo_url: Joi.string().uri().default("http://placehold.it/150x150"),
+  name: Joi.string().min(1).max(140).trim(),
+  slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
+  description: Joi.string().min(3).max(1000).trim(),
+  logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
   start_at: Joi.date(),
   end_at: Joi.date().min(Joi.ref("start_at")),
   meta: Joi.object().default({})
@@ -51,18 +51,18 @@ export const user = newUser.keys({id});
 */
 const projectBase = {
   video_id: optionalId,
-  title: Joi.string().min(1).max(30),
-  tagline: Joi.string().min(1).max(60),
+  title: Joi.string().min(1).max(120),
+  tagline: Joi.string().min(1).max(140),
   status: Joi.string(),
-  description: Joi.string(),
-  image_url: Joi.string().uri(),
-  code_repo_url: Joi.string().uri(),
-  prototype_url: Joi.string().uri(),
-  supporting_files_url: Joi.string().uri(),
-  inspiration: Joi.string(),
-  how_it_will_work: Joi.string(),
+  description: Joi.string().max(1000),
+  image_url: Joi.string().uri().max(255),
+  code_repo_url: Joi.string().uri().max(255),
+  prototype_url: Joi.string().uri().max(255),
+  supporting_files_url: Joi.string().uri().max(255),
+  inspiration: Joi.string().max(1000),
+  how_it_will_work: Joi.string().max(1000),
   needs_hackers: Joi.boolean(),
-  tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string"),
+  tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
   meta: Joi.object().default({})
 };
 export const projectUpdate = Joi.object(projectBase);
