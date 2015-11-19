@@ -23,16 +23,14 @@ export const paginationResults = pagination.keys({
 /*
   Users
 */
-const userBase = {
-  oid: stringId,
+export const newUser = Joi.object({
+  id: stringId,
   name: Joi.string().min(1).max(140).trim(),
   family_name: Joi.string().min(1).max(140).trim(),
   given_name: Joi.string().min(1).max(140).trim(),
   email: Joi.string().email().trim(),
   profile: Joi.object().default({})
-};
-export const newUser = Joi.object(userBase)
-  .requiredKeys("name", "email", "oid");
+});
 export const user = newUser.keys({id});
 
 /*

@@ -8,8 +8,11 @@ let count;
 
 export const users = [
   {
-    display_name: "Henrik Joreteg",
+    id: "9e4b5ba4-03e4-42ab-b4b3-04af1b4b6c70",
+    name: "Henrik Joreteg",
     email: "henrik@joreteg.com",
+    family_name: "Joreteg",
+    given_name: "Henrik",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     super_user: true,
@@ -30,7 +33,10 @@ export const users = [
     json_meta: JSON.stringify({})
   },
   {
-    display_name: "Dr. Seuss",
+    id: "4828fcc9-3272-45e4-96a9-0c79d152fd82",
+    name: "Dr. Seuss",
+    family_name: "Seuss",
+    given_name: "Dr.",
     email: "dr@seuss.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -52,7 +58,10 @@ export const users = [
     json_meta: JSON.stringify({})
   },
   {
-    display_name: "Sam I Am",
+    id: "8e7f4eca-921c-47f8-905e-d417c0eb78a8",
+    name: "Sam I Am",
+    family_name: "I Am",
+    given_name: "Sam",
     email: "sam@iam.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -77,8 +86,12 @@ export const users = [
 
 count = 50;
 while (count--) {
+  const name = faker.name.findName();
   users.push(Object.assign({}, users[2], {
-    display_name: faker.name.findName(),
+    id: faker.random.uuid(),
+    name,
+    family_name: name.split(" ")[1],
+    given_name: name.split(" ")[0],
     email: faker.internet.email(),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -134,7 +147,7 @@ export const hackathons = [
 
 export const projects = [
   {
-    owner_id: 1,
+    owner_id: users[0].id,
     hackathon_id: 1,
     title: "Yo!",
     tagline: "Yo your friends.",
@@ -156,7 +169,7 @@ export const projects = [
     })
   },
   {
-    owner_id: 1,
+    owner_id: users[0].id,
     hackathon_id: 1,
     title: "bnews app",
     tagline: "Where the news can be fun",
@@ -181,7 +194,7 @@ const tagset = ["Office", "News", "Bingcubator", "Azure", "Edge", "Windows 10"];
 count = 50;
 while (count--) {
   projects.push(Object.assign({}, projects[1], {
-    owner_id: 1,
+    owner_id: users[0].id,
     hackathon_id: 2,
     title: faker.name.title(),
     description: faker.lorem.paragraphs(),
@@ -198,11 +211,11 @@ while (count--) {
 
 export const members = [
   {
-    user_id: 1,
+    user_id: users[0].id,
     project_id: 1
   },
   {
-    user_id: 2,
+    user_id: users[1].id,
     project_id: 1
   }
 ];
@@ -210,35 +223,35 @@ export const members = [
 export const comments = [
   {
     body: "Try them and you may, I say.",
-    user_id: 1,
+    user_id: users[0].id,
     project_id: 1
   },
   {
     body: "Sam, if you will let me be I will try them and you will see.",
-    user_id: 1,
+    user_id: users[0].id,
     project_id: 1
   }
 ];
 
 export const participants = [
   {
-    user_id: 1,
+    user_id: users[0].id,
     hackathon_id: 1
   },
   {
-    user_id: 2,
+    user_id: users[1].id,
     hackathon_id: 1
   },
   {
-    user_id: 3,
+    user_id: users[2].id,
     hackathon_id: 1
   },
   {
-    user_id: 2,
+    user_id: users[1].id,
     hackathon_id: 2
   },
   {
-    user_id: 3,
+    user_id: users[2].id,
     hackathon_id: 2
   }
 ];

@@ -3,6 +3,7 @@ import test from "tape";
 import Joi from "joi";
 import ensure from "./helpers";
 import { user } from "../data/validation";
+import { users as mockUsers } from "../data/mock-data";
 
 test("fetch members for a project", (t) => {
   ensure({
@@ -18,7 +19,7 @@ test("fetch members for a project", (t) => {
   }, t);
 });
 
-const USER_ID = 3;
+const USER_ID = mockUsers[2].id;
 
 test("add a user to a project", (t) => {
   ensure({

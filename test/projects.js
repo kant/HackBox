@@ -2,6 +2,7 @@
 import test from "tape";
 import { project } from "../data/validation";
 import ensure from "./helpers";
+import { users as mockUsers } from "../data/mock-data";
 
 let createdProjectId;
 
@@ -24,7 +25,7 @@ test("fetch a specific project", (t) => {
 
 test("create a new project", (t) => {
   const properties = {
-    owner_id: 1,
+    owner_id: mockUsers[0].id,
     hackathon_id: 1,
     title: "Yo yo!",
     tagline: "Yo yo with your friends.",

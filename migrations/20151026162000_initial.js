@@ -3,8 +3,10 @@
 exports.up = function (knex) {
   return knex.schema
     .createTable("users", (t) => {
-      t.increments("id").primary();
-      t.string("display_name");
+      t.string("id").primary();
+      t.string("name");
+      t.string("family_name");
+      t.string("given_name");
       t.string("email");
       t.text("bio");
       t.timestamp("created_at").defaultTo(knex.fn.now());
@@ -29,7 +31,7 @@ exports.up = function (knex) {
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
-      t.integer("owner_id").unsigned().references("users.id");
+      t.string("owner_id").unsigned().references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.string("title");
       t.string("tagline");
@@ -50,33 +52,33 @@ exports.up = function (knex) {
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.text("body");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("participants", (t) => {
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("members", (t) => {
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("likes", (t) => {
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("views", (t) => {
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("shares", (t) => {
-      t.integer("user_id").unsigned().references("users.id");
+      t.string("user_id").unsigned().references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     });

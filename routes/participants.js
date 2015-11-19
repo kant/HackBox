@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, id } from "../data/validation";
+import { pagination, id, stringId } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -23,7 +23,6 @@ const register = function (server, options, next) {
           if (results.data.length === 0) {
             return results;
           }
-
 
           // if not, query for users and populate with user data instead
           const userIds = results.data.map((participant) => participant.user_id);
@@ -77,7 +76,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id,
-          userId: id
+          userId: stringId
         }
       }
     }
@@ -112,7 +111,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id,
-          userId: id
+          userId: stringId
         }
       }
     }

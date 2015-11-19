@@ -1,5 +1,6 @@
+/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, user, id } from "../data/validation";
+import { pagination, newUser, user, stringId } from "../data/validation";
 import db, { paginate, resolveOr404 } from "../db-connection";
 const register = function (server, options, next) {
   server.route({
@@ -44,9 +45,22 @@ const register = function (server, options, next) {
     config: {
       description: "Create a new user",
       tags: ["api"],
+      auth: "bearer",
       handler(request, reply) {
-        const response = db("users").insert(request.payload).then((result) => {
-          return db("users").where({id: result[0]});
+        const userProps = {};
+        const { oid, name, family_name, given_name, email } = request.auth.credentials;
+
+        Object.assign(userProps, request.payload, {
+          id: oid,
+          name,
+          family_name,
+          given_name,
+          email,
+          updated_at: new Date()
+        });
+
+        const response = db("users").insert(userProps).then(() => {
+          return db("users").where({id: oid});
         }).then((result) => {
           return result[0];
         }).then((result) => {
@@ -79,7 +93,9 @@ const register = function (server, options, next) {
         reply(response);
       },
       validate: {
-        params: {id}
+        params: {
+          id: stringId
+        }
       }
     }
   });
@@ -106,7 +122,9 @@ const register = function (server, options, next) {
       },
       validate: {
         payload: user,
-        params: {id}
+        params: {
+          id: stringId
+        }
       }
     }
   });
@@ -125,7 +143,9 @@ const register = function (server, options, next) {
         reply(resolveOr404(query, "user"));
       },
       validate: {
-        params: {id}
+        params: {
+          id: stringId
+        }
       }
     }
   });

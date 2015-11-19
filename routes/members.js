@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { id } from "../data/validation";
-import db, { ensureProject, ensureHackathon, ensureParticipant } from "../db-connection";
+import { id, stringId } from "../data/validation";
+import db, { ensureProject, ensureHackathon, ensureUser } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -49,7 +49,7 @@ const register = function (server, options, next) {
         const response = Promise.all([
           ensureHackathon(hackathonId),
           ensureProject(hackathonId, projectId),
-          ensureParticipant(hackathonId, userId),
+          ensureUser(userId),
           db("members").where(member)
         ]).then((result) => {
           // if user already a member, throw
@@ -68,7 +68,7 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id,
-          userId: id
+          userId: stringId
         }
       }
     }
@@ -105,7 +105,7 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id,
-          userId: id
+          userId: stringId
         }
       }
     }

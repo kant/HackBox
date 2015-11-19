@@ -14,13 +14,9 @@ const trackEvent = function (type) {
   return (request, reply) => {
     const { hackathonId, projectId } = request.params;
 
-    // we'll track user ID from session/token once we have it
-    // hardcoding for now
-    const userId = 1;
-
     const response = ensureParams(hackathonId, projectId).then(() => {
       return db(type).insert({
-        user_id: userId,
+        user_id: request.auth.credentials.oid,
         project_id: projectId
       });
     }).then(() => {
@@ -43,7 +39,7 @@ const register = function (server, options, next) {
 
         // we'll track user ID from session/token once we have it
         // hardcoding for now
-        const userId = 1;
+        const userId = request.auth.credentials.oid;
 
         const likeData = {
           user_id: userId,
@@ -79,18 +75,15 @@ const register = function (server, options, next) {
     config: {
       description: "Unlike a project. No body or query params required.",
       tags: ["api", "action", "stats"],
+      auth: "bearer",
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
-        // we'll track user ID from session/token once we have it
-        // hardcoding for now
-        const userId = 1;
-
         const response = ensureParams(hackathonId, projectId).then(() => {
           // we don't really care if the "like" already exists or not
-          // we'll just delete it and move on
+          // we'll just try to delete it and move on
           return db("likes").del({
-            user_id: userId,
+            user_id: request.auth.credentials.oid,
             project_id: projectId
           });
         }).then(() => {

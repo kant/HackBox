@@ -1,8 +1,9 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import ensure from "./helpers";
+import { users as mockUsers } from "../data/mock-data";
 
-const NEW_USER_ID = 2;
+const NEW_USER_ID = mockUsers[1].id;
 
 test("fetch participants for a hackathon", (t) => {
   ensure({
