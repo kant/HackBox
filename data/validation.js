@@ -1,7 +1,11 @@
 import Joi from "joi";
 
+/*
+  Id types
+*/
 export const optionalId = Joi.number().integer().positive();
 export const id = optionalId.required();
+export const stringId = Joi.string().min(1).max(140).trim();
 
 /*
   Pagination
@@ -15,6 +19,21 @@ export const paginationResults = pagination.keys({
   total_count: Joi.number().integer().min(0),
   result_count: Joi.number().integer().min(0)
 }).requiredKeys("limit", "offset", "total_count", "result_count");
+
+/*
+  Users
+*/
+const userBase = {
+  oid: stringId,
+  name: Joi.string().min(1).max(140).trim(),
+  family_name: Joi.string().min(1).max(140).trim(),
+  given_name: Joi.string().min(1).max(140).trim(),
+  email: Joi.string().email().trim(),
+  profile: Joi.object().default({})
+};
+export const newUser = Joi.object(userBase)
+  .requiredKeys("name", "email", "oid");
+export const user = newUser.keys({id});
 
 /*
   Hackathons
@@ -33,18 +52,6 @@ export const newHackathon = Joi.object(hackathonBase)
   .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at");
 export const hackathon = newHackathon.keys({id});
 
-/*
-  Participants
-*/
-const userBase = {
-  // name: Joi.string().min(1).max(60).trim().required(),
-  // phone: Joi.string().regex(/^[0-9\(\) \+]*$/).trim().required(),
-  // title: Joi.string().min(0).max(30).trim().required(),
-  // email: Joi.string().email().required(),
-  // username: Joi.string().min(1).max(30).trim().required()
-};
-export const newUser = Joi.object(userBase);
-export const user = newUser.keys({id});
 
 /*
   Project
@@ -71,7 +78,7 @@ export const newProject = Joi.object(projectBase)
 export const project = newProject.keys({id});
 
 /*
-  Project
+  Comment
 */
 const commentBase = {
   body: Joi.string().min(1).max(2000),
