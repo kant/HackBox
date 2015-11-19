@@ -14,6 +14,7 @@ try {
 } catch (e) {
   throw new Error("Create file 'TOKEN' at project root with bearer token. See README.md for info.");
 }
+
 export { token as token };
 
 export default (opts, t) => {

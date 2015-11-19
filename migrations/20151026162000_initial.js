@@ -11,7 +11,6 @@ exports.up = function (knex) {
       t.text("bio");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at");
-      t.boolean("super_user").defaultTo(false);
       t.text("json_profile");
       t.text("json_meta");
     })

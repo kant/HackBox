@@ -15,7 +15,6 @@ export const users = [
     given_name: "Henrik",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    super_user: true,
     json_profile: JSON.stringify({
       bio: "Some JS dev",
       job_title: "JS Developer",
@@ -40,7 +39,6 @@ export const users = [
     email: "dr@seuss.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    super_user: false,
     json_profile: JSON.stringify({
       bio: "I do not like green eggs and ham.",
       job_title: "Author",
@@ -65,7 +63,6 @@ export const users = [
     email: "sam@iam.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    super_user: false,
     json_profile: JSON.stringify({
       bio: "Persistant creature",
       job_title: "Nagging friend",
@@ -95,7 +92,6 @@ while (count--) {
     email: faker.internet.email(),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    super_user: false,
     json_profile: JSON.stringify({
       bio: faker.name.jobTitle(),
       job_title: faker.name.jobTitle(),

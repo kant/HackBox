@@ -1,5 +1,5 @@
 import BearerAuthorization from "hapi-auth-bearer-simple";
-import aad from "azure-ad-jwt";
+import aad from "azure-ad-jwt-mod";
 
 export const validate = function (token, next) {
   aad.verify(token, null, (err, result) => {
