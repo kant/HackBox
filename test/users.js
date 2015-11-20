@@ -13,6 +13,7 @@ test("fetch all users", (t) => {
   }, t);
 });
 
+/*
 test("delete existing user", (t) => {
   ensure({
     method: "DELETE",
@@ -46,6 +47,7 @@ test("create new user", (t) => {
     }
   }, t);
 });
+*/
 
 test("get created user", (t) => {
   ensure({

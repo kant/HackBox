@@ -30,7 +30,7 @@ exports.up = function (knex) {
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
-      t.string("owner_id").unsigned().references("users.id");
+      t.string("owner_id").references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.string("title");
       t.string("tagline");
@@ -51,33 +51,33 @@ exports.up = function (knex) {
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.text("body");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("participants", (t) => {
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("hackathon_id").unsigned().references("hackathons.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("members", (t) => {
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("likes", (t) => {
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("views", (t) => {
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("shares", (t) => {
-      t.string("user_id").unsigned().references("users.id");
+      t.string("user_id").references("users.id");
       t.integer("project_id").unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     });
