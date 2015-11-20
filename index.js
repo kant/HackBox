@@ -1,6 +1,7 @@
 import Hapi from "hapi";
 import Good from "good";
 import GoodConsole from "good-console";
+import GoodFile from "good-file";
 import Vision from "vision";
 import Inert from "inert";
 import Bell from "bell";
@@ -64,10 +65,17 @@ server.register([
   {
     register: Good,
     options: {
-      reporters: [{
-        reporter: GoodConsole,
-        events: config.logEvents
-      }]
+      reporters: [
+        {
+          reporter: GoodConsole,
+          events: config.logEvents
+        },
+        {
+          reporter: GoodFile,
+          events: { error: "*" },
+          config: "./error.log"
+        }
+      ]
     }
   },
   DbPlugin,
