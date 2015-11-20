@@ -17,7 +17,24 @@ const cleanCredentials = (credsObject) => {
 export const validate = function (token, next) {
   // to enable simpler testing since we can't programmatically
   // generate valid tokens for multiple users
-  if (process.env.NODE_ENV === "test") {
+
+  /*
+
+    WARNING!
+
+    BEFORE GOING TO PRODUCTION YOU MUST REMOVE THIS!
+
+    the `if (true)`
+
+    should be replaced with
+
+    `if (process.env.NODE_ENV === "test") {`
+
+    so that this only works in TEST mode.
+
+  */
+
+  if (true) { // eslint-disable-line
     if (token === "super") {
       return next(null, true, cleanCredentials(credentials.super));
     }
