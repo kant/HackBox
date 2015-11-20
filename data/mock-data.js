@@ -110,6 +110,58 @@ while (count--) {
   }));
 }
 
+// fake decoded credentials
+// used for testing route
+export const credentials = {
+  "super": {
+    "aud": faker.random.uuid(),
+    "iss": "https://sts.windows.net/6fb02a07-5389-40d4-9f03-c87f94c07ec0/",
+    "iat": Date.now(),
+    "nbf": Date.now(),
+    "exp": Date.now(),
+    "amr": [
+      "pwd"
+    ],
+    "email": users[0].email,
+    "family_name": users[0].family_name,
+    "given_name": users[0].given_name,
+    "idp": "live.com",
+    "name": users[0].name,
+    "nonce": faker.random.uuid(),
+    "oid": users[0].id,
+    "roles": [
+      "admin"
+    ],
+    "sub": faker.random.uuid(),
+    "tid": faker.random.uuid(),
+    "unique_name": "live.com#hjoreteg@outlook.com",
+    "ver": "1.0",
+    "token": faker.random.uuid()
+  },
+  "regular": {
+    "aud": faker.random.uuid(),
+    "iss": "https://sts.windows.net/6fb02a07-5389-40d4-9f03-c87f94c07ec0/",
+    "iat": Date.now(),
+    "nbf": Date.now(),
+    "exp": Date.now(),
+    "amr": [
+      "pwd"
+    ],
+    "email": users[1].email,
+    "family_name": users[1].family_name,
+    "given_name": users[1].given_name,
+    "idp": "live.com",
+    "name": users[1].name,
+    "nonce": faker.random.uuid(),
+    "oid": users[1].id,
+    "roles": [],
+    "sub": faker.random.uuid(),
+    "tid": faker.random.uuid(),
+    "unique_name": "live.com#hjoreteg@outlook.com",
+    "ver": "1.0",
+    "token": faker.random.uuid()
+  }
+};
 
 export const hackathons = [
   {

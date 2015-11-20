@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { pagination, newProject, projectUpdate, id } from "../data/validation";
-import db, { paginate, resolveOr404, ensureHackathon } from "../db-connection";
+import db, { paginate, resolveOr404, ensureHackathon, ensureProject } from "../db-connection";
 import Joi from "joi";
 
 const register = function (server, options, next) {
@@ -45,15 +45,28 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/projects",
     config: {
       description: "Create a new project",
+      notes: "Only admins can set `owner_id` to something other than self.",
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId } = request.params;
         const payload = request.payload;
+        const userId = request.userId();
 
         // always set the hackathon_id from the URL
         payload.hackathon_id = request.params.hackathonId;
         payload.created_at = new Date();
         payload.updated_at = new Date();
+
+        // make sure they don't create projects owned by other people
+        // unless they're super users
+        if (payload.owner_id && payload.owner_id !== userId && !request.isSuperUser()) {
+          return reply(Boom.forbidden("You're not authorized to create projects for other people"));
+        }
+
+        // set the owner id to user if blank
+        if (!payload.owner_id) {
+          payload.owner_id = userId;
+        }
 
         const response = ensureHackathon(hackathonId).then(() => {
           return db("projects").insert(payload);
@@ -82,8 +95,9 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const ownerId = request.isSuperUser() ? false : request.userId();
 
-        const response = ensureHackathon(hackathonId).then(() => {
+        const response = ensureProject(hackathonId, projectId, {checkOwner: ownerId}).then(() => {
           return db("projects").where({id: projectId, hackathon_id: hackathonId}).del();
         }).then((result) => {
           if (result === 0) {
@@ -116,10 +130,11 @@ const register = function (server, options, next) {
           id: projectId,
           hackathon_id: hackathonId
         };
+        const ownerId = request.isSuperUser() ? false : request.userId();
         const { payload } = request;
         payload.updated_at = new Date();
 
-        const response = ensureHackathon(hackathonId).then(() => {
+        const response = ensureProject(hackathonId, projectId, {checkOwner: ownerId}).then(() => {
           return db("projects")
             .where(projectObj)
             .update(payload);

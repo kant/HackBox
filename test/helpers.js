@@ -4,18 +4,7 @@
 // for things like pagination, etc.
 import server from "../index";
 import Joi from "joi";
-import fs from "fs";
 import { paginationResults } from "../data/validation";
-
-// set up and export token
-let token;
-try {
-  token = fs.readFileSync(`${__dirname}/../TOKEN`, "utf8");
-} catch (e) {
-  throw new Error("Create file 'TOKEN' at project root with bearer token. See README.md for info.");
-}
-
-export { token as token };
 
 export default (opts, t) => {
   const defaults = {
@@ -24,7 +13,8 @@ export default (opts, t) => {
     allowUnknown: true,
     bodyEmpty: false,
     hasPagination: false,
-    token
+    user: "a",
+    token: "" // falsy, "regular", "super" or real token
   };
 
   // fill in defaults
@@ -42,6 +32,16 @@ export default (opts, t) => {
     method: opts.method,
     url: opts.url
   };
+
+  // pass an appropriate test token
+  // based on "user" we're simulating
+  // if user is passed
+  if (!opts.token && opts.user) {
+    opts.token = {
+      a: "super",
+      b: "regular"
+    }[opts.user];
+  }
 
   if (opts.token) {
     injectConfig.headers = {

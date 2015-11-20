@@ -55,6 +55,7 @@ export const hackathon = newHackathon.keys({id});
   Project
 */
 const projectBase = {
+  owner_id: stringId,
   video_id: optionalId,
   title: Joi.string().min(1).max(120),
   tagline: Joi.string().min(1).max(140),

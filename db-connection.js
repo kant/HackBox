@@ -26,11 +26,18 @@ export const ensureHackathon = (id) => {
   });
 };
 
-export const ensureProject = (hackathonId, id) => {
-  return client("projects").where({id, hackathon_id: hackathonId}).then((rows) => {
-    if (rows.length === 0) {
+export const ensureProject = (hackathonId, id, opts = {checkOwner: false}) => {
+  return client("projects").where({id}).then((rows) => {
+    const project = rows[0];
+
+    if (!project) {
+      throw Boom.notFound(`No project ${id} exists.`);
+    } else if (project.hackathon_id !== hackathonId) {
       throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);
+    } else if (opts.checkOwner && project.owner_id !== opts.checkOwner) {
+      throw Boom.forbidden(`You must be the project owner to modify it`);
     }
+    return project;
   });
 };
 
