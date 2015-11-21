@@ -134,11 +134,11 @@ test("super user (user 'a') can create projects owned by other people", (t) => {
     method: "POST",
     url: "/hackathons/1/projects",
     statusCode: 201,
-    payload: getProjectProps({owner_id: "someone else"}),
+    payload: getProjectProps({owner_id: mockUsers[2].id}),
     schema: project,
     test(result) {
       superUserCreatedProjectId = result.id;
-      t.equal(result.owner_id, "someone else", "create project for other user");
+      t.equal(result.owner_id, mockUsers[2].id, "create project for other user");
     }
   }, t);
 });
@@ -156,7 +156,7 @@ test("regular user (user 'b') cannot create projects owned by other people", (t)
     method: "POST",
     url: "/hackathons/1/projects",
     statusCode: 403,
-    payload: getProjectProps({owner_id: "someone else"}),
+    payload: getProjectProps({owner_id: mockUsers[2].id}),
     user: "b"
   }, t);
 });
