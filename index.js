@@ -14,9 +14,11 @@ import MemberRoutes from "./routes/members";
 import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
 import StatsRoutes from "./routes/shares-likes-views";
+import DocumentationRoutes from "./routes/documentation";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
+import Jade from "jade";
 
 let serverOpts = {};
 if (config.serverDebug) {
@@ -51,7 +53,8 @@ server.register([
   {
     register: HapiSwagger,
     options: {
-      protocol: config.https ? "https" : "http"
+      protocol: config.https ? "https" : "http",
+      enableDocumentationPage: false
     }
   },
   Bell,
@@ -75,10 +78,21 @@ server.register([
   CommentRoutes,
   DataSetRoutes,
   StatsRoutes,
+  DocumentationRoutes,
   ExpandMetaPlugin
 ], (err) => {
   if (err) {
     throw err;
+  }
+});
+
+server.views({
+  engines: {
+    jade: Jade
+  },
+  path: `${__dirname}/templates`,
+  compileOptions: {
+    pretty: true
   }
 });
 

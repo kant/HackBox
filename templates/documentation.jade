@@ -1,0 +1,73 @@
+doctype html
+html(lang="en")
+  head
+    title Hackbox API Documentation
+    link(href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700', rel='stylesheet')
+    link(href='/docs/swaggerui/css/highlight.default.css', media='screen', rel='stylesheet')
+    link(href='/docs/swaggerui/css/screen.css', media='screen', rel='stylesheet')
+    script(src='/docs/swaggerui/lib/shred.bundle.js')
+    script(src='/docs/swaggerui/lib/jquery-1.x.min.js')
+    script(src='/docs/swaggerui/lib/jquery.slideto.min.js')
+    script(src='/docs/swaggerui/lib/jquery.wiggle.min.js')
+    script(src='/docs/swaggerui/lib/jquery.ba-bbq.min.js')
+    script(src='/docs/swaggerui/lib/handlebars-1.0.0.js')
+    script(src='/docs/swaggerui/lib/underscore-min.js')
+    script(src='/docs/swaggerui/lib/backbone-min.js')
+    script(src='/docs/swaggerui/lib/swagger.js')
+    script(src='/docs/swaggerui/swagger-ui.js')
+    script(src='/docs/swaggerui/lib/highlight.7.3.pack.js')
+    script(src='/docs/custom.js')
+    script.
+      $(function () {
+        function setAuth(key) {
+          window.authorizations.add("key", new ApiKeyAuthorization("Authorization", "Bearer " + key, "header"));
+          localStorage.token = key;
+        }
+
+        window.swaggerUi = new SwaggerUi({
+          url: '/docs',
+          dom_id: "swagger-ui-container",
+          supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+          onComplete: function(swaggerApi, swaggerUi){
+            log("Loaded SwaggerUI")
+            $('pre code').each(function(i, e) {
+                hljs.highlightBlock(e)
+            });
+            $('.response_throbber').attr( 'src', '/docs/swaggerui/images/throbber.gif' );
+          },
+          onFailure: function(data) {
+            log("Unable to Load SwaggerUI");
+          },
+          authorizations: {
+            apiKey: {
+              passAs: "header",
+              keyname: "Authorization"
+            }
+          },
+          docExpansion: "list"
+        });
+
+        // add a new SwaggerClient.ApiKeyAuthorization when the api-key changes in the ui.
+        $('#api-key').change(function() {
+          var key = $('#api-key').val().trim();
+          if (key) {
+            setAuth(key);
+          }
+        })
+
+        if (localStorage.token) {
+          setAuth(localStorage.token);
+          $('#api-key').val(localStorage.token);
+        } 
+
+        window.swaggerUi.load();
+      });
+  body
+    section#swagger
+      div.swagger-ui-wrap 
+        h1 Hackbox API Docs
+
+        p All API requests require a token:
+         input#api-key
+      div#message-bar.swagger-ui-wrap
+      div#swagger-ui-container.swagger-ui-wrap
