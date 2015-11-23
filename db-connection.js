@@ -41,6 +41,20 @@ export const ensureProject = (hackathonId, id, opts = {checkOwner: false}) => {
   });
 };
 
+export const ensureComment = (projectId, id, opts = {checkOwner: false}) => {
+  return client("comments").where({id}).then((rows) => {
+    const comment = rows[0];
+
+    if (!comment) {
+      throw Boom.notFound(`No comment ${id} exists.`);
+    } else if (comment.project_id !== projectId) {
+      throw Boom.notFound(`No comment with id ${id} was found in project ${projectId}.`);
+    } else if (opts.checkOwner && comment.user_id !== opts.checkOwner) {
+      throw Boom.forbidden(`You must have created the comment to modify it`);
+    }
+  });
+};
+
 export const ensureParticipant = (hackathonId, userId) => {
   return client("participants").where({user_id: userId, hackathon_id: hackathonId}).then((rows) => {
     if (rows.length === 0) {

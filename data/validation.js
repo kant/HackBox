@@ -80,8 +80,12 @@ export const project = newProject.keys({id});
   Comment
 */
 const commentBase = {
-  body: Joi.string().min(1).max(2000),
-  user_id: id
+  body: Joi.string().min(1).max(2000)
 };
 export const newComment = Joi.object().keys(commentBase);
-export const comment = newComment.keys({id});
+export const comment = newComment.keys({
+  id,
+  user_id: id,
+  project_id: id,
+  created_at: Joi.date()
+}).requiredKeys("id", "user_id", "project_id", "body", "created_at");

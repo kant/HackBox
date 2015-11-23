@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { id, newComment, pagination } from "../data/validation";
-import db, { paginate, ensureHackathon, ensureProject } from "../db-connection";
+import db, { paginate, ensureProject, ensureComment } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -19,11 +19,10 @@ const register = function (server, options, next) {
         });
 
         const result = Promise.all([
-          ensureHackathon(hackathonId),
           ensureProject(hackathonId, projectId),
           paginate(commentsQuery, limit, offset)
         ]).then((results) => {
-          return results[2];
+          return results[1];
         });
 
         reply(result);
@@ -47,21 +46,20 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
-        const result = Promise.all([
-          ensureHackathon(hackathonId),
-          ensureProject(hackathonId, projectId)
-        ]).then(() => {
+        const response = ensureProject(hackathonId, projectId).then(() => {
           return db("comments").insert({
             project_id: projectId,
-            body: request.payload.body
+            body: request.payload.body,
+            user_id: request.userId(),
+            created_at: new Date()
           });
         }).then((res) => {
           return db("comments").where({id: res[0]});
-        }).then((comments) => {
-          return request.generateResponse(comments).code(201);
+        }).then((result) => {
+          return request.generateResponse(result[0]).code(201);
         });
 
-        reply(result);
+        reply(response);
       },
       validate: {
         params: {
@@ -80,12 +78,10 @@ const register = function (server, options, next) {
       description: "Delete a comment",
       tags: ["api"],
       handler(request, reply) {
-        const { hackathonId, projectId, commentId } = request.params;
+        const { projectId, commentId } = request.params;
+        const checkOwner = request.isSuperUser() ? false : request.userId();
 
-        const result = Promise.all([
-          ensureHackathon(hackathonId),
-          ensureProject(hackathonId, projectId)
-        ]).then(() => {
+        const result = ensureComment(projectId, commentId, {checkOwner}).then(() => {
           return db("comments")
             .where({
               id: commentId,

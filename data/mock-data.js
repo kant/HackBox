@@ -134,7 +134,7 @@ export const credentials = {
     ],
     "sub": faker.random.uuid(),
     "tid": faker.random.uuid(),
-    "unique_name": "live.com#hjoreteg@outlook.com",
+    "unique_name": `live.com#${users[0].email}`,
     "ver": "1.0",
     "token": faker.random.uuid()
   },
@@ -157,7 +157,30 @@ export const credentials = {
     "roles": [],
     "sub": faker.random.uuid(),
     "tid": faker.random.uuid(),
-    "unique_name": "live.com#hjoreteg@outlook.com",
+    "unique_name": `live.com#${users[1].email}`,
+    "ver": "1.0",
+    "token": faker.random.uuid()
+  },
+  "regular2": {
+    "aud": faker.random.uuid(),
+    "iss": "https://sts.windows.net/6fb02a07-5389-40d4-9f03-c87f94c07ec0/",
+    "iat": Date.now(),
+    "nbf": Date.now(),
+    "exp": Date.now(),
+    "amr": [
+      "pwd"
+    ],
+    "email": users[2].email,
+    "family_name": users[2].family_name,
+    "given_name": users[2].given_name,
+    "idp": "live.com",
+    "name": users[2].name,
+    "nonce": faker.random.uuid(),
+    "oid": users[2].id,
+    "roles": [],
+    "sub": faker.random.uuid(),
+    "tid": faker.random.uuid(),
+    "unique_name": `live.com#${users[2].email}`,
     "ver": "1.0",
     "token": faker.random.uuid()
   }

@@ -35,11 +35,8 @@ export const validate = function (token, next) {
   */
 
   if (true) { // eslint-disable-line
-    if (token === "super") {
-      return next(null, true, cleanCredentials(credentials.super));
-    }
-    if (token === "regular") {
-      return next(null, true, cleanCredentials(credentials.regular));
+    if (token === "super" || token === "regular" || token === "regular2") {
+      return next(null, true, cleanCredentials(credentials[token]));
     }
   }
 

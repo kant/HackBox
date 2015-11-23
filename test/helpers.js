@@ -39,7 +39,8 @@ export default (opts, t) => {
   if (!opts.token && opts.user) {
     opts.token = {
       a: "super",
-      b: "regular"
+      b: "regular",
+      c: "regular2"
     }[opts.user];
   }
 
@@ -74,8 +75,15 @@ export default (opts, t) => {
     }
 
     if (opts.schema) {
-      const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
-      t.ok(!result.err, "matches schema");
+      if (opts.hasPagination) {
+        parsed.data.forEach((item) => {
+          const result = Joi.validate(item, opts.schema, {allowUnknown: opts.allowUnknown});
+          t.ok(!result.err, "each result in data matches schema");
+        });
+      } else {
+        const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
+        t.ok(!result.err, "matches schema");
+      }
     }
 
     t.equal(response.statusCode, opts.statusCode, `status code is ${opts.statusCode}`);
