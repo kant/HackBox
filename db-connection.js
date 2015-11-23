@@ -18,11 +18,29 @@ export const resolveOr404 = (promise, label = "resource") => {
   });
 };
 
-export const ensureHackathon = (id) => {
+export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false}) => {
+  let hackathonResult;
   return client("hackathons").where({id}).then((rows) => {
-    if (rows.length === 0) {
+    hackathonResult = rows[0];
+
+    // 404 if soft deleted or not found
+    if (!hackathonResult || (hackathonResult.deleted && !opts.allowDeleted)) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
     }
+    if (!opts.checkOwner) {
+      return hackathonResult;
+    }
+
+    // check if they're an admin
+    return client("hackathon_admins").where({
+      hackathon_id: id,
+      owner_id: opts.checkOwner
+    }).then((owners) => {
+      if (!owners.length) {
+        throw Boom.forbidden(`You must be a hackathon admin to do this`);
+      }
+      return hackathonResult;
+    });
   });
 };
 

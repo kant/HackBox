@@ -19,6 +19,9 @@
 // 2. Any outgoing response that contains keys that start
 //    with `json_*` will be renamed stripped of that prefix
 //    and returned as parsed JSON.
+// 3. `true` will be translated to `1`, false will be translated
+//    to `0` and vice versa.
+const BOOLEAN_KEYS = ["deleted", "is_public", "needs_hackers"];
 const expandResult = (obj) => {
   if (Array.isArray(obj)) {
     obj.forEach(expandResult);
@@ -29,6 +32,9 @@ const expandResult = (obj) => {
       if (split.length === 2) {
         obj[split[1]] = JSON.parse(value);
         delete obj[key];
+      }
+      if (BOOLEAN_KEYS.indexOf(key) !== -1) {
+        obj[key] = !!obj[key];
       }
       if (typeof value === "object") {
         expandResult(value);
@@ -43,6 +49,9 @@ const stringifyKeys = (obj) => {
     obj.forEach(stringifyKeys);
   } else {
     for (const key in obj) {
+      if (BOOLEAN_KEYS.indexOf(key) !== -1) {
+        obj[key] = obj[key] ? 1 : 0;
+      }
       if (key === "meta" || key === "profile") {
         obj[`json_${key}`] = JSON.stringify(obj[key]);
         delete obj[key];

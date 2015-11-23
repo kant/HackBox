@@ -1,6 +1,7 @@
 require("babel/register");
-require("./comments");
+
 require("./hackathons");
+require("./comments");
 require("./members");
 require("./participants");
 require("./project-search");

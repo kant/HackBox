@@ -79,10 +79,22 @@ test("delete newly created hackathon", (t) => {
   }, t);
 });
 
-test("make sure it was deleted", (t) => {
+test("make sure it's still retrievable for super user", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/${hackathonId}`,
-    statusCode: 404
+    statusCode: 200,
+    test(result) {
+      t.equal(result.deleted, true, "should show as deleted");
+    }
+  }, t);
+});
+
+test("make sure it's no longer visible for non super user", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 404,
+    user: "b"
   }, t);
 });

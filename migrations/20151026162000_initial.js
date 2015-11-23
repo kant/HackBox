@@ -11,6 +11,7 @@ exports.up = function (knex) {
       t.text("bio");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
+      t.boolean("deleted").defaultTo(false);
       t.text("json_profile");
       t.text("json_meta");
     })
@@ -26,6 +27,8 @@ exports.up = function (knex) {
       t.string("contact_email");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
+      t.boolean("deleted").defaultTo(false);
+      t.boolean("is_public").defaultTo(true);
       t.text("json_meta");
     })
     .createTable("projects", (t) => {
@@ -47,7 +50,12 @@ exports.up = function (knex) {
       t.integer("video_id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
+      t.boolean("deleted").defaultTo(false);
       t.text("json_meta");
+    })
+    .createTable("hackathon_admins", (t) => {
+      t.string("user_id").references("users.id");
+      t.integer("hackathon_id").unsigned().references("hackathons.id");
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
@@ -92,6 +100,7 @@ exports.down = function (knex) {
     .dropTableIfExists("comments")
     .dropTableIfExists("members")
     .dropTableIfExists("projects")
+    .dropTableIfExists("hackathon_admins")
     .dropTableIfExists("hackathons")
     .dropTableIfExists("users");
 };

@@ -17,7 +17,8 @@ test("add a new participant", (t) => {
   ensure({
     method: "POST",
     url: `/hackathons/1/participants/${NEW_USER_ID}`,
-    statusCode: 204
+    statusCode: 204,
+    user: "b"
   }, t);
 });
 
@@ -39,7 +40,8 @@ test("remove participant", (t) => {
   ensure({
     method: "DELETE",
     url: `/hackathons/1/participants/${NEW_USER_ID}`,
-    statusCode: 204
+    statusCode: 204,
+    user: "b"
   }, t);
 });
 

@@ -31,7 +31,10 @@ export const newUser = Joi.object({
   email: Joi.string().email().trim(),
   profile: Joi.object().default({})
 });
-export const user = newUser.keys({id});
+export const user = newUser.keys({
+  id,
+  delimited: Joi.boolean()
+});
 
 /*
   Hackathons
@@ -43,12 +46,16 @@ const hackathonBase = {
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
   start_at: Joi.date(),
   end_at: Joi.date().min(Joi.ref("start_at")),
-  meta: Joi.object().default({})
+  meta: Joi.object().default({}),
+  deleted: Joi.boolean()
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
   .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at");
-export const hackathon = newHackathon.keys({id});
+export const hackathon = newHackathon.keys({
+  id,
+  deleted: Joi.boolean()
+});
 
 
 /*

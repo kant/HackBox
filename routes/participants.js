@@ -51,6 +51,11 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
+        const requestorId = request.userId();
+
+        if (requestorId !== userId) {
+          return reply(Boom.forbidden("You can only add yourself"));
+        }
 
         const participant = {
           user_id: userId,
@@ -63,7 +68,7 @@ const register = function (server, options, next) {
           db("participants").where(participant)
         ]).then((results) => {
           if (results[2] > 0) {
-            throw Boom.preconditionFailed(`User ${userId} is in hackahton ${hackathonId}`);
+            throw Boom.preconditionFailed(`User ${userId} is already in hackathon ${hackathonId}`);
           }
         }).then(() => {
           return db("participants").insert(participant);
@@ -86,10 +91,15 @@ const register = function (server, options, next) {
     method: "DELETE",
     path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
-      description: "Remove a user from a project",
+      description: "Remove a user from a hackathon",
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
+        const requestorId = request.userId();
+
+        if (requestorId !== userId) {
+          return reply(Boom.forbidden("You can only remove yourself"));
+        }
 
         const participant = {
           user_id: userId,
