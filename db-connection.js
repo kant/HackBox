@@ -18,7 +18,7 @@ export const resolveOr404 = (promise, label = "resource") => {
   });
 };
 
-export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false}) => {
+export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false, getAdmins: false}) => {
   let hackathonResult;
   return client("hackathons").where({id}).then((rows) => {
     hackathonResult = rows[0];
@@ -34,13 +34,25 @@ export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: fal
     // check if they're an admin
     return client("hackathon_admins").where({
       hackathon_id: id,
-      owner_id: opts.checkOwner
+      user_id: opts.checkOwner
     }).then((owners) => {
       if (!owners.length) {
         throw Boom.forbidden(`You must be a hackathon admin to do this`);
       }
       return hackathonResult;
     });
+  }).then((hackathonData) => {
+    if (!opts.getAdmins) {
+      return hackathonData;
+    } else {
+      return client("users")
+        .join("hackathon_admins", "users.id", "=", "hackathon_admins.user_id")
+        .where("hackathon_admins.hackathon_id", id)
+        .then((rows) => {
+          hackathonData.admins = rows;
+          return hackathonData;
+        });
+    }
   });
 };
 

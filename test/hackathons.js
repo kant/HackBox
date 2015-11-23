@@ -22,7 +22,7 @@ test("fetch specific hackathon", (t) => {
   }, t);
 });
 
-test("create a hackathon", (t) => {
+test("regular user can create a hackathon", (t) => {
   const properties = {
     name: "Bingcubator Hack 2025",
     slug: "bingcubator-hack-2025",
@@ -44,7 +44,9 @@ test("create a hackathon", (t) => {
       hackathonId = result.id;
       const value = result.meta && result.meta.some_key;
       t.equal(value, "some_value", "make sure meta keys are persisted");
-    }
+      t.ok(result.admins.length, "should have creator listed as admin");
+    },
+    user: "b"
   }, t);
 });
 
@@ -52,7 +54,8 @@ test("get newly created hackathon", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/${hackathonId}`,
-    schema: hackathon
+    schema: hackathon,
+    user: "c"
   }, t);
 });
 
@@ -67,6 +70,34 @@ test("update newly created hackathon", (t) => {
     test(result) {
       t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
       t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
+    }
+  }, t);
+});
+
+test("non owner cannot update hackathon", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/${hackathonId}`,
+    payload: {
+      name: "I'm not an owner"
+    },
+    statusCode: 403,
+    user: "c"
+  }, t);
+});
+
+test("super user can update hackathon", (t) => {
+  const newName = "I'm a super user, hear me roar";
+  ensure({
+    method: "PUT",
+    url: `/hackathons/${hackathonId}`,
+    payload: {
+      name: newName
+    },
+    statusCode: 200,
+    user: "a",
+    test(result) {
+      t.equal(result.name, newName, "should have new name");
     }
   }, t);
 });
@@ -95,6 +126,29 @@ test("make sure it's no longer visible for non super user", (t) => {
     method: "GET",
     url: `/hackathons/${hackathonId}`,
     statusCode: 404,
+    user: "b"
+  }, t);
+});
+
+test("super user can re-activate deleted hackathon", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 200,
+    payload: {
+      deleted: false
+    },
+    test(result) {
+      t.equal(result.deleted, false, "should no longer show as deleted");
+    }
+  }, t);
+});
+
+test("should be visible to regular users again", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 200,
     user: "b"
   }, t);
 });

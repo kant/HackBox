@@ -280,6 +280,25 @@ while (count--) {
   }));
 }
 
+export const hackathonAdmins = [
+  {
+    user_id: users[0].id,
+    hackathon_id: 1
+  },
+  {
+    user_id: users[1].id,
+    hackathon_id: 1
+  },
+  {
+    user_id: users[1].id,
+    hackathon_id: 2
+  },
+  {
+    user_id: users[2].id,
+    hackathon_id: 2
+  }
+];
+
 export const members = [
   {
     user_id: users[0].id,

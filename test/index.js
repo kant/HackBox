@@ -1,5 +1,4 @@
 require("babel/register");
-
 require("./hackathons");
 require("./comments");
 require("./members");

@@ -33,8 +33,8 @@ exports.up = function (knex) {
     })
     .createTable("projects", (t) => {
       t.increments("id").primary();
-      t.string("owner_id").references("users.id");
-      t.integer("hackathon_id").unsigned().references("hackathons.id");
+      t.string("owner_id").notNull().references("users.id");
+      t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.string("title");
       t.string("tagline");
       t.string("status");
@@ -54,39 +54,39 @@ exports.up = function (knex) {
       t.text("json_meta");
     })
     .createTable("hackathon_admins", (t) => {
-      t.string("user_id").references("users.id");
-      t.integer("hackathon_id").unsigned().references("hackathons.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
     })
     .createTable("comments", (t) => {
       t.increments("id").primary();
-      t.string("user_id").references("users.id");
-      t.integer("project_id").unsigned().references("projects.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("project_id").notNull().unsigned().references("projects.id");
       t.text("body");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("participants", (t) => {
       t.string("user_id").references("users.id");
-      t.integer("hackathon_id").unsigned().references("hackathons.id");
+      t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("members", (t) => {
-      t.string("user_id").references("users.id");
-      t.integer("project_id").unsigned().references("projects.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("project_id").notNull().unsigned().references("projects.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("likes", (t) => {
-      t.string("user_id").references("users.id");
-      t.integer("project_id").unsigned().references("projects.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("project_id").notNull().unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("views", (t) => {
-      t.string("user_id").references("users.id");
-      t.integer("project_id").unsigned().references("projects.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("project_id").notNull().unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     })
     .createTable("shares", (t) => {
-      t.string("user_id").references("users.id");
-      t.integer("project_id").unsigned().references("projects.id");
+      t.string("user_id").notNull().references("users.id");
+      t.integer("project_id").notNull().unsigned().references("projects.id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
     });
 };

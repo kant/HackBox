@@ -45,9 +45,9 @@ const register = function (server, options, next) {
               });
             });
         }).then(() => {
-          return db("hackathons").where({id: hackathonId});
+          return ensureHackathon(hackathonId, {getAdmins: true});
         }).then((result) => {
-          return request.generateResponse(result[0]).code(201);
+          return request.generateResponse(result).code(201);
         });
 
         reply(response);
@@ -97,8 +97,9 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const { payload } = request;
+        const isSuperUser = request.isSuperUser();
         // figure out if we should validate if they're an admin
-        const ownerId = request.isSuperUser() ? false : request.userId();
+        const ownerId = isSuperUser ? false : request.userId();
 
         // only superusers can delete/undelete
         // via PUT
@@ -106,15 +107,13 @@ const register = function (server, options, next) {
           delete payload.deleted;
         }
 
-        const response = ensureHackathon(hackathonId, {checkOwner: ownerId}).then(() => {
+        const response = ensureHackathon(hackathonId, {checkOwner: ownerId, allowDeleted: isSuperUser}).then(() => {
           payload.updated_at = new Date();
           return db("hackathons")
             .where({id: hackathonId})
             .update(payload);
         }).then(() => {
-          return db("hackathons").where({id: hackathonId});
-        }).then((result) => {
-          return result[0];
+          return ensureHackathon(hackathonId, {getAdmins: true});
         });
 
         reply(response);
@@ -136,7 +135,11 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId } = request.params;
-        const response = ensureHackathon(hackathonId, {allowDeleted: request.isSuperUser()});
+        const response = ensureHackathon(hackathonId, {
+          allowDeleted: request.isSuperUser(),
+          getAdmins: true
+        });
+
         reply(response);
       },
       validate: {
