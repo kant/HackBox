@@ -21,10 +21,14 @@ exports.up = function (knex) {
       t.string("slug");
       t.text("description");
       t.string("logo_url");
-      t.dateTime("start_at");
-      t.dateTime("end_at");
-      t.string("contact_name");
-      t.string("contact_email");
+      t.date("start_date");
+      t.time("start_time");
+      t.date("end_date");
+      t.time("end_time");
+      t.string("org");
+      t.string("city");
+      t.string("color_scheme");
+      t.string("country");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);

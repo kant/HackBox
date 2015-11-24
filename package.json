@@ -23,6 +23,7 @@
     "jsonwebtoken": "^5.4.1",
     "knex": "git+https://github.com/myndzi/knex.git#double-release",
     "lodash.sample": "^3.1.0",
+    "moment": "^2.10.6",
     "mysql": "^2.9.0",
     "sqlite3": "^3.1.0",
     "vision": "^3.0.0"

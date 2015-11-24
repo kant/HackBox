@@ -1,5 +1,6 @@
 import sample from "lodash.sample";
 import faker from "faker";
+import { formatDate, formatTime } from "./validation";
 
 const yesterday = new Date(Date.now() - 86400);
 const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
@@ -192,12 +193,14 @@ export const hackathons = [
     slug: "hack-the-planet",
     description: "Yep, hack the planet!",
     logo_url: "http://example.com/hack.gif",
-    start_at: new Date(yesterday),
-    end_at: new Date(fiveDaysFromNow),
-    contact_name: "Hacker #42",
-    contact_email: "hackthe@planet.com",
+    start_date: formatDate(new Date(yesterday)),
+    start_time: formatTime(new Date(yesterday)),
+    end_date: formatDate(new Date(fiveDaysFromNow)),
+    end_time: formatTime(new Date(fiveDaysFromNow)),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    city: "Redmond",
+    country: "US",
     json_meta: JSON.stringify({})
   },
   {
@@ -205,12 +208,14 @@ export const hackathons = [
     slug: "hack-the-planet-again",
     description: "No really, I'm serious... hack the planet!",
     logo_url: "http://example.com/uberhack.gif",
-    start_at: new Date(yesterday),
-    end_at: new Date(fiveDaysFromNow),
-    contact_name: "Evilpacket",
-    contact_email: "l337@hackerz.com",
+    start_date: formatDate(new Date(yesterday)),
+    start_time: formatTime(new Date(yesterday)),
+    end_date: formatDate(new Date(fiveDaysFromNow)),
+    end_time: formatTime(new Date(fiveDaysFromNow)),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    city: "Redmond",
+    country: "US",
     json_meta: JSON.stringify({})
   }
 ];

@@ -1,4 +1,11 @@
 import Joi from "joi";
+import moment from "moment";
+
+/*
+  date formatters
+*/
+export const formatDate = (date) => moment(date).format("YYYY-MM-DD");
+export const formatTime = (date) => moment(date).startOf("minute").format("HH:MM:SS");
 
 /*
   Id types
@@ -44,14 +51,18 @@ const hackathonBase = {
   slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
   description: Joi.string().min(3).max(1000).trim(),
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
-  start_at: Joi.date(),
-  end_at: Joi.date().min(Joi.ref("start_at")),
+  start_date: Joi.date().format("YYYY-MM-DD"),
+  start_time: Joi.date().format("HH:MM:SS"),
+  end_date: Joi.date().format("YYYY-MM-DD"),
+  end_time: Joi.date().format("HH:MM:SS"),
+  city: Joi.string(),
+  country: Joi.string(),
   meta: Joi.object().default({}),
   deleted: Joi.boolean()
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at");
+  .requiredKeys("name", "slug", "description", "logo_url", "start_date", "start_time", "end_date", "end_time", "city", "country");
 export const hackathon = newHackathon.keys({
   id,
   deleted: Joi.boolean()

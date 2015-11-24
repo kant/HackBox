@@ -10,6 +10,7 @@ import HackathonRoutes from "./routes/hackathons";
 import ProjectRoutes from "./routes/projects";
 import ParticipantRoutes from "./routes/participants";
 import UserRoutes from "./routes/users";
+import GlobalStatsRoutes from "./routes/global-stats";
 import MemberRoutes from "./routes/members";
 import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
@@ -71,6 +72,7 @@ server.register([
   },
   DbPlugin,
   HackathonRoutes,
+  GlobalStatsRoutes,
   ParticipantRoutes,
   ProjectRoutes,
   UserRoutes,
