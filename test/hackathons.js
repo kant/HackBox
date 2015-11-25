@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import ensure from "./helpers";
-import { hackathon, formatTime, formatDate } from "../data/validation";
+import { hackathon } from "../data/validation";
 
 let hackathonId;
 
@@ -28,10 +28,8 @@ test("regular user can create a hackathon", (t) => {
     slug: "bingcubator-hack-2025",
     description: "Yo!",
     logo_url: "http://example.com/hack.gif",
-    start_time: formatTime(new Date()),
-    start_date: formatDate(new Date()),
-    end_time: formatTime(new Date(Date.now() + 86400 * 5)),
-    end_date: formatDate(new Date(Date.now() + 86400 * 5)),
+    start_at: new Date(),
+    end_at: new Date(Date.now() + 86400 * 5),
     city: "Redmond",
     country: "US",
     meta: {

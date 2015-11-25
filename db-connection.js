@@ -134,8 +134,20 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
 export const paginate = (query, limit, offset) => {
   assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
   assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
+  const countQuery = query.clone();
+
+  // delete any specific columns mentioned by the query for our count query
+  // otherwise we can create a query that MySQL doesn't consider to be valid
+  // when we add the `.count()` to it.
+  countQuery._statements.some((statement, index) => {
+    if (statement.grouping === "columns") {
+      countQuery._statements.splice(index, 1);
+      return true;
+    }
+  });
+
   return Promise.all([
-    query.clone().count(),
+    countQuery.count(),
     query
       .limit(limit)
       .offset(offset)

@@ -1,12 +1,5 @@
 import Joi from "joi";
-import moment from "moment";
 import { countryList } from "./fixed-data";
-
-/*
-  date formatters
-*/
-export const formatDate = (date) => moment(date).format("YYYY-MM-DD");
-export const formatTime = (date) => moment(date).startOf("minute").format("HH:MM");
 
 /*
   Id types
@@ -66,12 +59,15 @@ export const user = newUser.keys({
 const hackathonBase = {
   name: Joi.string().min(1).max(140).trim(),
   slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
-  description: Joi.string().min(3).max(1000).trim(),
+  tagline: Joi.string().min(1).max(255).trim(),
+  description: Joi.string().trim(),
+  judges: Joi.string().trim(),
+  rules: Joi.string().trim(),
+  schedule: Joi.string().trim(),
+  quick_links: Joi.string().trim(),
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
-  start_date: Joi.date().format("YYYY-MM-DD").raw(),
-  start_time: Joi.string().regex(/^\d\d\:\d\d$/),
-  end_date: Joi.date().format("YYYY-MM-DD").raw(),
-  end_time: Joi.string().regex(/^\d\d\:\d\d$/),
+  start_at: Joi.date(),
+  end_at: Joi.date(),
   city: Joi.string(),
   country: Joi.any().allow(countryList),
   meta: Joi.object().default({}),
@@ -79,7 +75,7 @@ const hackathonBase = {
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "description", "logo_url", "start_date", "start_time", "end_date", "end_time", "city", "country");
+  .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at", "city", "country");
 export const hackathon = newHackathon.keys({
   id,
   deleted: Joi.boolean()
@@ -93,15 +89,15 @@ const projectBase = {
   owner_id: stringId,
   video_id: optionalId,
   title: Joi.string().min(1).max(120),
-  tagline: Joi.string().min(1).max(140),
+  tagline: Joi.string().min(1).max(255),
   status: Joi.string(),
-  description: Joi.string().max(1000),
+  description: Joi.string(),
   image_url: Joi.string().uri().max(255),
   code_repo_url: Joi.string().uri().max(255),
   prototype_url: Joi.string().uri().max(255),
   supporting_files_url: Joi.string().uri().max(255),
-  inspiration: Joi.string().max(1000),
-  how_it_will_work: Joi.string().max(1000),
+  inspiration: Joi.string(),
+  how_it_will_work: Joi.string(),
   needs_hackers: Joi.boolean(),
   tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
   meta: Joi.object().default({})

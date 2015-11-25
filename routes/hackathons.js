@@ -11,9 +11,29 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
-        const includeDeleted = request.query.include_deleted;
-        const dbQuery = db("hackathons").where({deleted: includeDeleted});
         const { limit, offset } = request.query;
+        const includeDeleted = request.query.include_deleted;
+        const dbQuery = db
+          .select(
+            "id",
+            "name",
+            "slug",
+            "logo_url",
+            "start_at",
+            "end_at",
+            "org",
+            "city",
+            "country",
+            "tagline",
+            "color_scheme",
+            "created_at",
+            "updated_at",
+            "deleted",
+            "is_public",
+            "json_meta"
+          )
+          .from("hackathons")
+          .where({deleted: includeDeleted});
 
         reply(paginate(dbQuery, limit, offset));
       },

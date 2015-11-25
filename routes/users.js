@@ -136,8 +136,6 @@ const register = function (server, options, next) {
           delete payload.deleted;
         }
 
-        console.log("val of deleted", payload.deleted)
-
         const response = db("users")
           .where({id: userId})
           .update(payload)
