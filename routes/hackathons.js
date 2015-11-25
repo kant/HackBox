@@ -1,6 +1,6 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
+/*eslint camelcase: [2, {"properties": "never", "variables": "never"}] */
 import Boom from "boom";
-import { pagination, newHackathon, hackathonUpdate, id, stringId } from "../data/validation";
+import { pagination, newHackathon, hackathonUpdate, id, stringId, paginationWithDeleted } from "../data/validation";
 import db, { paginate, ensureHackathon } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -11,12 +11,13 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
-        const dbQuery = db("hackathons").where({deleted: false});
+        const includeDeleted = request.query.include_deleted;
+        const dbQuery = db("hackathons").where({deleted: includeDeleted});
         const { limit, offset } = request.query;
         reply(paginate(dbQuery, limit, offset));
       },
       validate: {
-        query: pagination
+        query: paginationWithDeleted
       }
     }
   });

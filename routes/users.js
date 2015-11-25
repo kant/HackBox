@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, updateUser, stringId, newUser } from "../data/validation";
+import { pagination, updateUser, stringId, newUser, paginationWithDeleted } from "../data/validation";
 import db, { paginate, ensureUser } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -11,13 +11,14 @@ const register = function (server, options, next) {
       description: "Fetch all users",
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
+        const includeDeleted = request.query.include_deleted;
         const { limit, offset } = request.query;
-        const query = db("users").where({deleted: false});
+        const query = db("users").where({deleted: includeDeleted});
 
         reply(paginate(query, limit, offset));
       },
       validate: {
-        query: pagination
+        query: paginationWithDeleted
       }
     }
   });

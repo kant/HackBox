@@ -23,6 +23,16 @@ export const pagination = Joi.object().keys({
   offset: Joi.number().integer().min(0).default(0)
 });
 
+const includeDeleted = Joi.boolean().default(false);
+
+export const deleted = Joi.object().keys({
+  include_deleted: includeDeleted
+});
+
+export const paginationWithDeleted = pagination.keys({
+  include_deleted: includeDeleted
+});
+
 export const paginationResults = pagination.keys({
   total_count: Joi.number().integer().min(0),
   result_count: Joi.number().integer().min(0)

@@ -1,5 +1,6 @@
 /*eslint no-invalid-this: 0, camelcase: [2, {"properties": "never"}] */
 import BearerAuthorization from "hapi-auth-bearer-simple";
+import Boom from "boom";
 import aad from "azure-ad-jwt-mod";
 import { credentials } from "../data/mock-data";
 
@@ -61,6 +62,15 @@ const register = function (plugin, options, next) {
 
   plugin.decorate("request", "userId", function () {
     return this.auth.credentials && this.auth.credentials.id || null;
+  });
+
+  // only super users can ever request `include_deleted` as
+  // a query param
+  plugin.ext("onPreHandler", (request, reply) => {
+    if (request.query.include_deleted && !request.isSuperUser()) {
+      return reply(Boom.forbidden(`You must be an admin to requset deleted data`));
+    }
+    return reply.continue();
   });
 
   plugin.register(BearerAuthorization, () => {

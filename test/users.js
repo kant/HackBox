@@ -33,7 +33,16 @@ test("users can delete themselves", (t) => {
   }, t);
 });
 
-test("deleted users is not in results", (t) => {
+test("regular users cannot request list that includes deleted users", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users?include_deleted=true`,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
+test("deleted users are not in results for regular users", (t) => {
   ensure({
     method: "GET",
     url: `/users`,
@@ -43,7 +52,38 @@ test("deleted users is not in results", (t) => {
         !result.data.some((userItem) => userItem.id === bUserId),
         "make sure deleted user is not listed in results"
       );
-    }
+    },
+    user: "b"
+  }, t);
+});
+
+test("deleted users are not in results for super users if not requested", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users`,
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        !result.data.some((userItem) => userItem.id === bUserId),
+        "make sure deleted user is not listed in results"
+      );
+    },
+    user: "b"
+  }, t);
+});
+
+test("deleted users is *are* in results for super users when requested", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users?include_deleted=true`,
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        result.data.some((userItem) => userItem.id === bUserId),
+        "make sure deleted user is listed in results"
+      );
+    },
+    user: "a"
   }, t);
 });
 
