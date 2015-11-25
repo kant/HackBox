@@ -18,41 +18,62 @@ export const resolveOr404 = (promise, label = "resource") => {
   });
 };
 
-export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false, getAdmins: false}) => {
-  let hackathonResult;
-  return client("hackathons").where({id}).then((rows) => {
-    hackathonResult = rows[0];
+export const getHackathon = (id, opts = {allowDeleted: false}) => {
+  const participantCount = client.select()
+    .count("participants.hackathon_id")
+    .from("participants")
+    .where("participants.hackathon_id", "=", id)
+    .as("participants");
+  const projectCount = client.select()
+    .count("projects.hackathon_id")
+    .from("projects")
+    .where("projects.hackathon_id", "=", id)
+    .as("projects");
 
-    // 404 if soft deleted or not found
-    if (!hackathonResult || (hackathonResult.deleted && !opts.allowDeleted)) {
+  const whereClause = {
+    id,
+    deleted: false
+  };
+
+  if (opts.allowDeleted) {
+    delete whereClause.deleted;
+  }
+
+  const mainQuery = client("hackathons")
+    .select("*", participantCount, projectCount)
+    .from("hackathons")
+    .where(whereClause);
+
+  const adminQuery = client("users")
+    .join("hackathon_admins", "users.id", "=", "hackathon_admins.user_id")
+    .where("hackathon_admins.hackathon_id", id);
+
+  return Promise.all([mainQuery, adminQuery]).then(([hackathonRows, admins]) => {
+    const hackathon = hackathonRows[0];
+    if (hackathon) {
+      hackathon.admins = admins;
+    }
+    return hackathon;
+  });
+};
+
+export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false}) => {
+  return getHackathon(id, {allowDeleted: opts.allowDeleted}).then((result) => {
+    if (!result) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
     }
+
     if (!opts.checkOwner) {
-      return hackathonResult;
+      return result;
     }
 
-    // check if they're an admin
-    return client("hackathon_admins").where({
-      hackathon_id: id,
-      user_id: opts.checkOwner
-    }).then((owners) => {
-      if (!owners.length) {
-        throw Boom.forbidden(`You must be a hackathon admin to do this`);
-      }
-      return hackathonResult;
-    });
-  }).then((hackathonData) => {
-    if (!opts.getAdmins) {
-      return hackathonData;
-    } else {
-      return client("users")
-        .join("hackathon_admins", "users.id", "=", "hackathon_admins.user_id")
-        .where("hackathon_admins.hackathon_id", id)
-        .then((rows) => {
-          hackathonData.admins = rows;
-          return hackathonData;
-        });
+    const hasOwner = result.admins.some((user) => user.id === opts.checkOwner);
+
+    if (!hasOwner) {
+      throw Boom.forbidden(`You must be a hackathon admin to do this`);
     }
+
+    return result;
   });
 };
 

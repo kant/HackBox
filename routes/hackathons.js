@@ -45,7 +45,7 @@ const register = function (server, options, next) {
               });
             });
         }).then(() => {
-          return ensureHackathon(hackathonId, {getAdmins: true});
+          return ensureHackathon(hackathonId);
         }).then((result) => {
           return request.generateResponse(result).code(201);
         });
@@ -107,13 +107,16 @@ const register = function (server, options, next) {
           delete payload.deleted;
         }
 
-        const response = ensureHackathon(hackathonId, {checkOwner: ownerId, allowDeleted: isSuperUser}).then(() => {
+        const response = ensureHackathon(hackathonId, {
+          checkOwner: ownerId,
+          allowDeleted: isSuperUser
+        }).then(() => {
           payload.updated_at = new Date();
           return db("hackathons")
             .where({id: hackathonId})
             .update(payload);
         }).then(() => {
-          return ensureHackathon(hackathonId, {getAdmins: true});
+          return ensureHackathon(hackathonId);
         });
 
         reply(response);
@@ -136,8 +139,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const response = ensureHackathon(hackathonId, {
-          allowDeleted: request.isSuperUser(),
-          getAdmins: true
+          allowDeleted: request.isSuperUser()
         });
 
         reply(response);
