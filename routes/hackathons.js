@@ -14,6 +14,7 @@ const register = function (server, options, next) {
         const includeDeleted = request.query.include_deleted;
         const dbQuery = db("hackathons").where({deleted: includeDeleted});
         const { limit, offset } = request.query;
+
         reply(paginate(dbQuery, limit, offset));
       },
       validate: {
@@ -67,17 +68,15 @@ const register = function (server, options, next) {
       tags: ["api", "admin"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const checkOwner = request.isSuperUser() ? false : request.userId();
 
-        const response = db("hackathons")
-          .where({id: hackathonId})
-          .update({deleted: true})
-          .then((result) => {
-            if (result === 0) {
-              return Boom.notFound(`Hackathon id ${hackathonId} not found`);
-            } else {
-              return request.generateResponse().code(204);
-            }
-          });
+        const response = ensureHackathon(hackathonId, {checkOwner: checkOwner}).then(() => {
+          return db("hackathons")
+            .where({id: hackathonId})
+            .update({deleted: true});
+        }).then(() => {
+          return request.generateResponse().code(204);
+        });
 
         reply(response);
       },

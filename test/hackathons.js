@@ -74,7 +74,8 @@ test("update newly created hackathon", (t) => {
     test(result) {
       t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
       t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
-    }
+    },
+    user: "b"
   }, t);
 });
 
@@ -106,11 +107,21 @@ test("super user can update hackathon", (t) => {
   }, t);
 });
 
-test("delete newly created hackathon", (t) => {
+test("regular user cannot delete someone else's hackathon", (t) => {
   ensure({
     method: "DELETE",
     url: `/hackathons/${hackathonId}`,
-    statusCode: 204
+    statusCode: 403,
+    user: "c"
+  }, t);
+});
+
+test("owner can delete newly created hackathon", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 204,
+    user: "b"
   }, t);
 });
 
@@ -156,3 +167,39 @@ test("should be visible to regular users again", (t) => {
     user: "b"
   }, t);
 });
+
+test("super user can delete other people's hackathons", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 204,
+    user: "a"
+  }, t);
+});
+
+test("super user can fetch all hackathons with include_deleted", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons?include_deleted=true`,
+    statusCode: 200,
+    user: "a",
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        result.data.some((hackathonItem) => hackathonItem.id === hackathonId),
+        "make sure deleted hackathon is listed in results"
+      );
+    }
+  }, t);
+});
+
+test("regular users can't fetch with include_deleted", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons?include_deleted=true`,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
+
