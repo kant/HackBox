@@ -1,6 +1,5 @@
 import sample from "lodash.sample";
 import faker from "faker";
-import { formatDate, formatTime } from "./validation";
 
 const yesterday = new Date(Date.now() - 86400);
 const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);

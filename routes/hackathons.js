@@ -1,6 +1,7 @@
-/*eslint camelcase: [2, {"properties": "never", "variables": "never"}] */
+/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, newHackathon, hackathonUpdate, id, stringId, paginationWithDeleted } from "../data/validation";
+import { newHackathon, hackathonUpdate, id,
+  stringId, paginationWithDeleted } from "../data/validation";
 import db, { paginate, ensureHackathon } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -90,7 +91,7 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
-        const response = ensureHackathon(hackathonId, {checkOwner: checkOwner}).then(() => {
+        const response = ensureHackathon(hackathonId, {checkOwner}).then(() => {
           return db("hackathons")
             .where({id: hackathonId})
             .update({deleted: true});
@@ -182,30 +183,30 @@ const register = function (server, options, next) {
         const { userId, hackathonId } = request.params;
         const requestorId = request.userId();
         const isSuperUser = request.isSuperUser();
+        const whereClause = {
+          user_id: userId,
+          hackathon_id: hackathonId
+        };
 
         if (requestorId === userId && !isSuperUser) {
           return reply(Boom.forbidden(`Only super users can add themselves as admins`));
         }
 
-        const response = db("hackathon_admins").where({
-          user_id: userId,
-          hackathon_id: hackathonId
-        }).then((rows) => {
-          if (rows.length > 1) {
+        const response = db("hackathon_admins").where(whereClause).then((rows) => {
+          if (rows.length > 0) {
             throw Boom.conflict(`User ${userId} is already an admin of this hackathon`);
           }
           return;
         }).then(() => {
-          return db("hackathon_admins").insert({user_id: userId});
-        }).then((result) => {
-          console.log('RESULT FROM INSERT', result);
-          return request.generateResponse(result[0]).code(201);
+          return db("hackathon_admins").insert(whereClause);
+        }).then(() => {
+          return request.generateResponse().code(204);
         });
 
         reply(response);
       },
       validate: {
-        query: {
+        params: {
           hackathonId: id,
           userId: stringId
         },
@@ -227,8 +228,7 @@ const register = function (server, options, next) {
 
         const response = ensureHackathon(hackathonId, {checkOwner: ownerId}).then(() => {
           return db("hackathon_admins").where({
-            hackathon_id: hackathonId,
-            user_id: userId
+            hackathon_id: hackathonId
           });
         }).then((adminResults) => {
           if (adminResults.length === 1 && !isSuperUser) {
@@ -242,15 +242,14 @@ const register = function (server, options, next) {
             user_id: userId,
             hackathon_id: hackathonId
           }).del();
-        }).then((result) => {
-          console.log('ADMIN REMOVE RESULT', result);
+        }).then(() => {
           return request.generateResponse().code(204);
         });
 
         reply(response);
       },
       validate: {
-        query: {
+        params: {
           hackathonId: id,
           userId: stringId
         },

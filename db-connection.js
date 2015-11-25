@@ -125,7 +125,7 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
   }
   return client("users").where(query).then((rows) => {
     const user = rows[0];
-    if (!user || (user && user.deleted && !opts.allowDeleted)) {
+    if (!user || user && user.deleted && !opts.allowDeleted) {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
     return user;

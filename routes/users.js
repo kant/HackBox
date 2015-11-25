@@ -1,6 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, updateUser, stringId, newUser, paginationWithDeleted } from "../data/validation";
+import { pagination, updateUser, stringId,
+  newUser, paginationWithDeleted } from "../data/validation";
 import db, { paginate, ensureUser } from "../db-connection";
 
 const register = function (server, options, next) {
