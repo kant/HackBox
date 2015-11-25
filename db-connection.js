@@ -45,6 +45,7 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
     .where(whereClause);
 
   const adminQuery = client("users")
+    .select("users.*")
     .join("hackathon_admins", "users.id", "=", "hackathon_admins.user_id")
     .where("hackathon_admins.hackathon_id", id);
 
