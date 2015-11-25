@@ -31,17 +31,23 @@ export const paginationResults = pagination.keys({
 /*
   Users
 */
-export const newUser = Joi.object({
-  id: stringId,
-  name: Joi.string().min(1).max(140).trim(),
-  family_name: Joi.string().min(1).max(140).trim(),
-  given_name: Joi.string().min(1).max(140).trim(),
-  email: Joi.string().email().trim(),
-  profile: Joi.object().default({})
-});
+const userBase = {
+  expertise: Joi.string(),
+  working_on: Joi.string(),
+  meta: Joi.object().default({}),
+  deleted: Joi.boolean()
+};
+export const newUser = Joi.object(userBase)
+  .requiredKeys("expertise", "working_on");
+export const updateUser = Joi.object(userBase);
 export const user = newUser.keys({
-  id,
-  delimited: Joi.boolean()
+  id: stringId.required(),
+  deleted: Joi.boolean().required(),
+  name: Joi.string().min(1).max(140).trim().required(),
+  family_name: Joi.string().min(1).max(140).trim().required(),
+  given_name: Joi.string().min(1).max(140).trim().required(),
+  email: Joi.string().email().trim().required(),
+  profile: Joi.object().default({}).required()
 });
 
 /*

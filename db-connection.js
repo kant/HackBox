@@ -114,11 +114,20 @@ export const ensureParticipant = (hackathonId, userId) => {
   });
 };
 
-export const ensureUser = (userId) => {
-  return client("users").where({id: userId}).then((rows) => {
-    if (rows.length === 0) {
+export const ensureUser = (userId, opts = {allowDeleted: false}) => {
+  const query = {
+    deleted: false,
+    id: userId
+  };
+  if (opts.allowDeleted) {
+    delete query.deleted;
+  }
+  return client("users").where(query).then((rows) => {
+    const user = rows[0];
+    if (!user || (user && user.deleted && !opts.allowDeleted)) {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
+    return user;
   });
 };
 

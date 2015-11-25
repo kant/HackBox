@@ -2,8 +2,10 @@
 import test from "tape";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
+import { user } from "../data/validation";
 
-const userId = mockUsers[0].id;
+const aUserId = mockUsers[0].id;
+const bUserId = mockUsers[1].id;
 
 test("fetch all users", (t) => {
   ensure({
@@ -13,55 +15,120 @@ test("fetch all users", (t) => {
   }, t);
 });
 
-/*
-test("delete existing user", (t) => {
+test("regular users cannot delete each other users", (t) => {
   ensure({
     method: "DELETE",
-    url: `/users/${userId}`,
-    statusCode: 204
+    url: `/users/${aUserId}`,
+    statusCode: 403,
+    user: "c"
   }, t);
 });
 
-test("user is not in list", (t) => {
+test("users can delete themselves", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/users/${bUserId}`,
+    statusCode: 204,
+    user: "b"
+  }, t);
+});
+
+test("deleted users is not in results", (t) => {
   ensure({
     method: "GET",
     url: `/users`,
     hasPagination: true,
     test(result) {
       t.ok(
-        !result.data.some((user) => user.id === userId),
+        !result.data.some((userItem) => userItem.id === bUserId),
         "make sure deleted user is not listed in results"
       );
     }
   }, t);
 });
 
-test("create new user", (t) => {
+test("deleted users can re-activate themselves by signing up again", (t) => {
   ensure({
     method: "POST",
     url: `/users`,
-    payload: {},
+    payload: {
+      working_on: "stuff,other things",
+      expertise: "javascript"
+    },
     statusCode: 201,
     test(result) {
-      t.equal(result.id, userId, "new created user should take Id of user");
+      t.equal(result.id, bUserId, "new created user should take Id of user");
+    },
+    user: "b"
+  }, t);
+});
+
+test("getting a user has expected fields", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users/${aUserId}`,
+    hasPagination: false,
+    schema: user,
+    test(result) {
+      t.strictEqual(result.deleted, false, "ensure deleted is false");
     }
   }, t);
 });
-*/
 
-test("get created user", (t) => {
+test("re-activated users is now in results", (t) => {
   ensure({
     method: "GET",
-    url: `/users/${userId}`,
-    hasPagination: false,
+    url: `/users`,
+    hasPagination: true,
     test(result) {
-      t.ok(result.email, "ensure email pulled from token");
-      t.ok(result.id, "ensure id pulled from token");
-      t.ok(result.given_name, "ensure given_name pulled from token");
-      t.ok(result.family_name, "ensure family_name pulled from token");
-      t.ok(result.name, "ensure name pulled from token");
-      t.ok(result.created_at, "ensure created_at created");
-      t.ok(result.updated_at, "ensure updated_at created");
+      t.ok(
+        result.data.some((userItem) => userItem.id === bUserId),
+        "make sure deleted user is back in results"
+      );
     }
+  }, t);
+});
+
+test("super users can delete other users", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/users/${bUserId}`,
+    statusCode: 204,
+    user: "a"
+  }, t);
+});
+
+test("deleted users cannot be fetched by regular users", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users/${bUserId}`,
+    hasPagination: false,
+    user: "b",
+    statusCode: 404
+  }, t);
+});
+
+test("deleted users can be fetched by super users", (t) => {
+  ensure({
+    method: "GET",
+    url: `/users/${bUserId}`,
+    hasPagination: false,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.deleted, "should be marked as deleted");
+    },
+    user: "a"
+  }, t);
+});
+
+test("super users can re-active deleted users with a PUT", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/users/${bUserId}`,
+    payload: {
+      deleted: false
+    },
+    statusCode: 200,
+    user: "a"
   }, t);
 });

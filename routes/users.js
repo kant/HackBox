@@ -1,7 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, user, stringId } from "../data/validation";
-import db, { paginate, resolveOr404 } from "../db-connection";
+import { pagination, updateUser, stringId, newUser } from "../data/validation";
+import db, { paginate, ensureUser } from "../db-connection";
+
 const register = function (server, options, next) {
   server.route({
     method: "GET",
@@ -11,7 +12,7 @@ const register = function (server, options, next) {
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const { limit, offset } = request.query;
-        const query = db("users");
+        const query = db("users").where({deleted: false});
 
         reply(paginate(query, limit, offset));
       },
@@ -45,24 +46,33 @@ const register = function (server, options, next) {
     config: {
       description: "Create a new user",
       tags: ["api"],
-      auth: "bearer",
       handler(request, reply) {
         const userProps = {};
-        const { oid, name, family_name, given_name, email } = request.auth.credentials;
+        const { id, name, family_name, given_name, email } = request.auth.credentials;
 
         Object.assign(userProps, request.payload, {
-          id: oid,
+          id,
           name,
           family_name,
           given_name,
           email,
-          updated_at: new Date()
+          updated_at: new Date(),
+          // we force this to be false
+          // since they may be re-activating
+          // a "deleted" user
+          deleted: false
         });
 
-        const response = db("users").insert(userProps).then(() => {
-          return db("users").where({id: oid});
-        }).then((result) => {
-          return result[0];
+        // Check to make sure it doesn't exist, it's possible it was
+        // soft deleted, if so, re-inserting same ID would fail.
+        const response = db("users").where({id}).then((result) => {
+          if (result.length) {
+            return db("users").update(userProps).where({id});
+          } else {
+            return db("users").insert(userProps);
+          }
+        }).then(() => {
+          return ensureUser(id);
         }).then((result) => {
           return request.generateResponse(result).code(201);
         });
@@ -70,31 +80,41 @@ const register = function (server, options, next) {
         reply(response);
       },
       validate: {
-        // payload: newUser
+        payload: newUser
       }
     }
   });
 
   server.route({
     method: "DELETE",
-    path: "/users/{id}",
+    path: "/users/{userId}",
     config: {
       description: "Delete a user",
       tags: ["api"],
       handler(request, reply) {
-        const response = db("users").where({id: request.params.id}).del().then((result) => {
-          if (result === 0) {
-            return Boom.notFound(`User id ${request.params.id} not found`);
-          } else {
+        const isSuperUser = request.isSuperUser();
+        const requestorId = request.userId();
+        const { userId } = request.params;
+
+        if (userId !== requestorId && !isSuperUser) {
+          return reply(Boom.forbidden(`Only admins can delete users other than themselves`));
+        }
+
+        const response = db("users")
+          .where({id: userId})
+          .update({deleted: true}).then((result) => {
+            if (result === 0) {
+              throw Boom.notFound(`User id ${userId} not found`);
+            }
+
             return request.generateResponse().code(204);
-          }
-        });
+          });
 
         reply(response);
       },
       validate: {
         params: {
-          id: stringId
+          userId: stringId
         }
       }
     }
@@ -102,28 +122,34 @@ const register = function (server, options, next) {
 
   server.route({
     method: "PUT",
-    path: "/users/{id}",
+    path: "/users/{userId}",
     config: {
       description: "Edit user details",
       tags: ["api"],
       handler(request, reply) {
         const { userId } = request.params;
+        const { payload } = request;
+
+        // remove value of `deleted` unless requestor is super user
+        if (payload.hasOwnProperty("deleted") && !request.isSuperUser()) {
+          delete payload.deleted;
+        }
+
+        console.log("val of deleted", payload.deleted)
+
         const response = db("users")
           .where({id: userId})
-          .update(request.payload)
+          .update(payload)
         .then(() => {
-          return db("userid").where({id: userId});
-        })
-        .then((result) => {
-          return result[0];
+          return ensureUser(userId);
         });
 
         reply(response);
       },
       validate: {
-        payload: user,
+        payload: updateUser,
         params: {
-          id: stringId
+          userId: stringId
         }
       }
     }
@@ -131,20 +157,18 @@ const register = function (server, options, next) {
 
   server.route({
     method: "GET",
-    path: "/users/{id}",
+    path: "/users/{userId}",
     config: {
       description: "Fetch details about a single user",
       tags: ["api", "detail"],
       handler(request, reply) {
-        const query = db("users")
-          .select()
-          .where({id: request.params.id});
-
-        reply(resolveOr404(query, "user"));
+        const { userId } = request.params;
+        const isSuperUser = request.isSuperUser();
+        reply(ensureUser(userId, {allowDeleted: isSuperUser}));
       },
       validate: {
         params: {
-          id: stringId
+          userId: stringId
         }
       }
     }

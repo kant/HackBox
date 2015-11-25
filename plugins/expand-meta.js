@@ -21,7 +21,7 @@
 //    and returned as parsed JSON.
 // 3. `true` will be translated to `1`, false will be translated
 //    to `0` and vice versa.
-const BOOLEAN_KEYS = ["deleted", "is_public", "needs_hackers"];
+const BOOLEAN_KEYS = ["deleted", "blocked", "is_public", "needs_hackers"];
 const expandResult = (obj) => {
   if (Array.isArray(obj)) {
     obj.forEach(expandResult);
@@ -49,9 +49,6 @@ const stringifyKeys = (obj) => {
     obj.forEach(stringifyKeys);
   } else {
     for (const key in obj) {
-      if (BOOLEAN_KEYS.indexOf(key) !== -1) {
-        obj[key] = obj[key] ? 1 : 0;
-      }
       if (key === "meta" || key === "profile") {
         obj[`json_${key}`] = JSON.stringify(obj[key]);
         delete obj[key];

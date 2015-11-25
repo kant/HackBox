@@ -12,6 +12,8 @@ exports.up = function (knex) {
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);
+      t.string("working_on");
+      t.string("expertise");
       t.text("json_profile");
       t.text("json_meta");
     })
