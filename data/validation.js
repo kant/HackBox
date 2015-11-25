@@ -1,11 +1,12 @@
 import Joi from "joi";
 import moment from "moment";
+import { countryList } from "./fixed-data";
 
 /*
   date formatters
 */
 export const formatDate = (date) => moment(date).format("YYYY-MM-DD");
-export const formatTime = (date) => moment(date).startOf("minute").format("HH:MM:SS");
+export const formatTime = (date) => moment(date).startOf("minute").format("HH:MM");
 
 /*
   Id types
@@ -51,12 +52,12 @@ const hackathonBase = {
   slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
   description: Joi.string().min(3).max(1000).trim(),
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
-  start_date: Joi.date().format("YYYY-MM-DD"),
-  start_time: Joi.date().format("HH:MM:SS"),
-  end_date: Joi.date().format("YYYY-MM-DD"),
-  end_time: Joi.date().format("HH:MM:SS"),
+  start_date: Joi.date().format("YYYY-MM-DD").raw(),
+  start_time: Joi.string().regex(/^\d\d\:\d\d$/),
+  end_date: Joi.date().format("YYYY-MM-DD").raw(),
+  end_time: Joi.string().regex(/^\d\d\:\d\d$/),
   city: Joi.string(),
-  country: Joi.string(),
+  country: Joi.any().allow(countryList),
   meta: Joi.object().default({}),
   deleted: Joi.boolean()
 };

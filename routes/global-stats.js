@@ -12,13 +12,21 @@ const register = function (server, options, next) {
         const response = Promise.all([
           db("users").count().whereNot({deleted: true}),
           db("hackathons").count().whereNot({deleted: true}),
-          db("projects").count().whereNot({deleted: true})
-        ]).then(([users, hackathons, projects]) => {
+          db("projects").count().as("value").whereNot({deleted: true}),
+          db("hackathons")
+            .select(db.raw("count(distinct \"country\") as countries"))
+            .whereNot({deleted: true}),
+          db("hackathons")
+            .select(db.raw("count(distinct \"cities\") as cities"))
+            .whereNot({deleted: true})
+        ]).then(([users, hackathons, projects, countries, cities]) => {
           const key = "count(*)";
           return {
             users: users[0][key],
             hackathons: hackathons[0][key],
-            projects: projects[0][key]
+            projects: projects[0][key],
+            countries: countries[0].countries,
+            cities: cities[0].cities
           };
         });
 
