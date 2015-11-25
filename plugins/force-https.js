@@ -12,6 +12,8 @@ export const register = function (server, options, next) {
   next();
 };
 
+export default { register }
+
 register.attributes = {
   name: "force-https",
   version: "1.0.0"
