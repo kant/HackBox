@@ -49,7 +49,6 @@ server.connection({
 });
 
 server.register([
-  ForceHttps,
   AuthPlugin,
   Inert,
   Vision,
