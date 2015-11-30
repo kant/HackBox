@@ -52,9 +52,13 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
         const requestorId = request.userId();
+        const isAddingSelf = requestorId === userId;
+        let checkOwner = false;
 
-        if (requestorId !== userId) {
-          return reply(Boom.forbidden("You can only add yourself"));
+        // unless you're a super user, or adding yourself
+        // make sure requestor is an owner
+        if (!isAddingSelf && !request.isSuperUser()) {
+          checkOwner = requestorId;
         }
 
         const participant = {
@@ -63,12 +67,20 @@ const register = function (server, options, next) {
         };
 
         const response = Promise.all([
-          ensureHackathon(hackathonId),
+          ensureHackathon(hackathonId, {checkOwner}),
           ensureUser(userId),
           db("participants").where(participant)
         ]).then((results) => {
-          if (results[2] > 0) {
-            throw Boom.preconditionFailed(`User ${userId} is already in hackathon ${hackathonId}`);
+          const hackathonResult = results[0];
+          const participantResult = results[2];
+          const isHackathonAdmin = hackathonResult.admins.some((item) => item.id === requestorId);
+
+          if (participantResult.length > 0) {
+            throw Boom.conflict(`User ${userId} is already in hackathon ${hackathonId}`);
+          }
+
+          if (!hackathonResult.is_public && isAddingSelf && !isHackathonAdmin) {
+            throw Boom.forbidden(`Hackathon is not public. You must be added by a hackathon admin`);
           }
         }).then(() => {
           return db("participants").insert(participant);
@@ -96,9 +108,14 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, userId } = request.params;
         const requestorId = request.userId();
+        const isRemovingSelf = requestorId === userId;
+        const isSuperUser = request.isSuperUser();
+        let checkOwner = false;
 
-        if (requestorId !== userId) {
-          return reply(Boom.forbidden("You can only remove yourself"));
+        // unless you're a super user, or adding yourself
+        // make sure requestor is an owner
+        if (!isRemovingSelf && !isSuperUser) {
+          checkOwner = requestorId;
         }
 
         const participant = {
@@ -107,7 +124,7 @@ const register = function (server, options, next) {
         };
 
         const response = Promise.all([
-          ensureHackathon(hackathonId),
+          ensureHackathon(hackathonId, {checkOwner}),
           ensureUser(userId),
           ensureParticipant(hackathonId, userId)
         ]).then(() => {

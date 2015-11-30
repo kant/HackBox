@@ -201,7 +201,8 @@ export const hackathons = [
     city: "Redmond",
     country: "US",
     color_scheme: "Azure blue",
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    is_public: true
   },
   {
     name: "Hack the planet, again!",
@@ -216,7 +217,8 @@ export const hackathons = [
     city: "Redmond",
     country: "US",
     color_scheme: "Xbox green",
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    is_public: false
   }
 ];
 
@@ -297,10 +299,6 @@ export const hackathonAdmins = [
   {
     user_id: users[1].id,
     hackathon_id: 2
-  },
-  {
-    user_id: users[2].id,
-    hackathon_id: 2
   }
 ];
 
@@ -338,15 +336,7 @@ export const participants = [
     hackathon_id: 1
   },
   {
-    user_id: users[2].id,
-    hackathon_id: 1
-  },
-  {
     user_id: users[1].id,
-    hackathon_id: 2
-  },
-  {
-    user_id: users[2].id,
     hackathon_id: 2
   }
 ];
