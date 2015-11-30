@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { countryList } from "./fixed-data";
+import { countryList, colorSchemes } from "./fixed-data";
 
 /*
   Id types
@@ -68,10 +68,13 @@ const hackathonBase = {
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
   start_at: Joi.date(),
   end_at: Joi.date(),
+  org: Joi.string().trim(),
   city: Joi.string(),
   country: Joi.any().allow(countryList),
-  meta: Joi.object().default({}),
-  deleted: Joi.boolean()
+  color_scheme: Joi.any().allow(colorSchemes).default(colorSchemes[0]),
+  is_public: Joi.boolean().default(true),
+  deleted: Joi.boolean(),
+  meta: Joi.object().default({})
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)

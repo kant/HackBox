@@ -186,6 +186,7 @@ export const credentials = {
   }
 };
 
+
 export const hackathons = [
   {
     name: "Hack the planet",
@@ -194,10 +195,12 @@ export const hackathons = [
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(yesterday),
     end_at: new Date(fiveDaysFromNow),
+    org: "Hackers Inc.",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     city: "Redmond",
     country: "US",
+    color_scheme: "Azure blue",
     json_meta: JSON.stringify({})
   },
   {
@@ -207,10 +210,12 @@ export const hackathons = [
     logo_url: "http://example.com/uberhack.gif",
     start_at: new Date(yesterday),
     end_at: new Date(fiveDaysFromNow),
+    org: "Hackers LLC",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     city: "Redmond",
     country: "US",
+    color_scheme: "Xbox green",
     json_meta: JSON.stringify({})
   }
 ];

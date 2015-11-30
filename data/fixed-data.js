@@ -105,11 +105,21 @@ const countryList = [
   "TechReady"
 ];
 
+const colorSchemes = [
+  "Azure blue",
+  "Bing gold",
+  "Office red",
+  "Visual Studio purple",
+  "Windows blue",
+  "Xbox green"
+];
+
 export default {
   customerTypes,
   productTypes,
   expertiseTypes,
   projectTypes,
   participantTypes,
-  countryList
+  countryList,
+  colorSchemes
 };

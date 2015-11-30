@@ -32,8 +32,8 @@ exports.up = function (knex) {
       t.dateTime("end_at");
       t.string("org");
       t.string("city");
-      t.string("color_scheme");
       t.string("country");
+      t.string("color_scheme");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);
