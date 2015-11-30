@@ -34,7 +34,7 @@ const register = function (server, options, next) {
             "json_meta"
           )
           .from("hackathons")
-          .where({deleted: includeDeleted});
+          .where(includeDeleted ? {} : {deleted: false});
 
         reply(paginate(dbQuery, limit, offset));
       },

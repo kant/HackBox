@@ -297,6 +297,10 @@ test("super user can fetch all hackathons with include_deleted", (t) => {
         result.data.some((hackathonItem) => hackathonItem.id === hackathonId),
         "make sure deleted hackathon is listed in results"
       );
+      t.ok(
+        result.data.some((hackathonItem) => !hackathonItem.deleted),
+        "still includes the non-deleted ones"
+      );
     }
   }, t);
 });

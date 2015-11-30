@@ -82,6 +82,10 @@ test("deleted users is *are* in results for super users when requested", (t) => 
         result.data.some((userItem) => userItem.id === bUserId),
         "make sure deleted user is listed in results"
       );
+      t.ok(
+        result.data.some((userItem) => !userItem.deleted),
+        "make sure regular users are also included when include_deleted is true"
+      );
     },
     user: "a"
   }, t);
