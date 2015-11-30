@@ -103,6 +103,7 @@ const projectBase = {
   how_it_will_work: Joi.string(),
   needs_hackers: Joi.boolean(),
   tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
+  deleted: Joi.boolean(),
   meta: Joi.object().default({})
 };
 export const projectUpdate = Joi.object(projectBase);

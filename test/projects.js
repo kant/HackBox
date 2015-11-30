@@ -5,10 +5,11 @@ import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
 
 let createdProjectId;
+const bUserId = mockUsers[1].id;
 
 const getProjectProps = (overrides) => {
   const result = {
-    owner_id: mockUsers[0].id,
+    owner_id: bUserId,
     hackathon_id: 1,
     title: "Yo yo!",
     tagline: "Yo yo with your friends.",
@@ -61,7 +62,8 @@ test("create a new project", (t) => {
       createdProjectId = result.id;
       const value = result.meta && result.meta.is_awesome;
       t.equal(value, true, "make sure meta keys are persisted");
-    }
+    },
+    user: "b"
   }, t);
 });
 
@@ -72,12 +74,12 @@ test("new project is GET-able", (t) => {
     schema: project,
     statusCode: 200,
     test(result) {
-      t.equal(result.owner_id, mockUsers[0].id, "Owner ID should be user who created it");
+      t.equal(result.owner_id, bUserId, "Owner ID should be user who created it");
     }
   }, t);
 });
 
-test("edit created project", (t) => {
+test("owner can edit created project", (t) => {
   ensure({
     method: "PUT",
     url: `/hackathons/1/projects/${createdProjectId}`,
@@ -86,36 +88,52 @@ test("edit created project", (t) => {
     },
     test(result) {
       t.equal(result.title, "yo-yo!", "title has been updated");
-    }
+    },
+    user: "b"
   }, t);
 });
 
-test("non owner (user 'b') cannot edit project", (t) => {
+test("super users can edit created project", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/1/projects/${createdProjectId}`,
+    payload: {
+      title: "yo-yo!!!"
+    },
+    test(result) {
+      t.equal(result.title, "yo-yo!!!", "title has been updated");
+    },
+    user: "a"
+  }, t);
+});
+
+test("non owner (user 'c') cannot edit project", (t) => {
   ensure({
     method: "PUT",
     url: `/hackathons/1/projects/${createdProjectId}`,
     payload: {
       title: "no-no!"
     },
-    user: "b",
+    user: "c",
     statusCode: 403
   }, t);
 });
 
-test("non-owner (user 'b') cannot delete project", (t) => {
+test("non-owner (user 'c') cannot delete project", (t) => {
   ensure({
     method: "DELETE",
     url: `/hackathons/1/projects/${createdProjectId}`,
-    user: "b",
+    user: "c",
     statusCode: 403
   }, t);
 });
 
-test("delete project", (t) => {
+test("owner can delete project", (t) => {
   ensure({
     method: "DELETE",
     url: `/hackathons/1/projects/${createdProjectId}`,
-    statusCode: 204
+    statusCode: 204,
+    user: "b"
   }, t);
 });
 
@@ -123,7 +141,92 @@ test("make sure project is no longer retrievable", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/1/projects/${createdProjectId}`,
-    statusCode: 404
+    statusCode: 404,
+    user: "b"
+  }, t);
+});
+
+test("deleted project not listed when fetching all", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects`,
+    statusCode: 200,
+    user: "a",
+    hasPagination: true,
+    test(result) {
+      t.ok(
+        !result.data.some((projectItem) => projectItem.id === createdProjectId),
+        "deleted project is not listed"
+      );
+    }
+  }, t);
+});
+
+test("deleted project can be listed by super user with `include_deleted`", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects?include_deleted=true`,
+    statusCode: 200,
+    hasPagination: true,
+    user: "a",
+    test(result) {
+      t.ok(
+        result.data.some((projectItem) => projectItem.id === createdProjectId),
+        "deleted project is listed"
+      );
+      t.ok(
+        result.data.some((projectItem) => projectItem.deleted),
+        "still includes non-deleted projects"
+      );
+      t.ok(
+        result.data.some((projectItem) => !projectItem.deleted),
+        "now includes deleted projects"
+      );
+    }
+  }, t);
+});
+
+test("regular user cannot pass `include_deleted`", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects?include_deleted=true`,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
+test("super user can still undelete project via a PUT", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/1/projects/${createdProjectId}`,
+    statusCode: 200,
+    payload: {
+      deleted: false
+    },
+    test(result) {
+      t.equal(result.deleted, false, "project was undeleted");
+    },
+    user: "a"
+  }, t);
+});
+
+test("super user can delete projects they don't own", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/1/projects/${createdProjectId}`,
+    statusCode: 204,
+    user: "a"
+  }, t);
+});
+
+test("super user can still retreive deleted project", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects/${createdProjectId}`,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.deleted, "retrieved deleted project");
+    }
   }, t);
 });
 
@@ -160,7 +263,6 @@ test("regular user (user 'b') cannot create projects owned by other people", (t)
     user: "b"
   }, t);
 });
-
 
 test("like a project", (t) => {
   ensure({

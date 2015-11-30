@@ -78,11 +78,11 @@ export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: fal
   });
 };
 
-export const ensureProject = (hackathonId, id, opts = {checkOwner: false}) => {
+export const ensureProject = (hackathonId, id, opts = {checkOwner: false, allowDeleted: false}) => {
   return client("projects").where({id}).then((rows) => {
     const project = rows[0];
 
-    if (!project) {
+    if (!project || project.deleted && !opts.allowDeleted) {
       throw Boom.notFound(`No project ${id} exists.`);
     } else if (project.hackathon_id !== hackathonId) {
       throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);

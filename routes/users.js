@@ -163,8 +163,10 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { userId } = request.params;
-        const isSuperUser = request.isSuperUser();
-        reply(ensureUser(userId, {allowDeleted: isSuperUser}));
+        const response = ensureUser(userId, {
+          allowDeleted: request.isSuperUser()
+        });
+        reply(response);
       },
       validate: {
         params: {

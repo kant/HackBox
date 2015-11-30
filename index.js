@@ -20,7 +20,6 @@ import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
 import Jade from "jade";
-import ForceHttps from "./plugins/force-https";
 
 let serverOpts = {};
 if (config.serverDebug) {

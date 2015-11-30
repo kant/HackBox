@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, newProject, projectUpdate, id } from "../data/validation";
-import db, { paginate, resolveOr404, ensureHackathon, ensureProject } from "../db-connection";
+import { paginationWithDeleted, newProject, projectUpdate, id } from "../data/validation";
+import db, { paginate, ensureHackathon, ensureProject } from "../db-connection";
 import Joi from "joi";
 
 const register = function (server, options, next) {
@@ -13,13 +13,16 @@ const register = function (server, options, next) {
       tags: ["api", "paginated", "list", "filterable"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const includeDeleted = request.query.include_deleted;
         const response = ensureHackathon(hackathonId).then(() => {
           const { query } = request;
-          const dbQuery = db("projects").orderBy("created_at", "desc");
+          const dbQuery = db("projects")
+            .where(includeDeleted ? {} : {deleted: false})
+            .orderBy("created_at", "desc");
 
           if (query.search) {
             dbQuery
-              .where("title", "like", `%${query.search}%`)
+              .andWhere("title", "like", `%${query.search}%`)
               .orWhere("tags", "like", `%${query.search}%`)
               .orWhere("tagline", "like", `%${query.search}%`);
           }
@@ -33,7 +36,7 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id
         },
-        query: pagination.keys({
+        query: paginationWithDeleted.keys({
           search: Joi.string()
         })
       }
@@ -98,13 +101,11 @@ const register = function (server, options, next) {
         const ownerId = request.isSuperUser() ? false : request.userId();
 
         const response = ensureProject(hackathonId, projectId, {checkOwner: ownerId}).then(() => {
-          return db("projects").where({id: projectId, hackathon_id: hackathonId}).del();
-        }).then((result) => {
-          if (result === 0) {
-            return Boom.notFound(`Project id ${projectId} not found in hackathon ${hackathonId}`);
-          } else {
-            return request.generateResponse().code(204);
-          }
+          return db("projects").where({
+            id: projectId
+          }).update({deleted: true});
+        }).then(() => {
+          return request.generateResponse().code(204);
         });
 
         reply(response);
@@ -130,11 +131,21 @@ const register = function (server, options, next) {
           id: projectId,
           hackathon_id: hackathonId
         };
-        const ownerId = request.isSuperUser() ? false : request.userId();
+        const isSuperUser = request.isSuperUser();
+        const ownerId = isSuperUser ? false : request.userId();
         const { payload } = request;
         payload.updated_at = new Date();
 
-        const response = ensureProject(hackathonId, projectId, {checkOwner: ownerId}).then(() => {
+        // only superusers can delete/undelete
+        // via PUT
+        if (!isSuperUser) {
+          delete payload.deleted;
+        }
+
+        const response = ensureProject(hackathonId, projectId, {
+          checkOwner: ownerId,
+          allowDeleted: isSuperUser
+        }).then(() => {
           return db("projects")
             .where(projectObj)
             .update(payload);
@@ -165,11 +176,11 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
-        const response = ensureHackathon(hackathonId).then(() => {
-          return db("projects").where({id: projectId});
+        const response = ensureProject(hackathonId, projectId, {
+          allowDeleted: request.isSuperUser()
         });
 
-        reply(resolveOr404(response, "project"));
+        reply(response);
       },
       validate: {
         params: {
