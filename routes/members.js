@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { id, stringId } from "../data/validation";
-import db, { ensureProject, ensureHackathon, ensureUser } from "../db-connection";
+import db, { ensureProject, ensureUser } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -12,13 +12,13 @@ const register = function (server, options, next) {
       tags: ["api", "list"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const checkOwner = request.isSuperUser() ? false : request.userId();
 
         const result = Promise.all([
-          ensureHackathon(hackathonId),
-          ensureProject(hackathonId, projectId),
+          ensureProject(hackathonId, projectId, {checkOwner}),
           db("members").where({project_id: projectId}).select("user_id")
         ]).then((results) => {
-          const memberIds = results[2].map((member) => member.user_id);
+          const memberIds = results[1].map((member) => member.user_id);
           return db("users").whereIn("id", memberIds);
         });
 
@@ -41,19 +41,19 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { userId, hackathonId, projectId } = request.params;
+        const checkOwner = request.isSuperUser() ? false : request.userId();
         const member = {
           user_id: userId,
           project_id: projectId
         };
 
         const response = Promise.all([
-          ensureHackathon(hackathonId),
-          ensureProject(hackathonId, projectId),
+          ensureProject(hackathonId, projectId, {checkOwner}),
           ensureUser(userId),
           db("members").where(member)
         ]).then((result) => {
           // if user already a member, throw
-          if (result[3].length > 0) {
+          if (result[2].length > 0) {
             throw Boom.preconditionFailed(`User ${userId} is already in project ${projectId}`);
           }
         }).then(() => {
@@ -82,10 +82,10 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId, userId } = request.params;
+        const checkOwner = request.isSuperUser() ? false : request.userId();
 
         const response = Promise.all([
-          ensureHackathon(hackathonId),
-          ensureProject(hackathonId, projectId)
+          ensureProject(hackathonId, projectId, {checkOwner})
         ]).then(() => {
           return db("members").where({
             user_id: userId,

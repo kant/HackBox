@@ -255,7 +255,7 @@ export const projects = [
     })
   },
   {
-    owner_id: users[0].id,
+    owner_id: users[1].id,
     hackathon_id: 1,
     title: "bnews app",
     tagline: "Where the news can be fun",
