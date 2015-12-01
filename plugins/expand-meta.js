@@ -49,7 +49,7 @@ const stringifyKeys = (obj) => {
     obj.forEach(stringifyKeys);
   } else {
     for (const key in obj) {
-      if (key === "meta" || key === "profile") {
+      if (key === "meta" || key === "profile" || key === "participation_meta") {
         obj[`json_${key}`] = JSON.stringify(obj[key]);
         delete obj[key];
       }

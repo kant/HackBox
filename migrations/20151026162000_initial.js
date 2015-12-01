@@ -77,6 +77,7 @@ exports.up = function (knex) {
       t.string("user_id").references("users.id");
       t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
+      t.text("json_participation_meta");
     })
     .createTable("members", (t) => {
       t.string("user_id").notNull().references("users.id");

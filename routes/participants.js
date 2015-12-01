@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, id, stringId } from "../data/validation";
+import { pagination, id, stringId, newParticipant } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -53,6 +53,7 @@ const register = function (server, options, next) {
         const { hackathonId, userId } = request.params;
         const requestorId = request.userId();
         const isAddingSelf = requestorId === userId;
+        const { payload } = request;
         let checkOwner = false;
 
         // unless you're a super user, or adding yourself
@@ -61,15 +62,16 @@ const register = function (server, options, next) {
           checkOwner = requestorId;
         }
 
-        const participant = {
-          user_id: userId,
-          hackathon_id: hackathonId
-        };
+        payload.user_id = userId;
+        payload.hackathon_id = hackathonId;
 
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
           ensureUser(userId),
-          db("participants").where(participant)
+          db("participants").where({
+            user_id: userId,
+            hackathon_id: hackathonId
+          })
         ]).then((results) => {
           const hackathonResult = results[0];
           const participantResult = results[2];
@@ -83,14 +85,62 @@ const register = function (server, options, next) {
             throw Boom.forbidden(`Hackathon is not public. You must be added by a hackathon admin`);
           }
         }).then(() => {
-          return db("participants").insert(participant);
+          return db("participants").insert(payload);
         }).then(() => {
-          return request.generateResponse().code(204);
+          return ensureParticipant(hackathonId, userId, {includeUser: true});
         });
 
         reply(response);
       },
       validate: {
+        payload: newParticipant,
+        params: {
+          hackathonId: id,
+          userId: stringId
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "PUT",
+    path: "/hackathons/{hackathonId}/participants/{userId}",
+    config: {
+      description: "edit a participants details in hackathon",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, userId } = request.params;
+        const requestorId = request.userId();
+        const isEditingSelf = requestorId === userId;
+        const { payload } = request;
+        let checkOwner = false;
+
+        // unless you're a super user, or adding yourself
+        // make sure requestor is an owner
+        if (!isEditingSelf && !request.isSuperUser()) {
+          checkOwner = requestorId;
+        }
+
+        const participant = {
+          user_id: userId,
+          hackathon_id: hackathonId
+        };
+
+        const response = Promise.all([
+          ensureHackathon(hackathonId, {checkOwner}),
+          ensureParticipant(hackathonId, userId)
+        ]).then(() => {
+          payload.user_id = userId;
+          payload.hackathon_id = hackathonId;
+          return db("participants").where(participant).update(payload);
+        }).then(() => {
+          return ensureParticipant(hackathonId, userId, {includeUser: true});
+        });
+
+        reply(response);
+      },
+      validate: {
+        payload: newParticipant,
         params: {
           hackathonId: id,
           userId: stringId
@@ -125,7 +175,6 @@ const register = function (server, options, next) {
 
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
-          ensureUser(userId),
           ensureParticipant(hackathonId, userId)
         ]).then(() => {
           return db("participants").where(participant).del();

@@ -2,11 +2,12 @@ import Joi from "joi";
 import { countryList, colorSchemes } from "./fixed-data";
 
 /*
-  Id types
+  re-usable types
 */
 export const optionalId = Joi.number().integer().positive();
 export const id = optionalId.required();
 export const stringId = Joi.string().min(1).max(140).trim();
+export const meta = Joi.object().default({});
 
 /*
   Pagination
@@ -37,7 +38,7 @@ export const paginationResults = pagination.keys({
 const userBase = {
   expertise: Joi.string(),
   working_on: Joi.string(),
-  meta: Joi.object().default({}),
+  meta,
   deleted: Joi.boolean()
 };
 export const newUser = Joi.object(userBase)
@@ -50,7 +51,17 @@ export const user = newUser.keys({
   family_name: Joi.string().min(1).max(140).trim().required(),
   given_name: Joi.string().min(1).max(140).trim().required(),
   email: Joi.string().email().trim().required(),
-  profile: Joi.object().default({}).required()
+  profile: meta.required()
+});
+
+/*
+  Participants
+*/
+export const newParticipant = Joi.object({
+  participation_meta: meta
+});
+export const participant = user.keys({
+  participation_meta: meta
 });
 
 /*
@@ -74,7 +85,7 @@ const hackathonBase = {
   color_scheme: Joi.any().allow(colorSchemes).default(colorSchemes[0]),
   is_public: Joi.boolean().default(true),
   deleted: Joi.boolean(),
-  meta: Joi.object().default({})
+  meta
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
@@ -104,7 +115,7 @@ const projectBase = {
   needs_hackers: Joi.boolean(),
   tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
   deleted: Joi.boolean(),
-  meta: Joi.object().default({})
+  meta
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)

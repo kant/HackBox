@@ -107,14 +107,6 @@ export const ensureComment = (projectId, id, opts = {checkOwner: false}) => {
   });
 };
 
-export const ensureParticipant = (hackathonId, userId) => {
-  return client("participants").where({user_id: userId, hackathon_id: hackathonId}).then((rows) => {
-    if (rows.length === 0) {
-      throw Boom.notFound(`User id ${userId} was not found in hackathon ${hackathonId}.`);
-    }
-  });
-};
-
 export const ensureUser = (userId, opts = {allowDeleted: false}) => {
   const query = {
     deleted: false,
@@ -129,6 +121,26 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
     return user;
+  });
+};
+
+export const ensureParticipant = (hackathonId, userId, opts = {includeUser: false}) => {
+  return client("participants").where({user_id: userId, hackathon_id: hackathonId}).then((rows) => {
+    if (rows.length === 0) {
+      throw Boom.notFound(`User id ${userId} was not found in hackathon ${hackathonId}.`);
+    }
+    return rows[0];
+  }).then((participant) => {
+    if (!opts.includeUser) {
+      return participant;
+    }
+
+    return ensureUser(userId).then((user) => {
+      for (const key in user) {
+        participant[key] = user[key];
+      }
+      return participant;
+    });
   });
 };
 
