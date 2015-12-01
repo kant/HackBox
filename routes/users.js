@@ -16,7 +16,7 @@ const register = function (server, options, next) {
         const { limit, offset } = request.query;
         const query = db("users").where(includeDeleted ? {} : {deleted: false});
 
-        reply(paginate(query, limit, offset));
+        reply(paginate(query, {limit, offset}));
       },
       validate: {
         query: paginationWithDeleted

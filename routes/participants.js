@@ -15,21 +15,17 @@ const register = function (server, options, next) {
 
         const response = ensureHackathon(hackathonId).then(() => {
           const { limit, offset } = request.query;
-          const query = db("participants").where({hackathon_id: hackathonId});
 
-          return paginate(query, limit, offset);
-        }).then((results) => {
-          // if it's empty, stop here
-          if (results.data.length === 0) {
-            return results;
-          }
+          const query = db("users")
+            .join("participants", "participants.user_id", "=", "users.id")
+            .where("participants.hackathon_id", hackathonId)
+            .select("participants.json_participation_meta")
+            .select("users.*");
 
-          // if not, query for users and populate with user data instead
-          const userIds = results.data.map((participant) => participant.user_id);
-          return db("users").whereIn("id", userIds).then((userResults) => {
-            results.data = userResults;
-            return results;
-          });
+          const countQuery = db("participants")
+            .where({hackathon_id: hackathonId});
+
+          return paginate(query, {limit, offset, countQuery});
         });
 
         reply(response);

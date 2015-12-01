@@ -15,6 +15,8 @@ export const users = [
     given_name: "Henrik",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    expertise: "JS",
+    working_on: "progressive web apps",
     json_profile: JSON.stringify({
       bio: "Some JS dev",
       job_title: "JS Developer",
@@ -39,6 +41,8 @@ export const users = [
     email: "dr@seuss.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    expertise: "KidsBooks",
+    working_on: "writing",
     json_profile: JSON.stringify({
       bio: "I do not like green eggs and ham.",
       job_title: "Author",
@@ -63,6 +67,8 @@ export const users = [
     email: "sam@iam.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    expertise: "persistance",
+    working_on: "convincing cat to try green eggs and ham",
     json_profile: JSON.stringify({
       bio: "Persistant creature",
       job_title: "Nagging friend",
@@ -92,6 +98,8 @@ while (count--) {
     email: faker.internet.email(),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
+    expertise: "",
+    working_on: "",
     json_profile: JSON.stringify({
       bio: faker.name.jobTitle(),
       job_title: faker.name.jobTitle(),
@@ -329,14 +337,17 @@ export const comments = [
 export const participants = [
   {
     user_id: users[0].id,
-    hackathon_id: 1
+    hackathon_id: 1,
+    json_participation_meta: JSON.stringify({icecream: true})
   },
   {
     user_id: users[1].id,
-    hackathon_id: 1
+    hackathon_id: 1,
+    json_participation_meta: JSON.stringify({icecream: true})
   },
   {
     user_id: users[1].id,
-    hackathon_id: 2
+    hackathon_id: 2,
+    json_participation_meta: JSON.stringify({})
   }
 ];

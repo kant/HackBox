@@ -20,7 +20,7 @@ const register = function (server, options, next) {
 
         const result = Promise.all([
           ensureProject(hackathonId, projectId),
-          paginate(commentsQuery, limit, offset)
+          paginate(commentsQuery, {limit, offset})
         ]).then((results) => {
           return results[1];
         });

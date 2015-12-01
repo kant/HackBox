@@ -36,7 +36,7 @@ const register = function (server, options, next) {
           .from("hackathons")
           .where(includeDeleted ? {} : {deleted: false});
 
-        reply(paginate(dbQuery, limit, offset));
+        reply(paginate(dbQuery, {limit, offset}));
       },
       validate: {
         query: paginationWithDeleted

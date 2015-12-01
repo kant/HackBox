@@ -135,7 +135,6 @@ test("cannot join non-public hackathon", (t) => {
     url: `/hackathons/2/participants/${C_USER_ID}`,
     statusCode: 403,
     payload: {},
-    schema: participantSchema,
     user: "c"
   }, t);
 });

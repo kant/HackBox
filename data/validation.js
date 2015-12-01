@@ -8,6 +8,7 @@ export const optionalId = Joi.number().integer().positive();
 export const id = optionalId.required();
 export const stringId = Joi.string().min(1).max(140).trim();
 export const meta = Joi.object().default({});
+export const emptyString = Joi.string().trim().empty("").default("");
 
 /*
   Pagination
@@ -36,13 +37,12 @@ export const paginationResults = pagination.keys({
   Users
 */
 const userBase = {
-  expertise: Joi.string(),
-  working_on: Joi.string(),
+  expertise: Joi.string().default(""),
+  working_on: Joi.string().default(""),
   meta,
   deleted: Joi.boolean()
 };
-export const newUser = Joi.object(userBase)
-  .requiredKeys("expertise", "working_on");
+export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
 export const user = newUser.keys({
   id: stringId.required(),
@@ -62,7 +62,7 @@ export const newParticipant = Joi.object({
 });
 export const participant = user.keys({
   participation_meta: meta
-});
+}).requiredKeys("participation_meta");
 
 /*
   Hackathons
@@ -70,17 +70,17 @@ export const participant = user.keys({
 const hackathonBase = {
   name: Joi.string().min(1).max(140).trim(),
   slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
-  tagline: Joi.string().min(1).max(255).trim(),
-  description: Joi.string().trim(),
-  judges: Joi.string().trim(),
-  rules: Joi.string().trim(),
-  schedule: Joi.string().trim(),
-  quick_links: Joi.string().trim(),
+  tagline: emptyString,
+  description: emptyString,
+  judges: emptyString,
+  rules: emptyString,
+  schedule: emptyString,
+  quick_links: emptyString,
   logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
   start_at: Joi.date(),
   end_at: Joi.date(),
-  org: Joi.string().trim(),
-  city: Joi.string(),
+  org: emptyString,
+  city: emptyString,
   country: Joi.any().allow(countryList),
   color_scheme: Joi.any().allow(colorSchemes).default(colorSchemes[0]),
   is_public: Joi.boolean().default(true),
@@ -104,14 +104,14 @@ const projectBase = {
   video_id: optionalId,
   title: Joi.string().min(1).max(120),
   tagline: Joi.string().min(1).max(255),
-  status: Joi.string(),
-  description: Joi.string(),
+  status: emptyString,
+  description: emptyString,
   image_url: Joi.string().uri().max(255),
   code_repo_url: Joi.string().uri().max(255),
   prototype_url: Joi.string().uri().max(255),
   supporting_files_url: Joi.string().uri().max(255),
-  inspiration: Joi.string(),
-  how_it_will_work: Joi.string(),
+  inspiration: emptyString,
+  how_it_will_work: emptyString,
   needs_hackers: Joi.boolean(),
   tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
   deleted: Joi.boolean(),
@@ -131,7 +131,7 @@ const commentBase = {
 export const newComment = Joi.object().keys(commentBase);
 export const comment = newComment.keys({
   id,
-  user_id: id,
+  user_id: stringId,
   project_id: id,
   created_at: Joi.date()
 }).requiredKeys("id", "user_id", "project_id", "body", "created_at");

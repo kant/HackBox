@@ -14,20 +14,20 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const includeDeleted = request.query.include_deleted;
+        const { limit, offset, search } = request.query;
         const response = ensureHackathon(hackathonId).then(() => {
-          const { query } = request;
           const dbQuery = db("projects")
             .where(includeDeleted ? {} : {deleted: false})
             .orderBy("created_at", "desc");
 
-          if (query.search) {
+          if (search) {
             dbQuery
-              .andWhere("title", "like", `%${query.search}%`)
-              .orWhere("tags", "like", `%${query.search}%`)
-              .orWhere("tagline", "like", `%${query.search}%`);
+              .andWhere("title", "like", `%${search}%`)
+              .orWhere("tags", "like", `%${search}%`)
+              .orWhere("tagline", "like", `%${search}%`);
           }
 
-          return paginate(dbQuery, query.limit, query.offset);
+          return paginate(dbQuery, {limit, offset});
         });
 
         reply(response);

@@ -18,15 +18,6 @@ test("fetch hackathon list", (t) => {
   }, t);
 });
 
-test("fetch specific hackathon", (t) => {
-  ensure({
-    method: "GET",
-    url: "/hackathons/1",
-    hasPagination: false,
-    schema: hackathon
-  }, t);
-});
-
 test("user b can create a hackathon", (t) => {
   const properties = {
     name: "Bingcubator Hack 2025",

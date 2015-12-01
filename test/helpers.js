@@ -68,7 +68,7 @@ export default (opts, t) => {
 
     if (opts.hasPagination) {
       const result = Joi.validate(parsed, paginationResults, {allowUnknown: true});
-      t.ok(!result.err, "has pagination");
+      t.ok(!result.error, "has pagination");
     } else if (parsed) {
       t.ok(!parsed.hasOwnProperty("limit"), "should not have property: \"limit\"");
       t.ok(!parsed.hasOwnProperty("offset"), "should not have property: \"offset\"");
@@ -78,11 +78,17 @@ export default (opts, t) => {
       if (opts.hasPagination) {
         parsed.data.forEach((item) => {
           const result = Joi.validate(item, opts.schema, {allowUnknown: opts.allowUnknown});
-          t.ok(!result.err, "each result in data matches schema");
+          t.ok(!result.error, "each result in data matches schema");
+          if (result.error) {
+            console.log(result.error);
+          }
         });
       } else {
         const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
-        t.ok(!result.err, "matches schema");
+        t.ok(!result.error, "matches schema");
+        if (result.error) {
+          console.log(result.error);
+        }
       }
     }
 
