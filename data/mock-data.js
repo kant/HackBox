@@ -1,5 +1,6 @@
 import sample from "lodash.sample";
 import faker from "faker";
+import { participantTypes, customerTypes, productTypes } from "./fixed-data";
 
 const yesterday = new Date(Date.now() - 86400);
 const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
@@ -207,7 +208,7 @@ export const hackathons = [
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     city: "Redmond",
-    country: "US",
+    country: "USA",
     color_scheme: "Azure blue",
     json_meta: JSON.stringify({}),
     is_public: true
@@ -222,8 +223,8 @@ export const hackathons = [
     org: "Hackers LLC",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    city: "Redmond",
-    country: "US",
+    city: "Mumbai",
+    country: "India",
     color_scheme: "Xbox green",
     json_meta: JSON.stringify({}),
     is_public: false
@@ -245,8 +246,12 @@ export const projects = [
     supporting_files_url: "http://example.com/files",
     inspiration: "Why not?!",
     how_it_will_work: "Push a button, send a Yo!",
-    needs_hackers: false,
-    tags: ["Yo", "Social"].join(","),
+    needs_hackers: true,
+    needed_role: participantTypes[0],
+    product_focus: productTypes[0],
+    needed_expertise: ["bostaff", "nunchuck"].join(),
+    customer_type: customerTypes[0],
+    tags: ["Yo", "Social"].join(),
     video_id: 47,
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -268,8 +273,12 @@ export const projects = [
     inspiration: "Realized that news tend to be really boring.",
     how_it_will_work: "Scrape news, make interactive.",
     needs_hackers: false,
+    needed_role: participantTypes[1],
+    product_focus: productTypes[2],
+    needed_expertise: ["throwingstar", "mandolin"].join(),
+    customer_type: customerTypes[2],
     tags: ["Bing", "News", "Bingcubator", "ASGEA"].join(","),
-    video_id: 1231,
+    video_id: null,
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     json_meta: JSON.stringify({})
@@ -277,6 +286,7 @@ export const projects = [
 ];
 
 const tagset = ["Office", "News", "Bingcubator", "Azure", "Edge", "Windows 10"];
+const expertiseSet = ["xbox", "c#", "windows phone", "ios", "android", "js", ".net"];
 count = 50;
 while (count--) {
   projects.push(Object.assign({}, projects[1], {
@@ -288,8 +298,12 @@ while (count--) {
     inspiration: faker.lorem.paragraph(),
     how_it_will_work: faker.lorem.paragraph(),
     needs_hackers: count % 2 === 0,
+    needed_role: sample(participantTypes),
+    product_focus: sample(productTypes),
+    needed_expertise: sample(expertiseSet, 2).join(),
+    customer_type: sample(customerTypes),
     tags: sample(tagset, 3).join(),
-    video_id: count,
+    video_id: sample([count, null]),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent()
   }));

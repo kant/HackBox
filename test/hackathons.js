@@ -27,7 +27,7 @@ test("user b can create a hackathon", (t) => {
     start_at: new Date(),
     end_at: new Date(Date.now() + 86400 * 5),
     city: "Redmond",
-    country: "US",
+    country: "USA",
     meta: {
       some_key: "some_value"
     }

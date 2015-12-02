@@ -55,6 +55,10 @@ exports.up = function (knex) {
       t.text("inspiration");
       t.text("how_it_will_work");
       t.boolean("needs_hackers").defaultTo(false);
+      t.string("needed_role");
+      t.string("needed_expertise");
+      t.string("product_focus");
+      t.string("customer_type");
       t.string("tags");
       t.integer("video_id");
       t.timestamp("created_at").defaultTo(knex.fn.now());

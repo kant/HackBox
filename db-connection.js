@@ -1,4 +1,9 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
+/*eslint
+  camelcase: [0, {"properties": "never"}],
+  max-statements: [2, 30],
+  complexity: [2, 15],
+  no-invalid-this: 0
+*/
 import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
@@ -176,3 +181,58 @@ export const paginate = (query, {limit, offset, countQuery}) => {
   });
 };
 
+// we use this for two different routes so it lives here for re-use
+export const projectSearch = (queryObj) => {
+  const {
+    hackathon_id, search, include_deleted, has_video, needs_hackers, country,
+    needed_role, needed_expertise, product_focus, customer_type
+  } = queryObj;
+
+  const query = client("projects")
+    .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
+    .andWhere(include_deleted ? {} : {"projects.deleted": false});
+
+  if (hackathon_id) {
+    query.where("projects.hackathon_id", hackathon_id);
+  }
+
+  if (search) {
+    query.where(function () {
+      this.where("projects.title", "like", `%${search}%`)
+        .orWhere("projects.tags", "like", `%${search}%`)
+        .orWhere("projects.tagline", "like", `%${search}%`);
+    });
+  }
+
+  if (has_video === false || has_video === true) {
+    if (has_video) {
+      query.whereNotNull("projects.video_id");
+    } else {
+      query.whereNull("projects.video_id");
+    }
+  }
+  if (needs_hackers === false || needs_hackers === true) {
+    query.andWhere("projects.needs_hackers", needs_hackers);
+  }
+  if (needed_role) {
+    query.andWhere("projects.needed_role", needed_role);
+  }
+  if (needed_expertise) {
+    query.andWhere("projects.needed_expertise", "like", `%${needed_expertise}%`);
+  }
+  if (product_focus) {
+    query.andWhere("projects.product_focus", product_focus);
+  }
+  if (customer_type) {
+    query.andWhere("projects.customer_type", customer_type);
+  }
+  if (country) {
+    query.andWhere("hackathons.country", "=", country);
+  }
+
+  // set order by
+  query.orderBy("projects.created_at", "desc");
+  query.select("projects.*");
+
+  return query;
+};

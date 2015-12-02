@@ -1,7 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { paginationWithDeleted, newProject, projectUpdate, id } from "../data/validation";
-import db, { paginate, ensureHackathon, ensureProject } from "../db-connection";
+import { paginationWithDeleted, newProject,
+  role, product, projectUpdate, id, customerType } from "../data/validation";
+import db, { paginate, ensureHackathon, ensureProject, projectSearch } from "../db-connection";
 import Joi from "joi";
 
 const register = function (server, options, next) {
@@ -12,32 +13,28 @@ const register = function (server, options, next) {
       description: "Fetch all projects",
       tags: ["api", "paginated", "list", "filterable"],
       handler(request, reply) {
-        const { hackathonId } = request.params;
-        const includeDeleted = request.query.include_deleted;
-        const { limit, offset, search } = request.query;
-        const response = ensureHackathon(hackathonId).then(() => {
-          const dbQuery = db("projects")
-            .where(includeDeleted ? {} : {deleted: false})
-            .orderBy("created_at", "desc");
+        const { query } = request;
+        const { limit, offset } = query;
 
-          if (search) {
-            dbQuery
-              .andWhere("title", "like", `%${search}%`)
-              .orWhere("tags", "like", `%${search}%`)
-              .orWhere("tagline", "like", `%${search}%`);
-          }
+        // hardcode hackathon id to match
+        query.hackathon_id = request.params.hackathonId;
 
-          return paginate(dbQuery, {limit, offset});
-        });
+        const response = projectSearch(query);
 
-        reply(response);
+        reply(paginate(response, {limit, offset}));
       },
       validate: {
         params: {
           hackathonId: id
         },
         query: paginationWithDeleted.keys({
-          search: Joi.string()
+          search: Joi.string(),
+          has_video: Joi.boolean(),
+          needs_hackers: Joi.boolean(),
+          needed_role: role,
+          needed_expertise: Joi.string(),
+          product_focus: product,
+          customer_type: customerType
         })
       }
     }

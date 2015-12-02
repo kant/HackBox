@@ -1,5 +1,7 @@
 import Joi from "joi";
-import { countryList, colorSchemes } from "./fixed-data";
+import { countryList, colorSchemes,
+  customerTypes, productTypes,
+  participantTypes } from "./fixed-data";
 
 /*
   re-usable types
@@ -9,6 +11,12 @@ export const id = optionalId.required();
 export const stringId = Joi.string().min(1).max(140).trim();
 export const meta = Joi.object().default({});
 export const emptyString = Joi.string().trim().empty("").default("");
+export const role = Joi.string().valid(participantTypes);
+export const customerType = Joi.string().valid(customerTypes);
+export const country = Joi.string().valid(countryList);
+export const product = Joi.string().valid(productTypes);
+export const commaString = Joi.string()
+  .regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "must be comma delimited string").max(255);
 
 /*
   Pagination
@@ -81,8 +89,8 @@ const hackathonBase = {
   end_at: Joi.date(),
   org: emptyString,
   city: emptyString,
-  country: Joi.any().allow(countryList),
-  color_scheme: Joi.any().allow(colorSchemes).default(colorSchemes[0]),
+  country,
+  color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[0]),
   is_public: Joi.boolean().default(true),
   deleted: Joi.boolean(),
   meta
@@ -112,8 +120,12 @@ const projectBase = {
   supporting_files_url: Joi.string().uri().max(255),
   inspiration: emptyString,
   how_it_will_work: emptyString,
-  needs_hackers: Joi.boolean(),
-  tags: Joi.string().regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "Tags must be a comma delimited string").max(255),
+  needs_hackers: Joi.boolean().default(false),
+  needed_role: role.empty("").default(""),
+  product_focus: product.empty("").default(""),
+  needed_expertise: commaString.empty("").default(""),
+  customer_type: customerType.empty("").default(""),
+  tags: commaString,
   deleted: Joi.boolean(),
   meta
 };

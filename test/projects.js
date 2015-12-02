@@ -42,15 +42,6 @@ test("fetch projects", (t) => {
   }, t);
 });
 
-test("fetch a specific project", (t) => {
-  ensure({
-    method: "GET",
-    url: "/hackathons/1/projects/1",
-    hasPagination: false,
-    schema: project
-  }, t);
-});
-
 test("create a new project", (t) => {
   ensure({
     method: "POST",
