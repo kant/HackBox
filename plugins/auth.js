@@ -54,7 +54,9 @@ export const validate = function (token, next) {
 const register = function (plugin, options, next) {
   // create a `request.isSuperUser()` methdd for inside handlers
   plugin.decorate("request", "isSuperUser", function () {
-    if (this.auth.credentials && this.auth.credentials.scope.indexOf("admin") !== -1) {
+    if (this.auth.credentials &&
+      this.auth.credentials.scope &&
+      this.auth.credentials.scope.indexOf("admin") !== -1) {
       return true;
     }
     return false;
