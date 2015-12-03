@@ -2,7 +2,7 @@
 import Joi from "joi";
 import { paginationWithDeleted, role, product,
   optionalId, customerType, country } from "../data/validation";
-import { paginate, projectSearch } from "../db-connection";
+import { paginate, projectSearch, userSearch } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -27,6 +27,31 @@ const register = function (server, options, next) {
           product_focus: product,
           hackathon_id: optionalId,
           customer_type: customerType,
+          country
+        })
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/user-search",
+    config: {
+      description: "Search users",
+      tags: ["api"],
+      handler(request, reply) {
+        const { limit, offset } = request.query;
+        const response = userSearch(request.query);
+
+        reply(paginate(response, {limit, offset}));
+      },
+      validate: {
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          hackathon_id: optionalId,
+          has_project: Joi.boolean(),
+          product_focus: product,
+          role,
           country
         })
       }

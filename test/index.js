@@ -1,11 +1,13 @@
 require("babel/register");
+
 require("./hackathons");
 require("./comments");
 require("./members");
 require("./participants");
+require("./projects");
 require("./project-search");
 require("./users");
-require("./projects");
+require("./user-search");
 // require("./auth");
 
 // run this last to shut down the server

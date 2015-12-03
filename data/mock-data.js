@@ -16,10 +16,10 @@ export const users = [
     given_name: "Henrik",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    expertise: "JS",
+    bio: "Some JS dev",
+    expertise: "JSstuff",
     working_on: "progressive web apps",
     json_profile: JSON.stringify({
-      bio: "Some JS dev",
       job_title: "JS Developer",
       company_name: "Formidable",
       photo_url: "https://static.joreteg.com/henrik_medium.jpg",
@@ -44,8 +44,8 @@ export const users = [
     updated_at: faker.date.recent(),
     expertise: "KidsBooks",
     working_on: "writing",
+    bio: "I do not like green eggs and ham.",
     json_profile: JSON.stringify({
-      bio: "I do not like green eggs and ham.",
       job_title: "Author",
       company_name: "Whoville Inc.",
       photo_url: "https://placehold.it/150x150",
@@ -70,8 +70,8 @@ export const users = [
     updated_at: faker.date.recent(),
     expertise: "persistance",
     working_on: "convincing cat to try green eggs and ham",
+    bio: "Persistant creature",
     json_profile: JSON.stringify({
-      bio: "Persistant creature",
       job_title: "Nagging friend",
       company_name: "Whoville Inc.",
       photo_url: "https://placehold.it/150x150",

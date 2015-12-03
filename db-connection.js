@@ -236,3 +236,54 @@ export const projectSearch = (queryObj) => {
 
   return query;
 };
+
+export const userSearch = (queryObj) => {
+  const {
+    search, hackathon_id, has_project, include_deleted,
+    role, product_focus, country
+  } = queryObj;
+
+  const query = client("users")
+    .leftJoin("participants", "participants.user_id", "=", "users.id")
+    .leftJoin("members", "members.user_id", "=", "users.id");
+
+  if (include_deleted) {
+    query.andWhere("users.deleted", false);
+  }
+  if (hackathon_id) {
+    query.andWhere("participants.hackathon_id", hackathon_id);
+  }
+  if (search) {
+    query.where(function () {
+      this.where("users.name", "like", `%${search}%`)
+        .orWhere("users.email", "like", `%${search}%`)
+        .orWhere("users.bio", "like", `%${search}%`)
+        .orWhere("users.working_on", "like", `%${search}%`)
+        .orWhere("users.expertise", "like", `%${search}%`);
+    });
+  }
+  if (role) {
+    query.andWhere("users.role", role);
+  }
+  if (product_focus) {
+    query.andWhere("users.product_focus", role);
+  }
+  if (country) {
+    query.andWhere("users.country", country);
+  }
+  if (has_project === false || has_project === true) {
+    if (has_project) {
+      query.whereNotNull("members.user_id");
+    } else {
+      query.whereNull("members.user_id");
+    }
+  }
+
+  // set order by
+  query.orderBy("users.name", "asc");
+  query.select("users.*");
+
+  console.log(query.toString())
+
+  return query;
+};

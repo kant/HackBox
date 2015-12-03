@@ -1,7 +1,10 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, id, stringId, newParticipant } from "../data/validation";
-import db, { paginate, ensureHackathon, ensureUser, ensureParticipant } from "../db-connection";
+import Joi from "joi";
+import { paginationWithDeleted, id, role,
+  country, product, stringId, newParticipant } from "../data/validation";
+import db, { paginate, ensureHackathon, ensureUser,
+  ensureParticipant, userSearch } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -14,18 +17,19 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
 
         const response = ensureHackathon(hackathonId).then(() => {
-          const { limit, offset } = request.query;
+          const { query } = request;
+          const { limit, offset } = query;
 
-          const query = db("users")
-            .join("participants", "participants.user_id", "=", "users.id")
-            .where("participants.hackathon_id", hackathonId)
-            .select("participants.json_participation_meta")
-            .select("users.*");
+          // make sure we limit search to within this hackathon
+          query.hackathon_id = hackathonId;
 
-          const countQuery = db("participants")
-            .where({hackathon_id: hackathonId});
+          const countQuery = userSearch(query);
 
-          return paginate(query, {limit, offset, countQuery});
+          const withParticipantData = countQuery
+            .clone()
+            .select("participants.json_participation_meta");
+
+          return paginate(withParticipantData, {limit, offset, countQuery});
         });
 
         reply(response);
@@ -34,7 +38,13 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id
         },
-        query: pagination
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          has_project: Joi.boolean(),
+          product_focus: product,
+          role,
+          country
+        })
       }
     }
   });
