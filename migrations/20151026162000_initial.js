@@ -38,6 +38,7 @@ exports.up = function (knex) {
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);
       t.boolean("is_public").defaultTo(true);
+      t.boolean("is_published").defaultTo(false);
       t.text("json_meta");
     })
     .createTable("projects", (t) => {
