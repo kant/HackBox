@@ -92,7 +92,7 @@ const hackathonBase = {
   country,
   color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[0]),
   is_public: Joi.boolean().default(true),
-  is_published: Joi.boolean().default(true),
+  is_published: Joi.boolean().default(false),
   deleted: Joi.boolean(),
   meta
 };
