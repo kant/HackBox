@@ -27,6 +27,7 @@ export const pagination = Joi.object().keys({
 });
 
 const includeDeleted = Joi.boolean().default(false);
+const includeUnpublished = Joi.boolean().default(false);
 
 export const deleted = Joi.object().keys({
   include_deleted: includeDeleted

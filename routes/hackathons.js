@@ -14,6 +14,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { limit, offset } = request.query;
         const includeDeleted = request.query.include_deleted;
+        const includeUnpublished = request.query.include_unpublished;
         const dbQuery = db
           .select(
             "id",
@@ -34,7 +35,8 @@ const register = function (server, options, next) {
             "json_meta"
           )
           .from("hackathons")
-          .where(includeDeleted ? {} : {deleted: false});
+          .where(includeDeleted ? {} : {deleted: false})
+          .where(includeUnpublished ? {} : {is_published: false});
 
         reply(paginate(dbQuery, {limit, offset}));
       },
@@ -159,8 +161,11 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const ownerId = request.isSuperUser() ? false : request.userId();
+
         const response = ensureHackathon(hackathonId, {
-          allowDeleted: request.isSuperUser()
+          allowDeleted: request.isSuperUser(),
+          checkPublished: ownerId
         });
 
         reply(response);
