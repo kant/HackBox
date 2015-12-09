@@ -34,7 +34,8 @@ export const deleted = Joi.object().keys({
 });
 
 export const paginationWithDeleted = pagination.keys({
-  include_deleted: includeDeleted
+  include_deleted: includeDeleted,
+  include_unpublished: includeUnpublished
 });
 
 export const paginationResults = pagination.keys({

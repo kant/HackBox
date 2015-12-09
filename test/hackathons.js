@@ -14,7 +14,23 @@ test("fetch hackathon list", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?limit=12",
-    hasPagination: true
+    hasPagination: true,
+    test(result) {
+      console.log('got result: ' + JSON.stringify(result));
+      t.equal(result.result_count, 1, "shouldn't include unpublished data");
+    },
+  }, t);
+});
+
+test("fetch hackathon as admin", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?limit=12&include_unpublished=true",
+    hasPagination: true,
+    user:'a',
+    test(result) {
+      t.equal(result.result_count, 2, "shouldn't include unpublished data");
+    },
   }, t);
 });
 

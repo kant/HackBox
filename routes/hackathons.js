@@ -36,7 +36,7 @@ const register = function (server, options, next) {
           )
           .from("hackathons")
           .where(includeDeleted ? {} : {deleted: false})
-          .where(includeUnpublished ? {} : {is_published: false});
+          .orWhere(includeUnpublished ? {} : {is_published: true});
 
         reply(paginate(dbQuery, {limit, offset}));
       },
