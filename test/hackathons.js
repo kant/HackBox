@@ -29,7 +29,7 @@ test("fetch hackathon as admin", (t) => {
     hasPagination: true,
     user:'a',
     test(result) {
-      t.equal(result.result_count, 2, "shouldn't include unpublished data");
+      t.equal(result.result_count, 2, "should include unpublished data");
     },
   }, t);
 });
