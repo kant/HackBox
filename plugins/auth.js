@@ -70,7 +70,11 @@ const register = function (plugin, options, next) {
   // a query param
   plugin.ext("onPreHandler", (request, reply) => {
     if (request.query.include_deleted && !request.isSuperUser()) {
-      return reply(Boom.forbidden(`You must be an admin to requset deleted data`));
+      return reply(Boom.forbidden(`You must be an admin to request deleted data`));
+    }
+
+    if (request.query.include_unpublished && !request.isSuperUser()) {
+      return reply(Boom.forbidden(`You must be an admin to request unpublished data`));
     }
     return reply.continue();
   });

@@ -63,19 +63,20 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   });
 };
 
-export const ensureHackathon = (id, opts = {checkOwner: false, allowDeleted: false}) => {
+export const ensureHackathon = (id, opts = {checkOwner: false, checkPublished: false, allowDeleted: false}) => {
   return getHackathon(id, {allowDeleted: opts.allowDeleted}).then((result) => {
     if (!result) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
     }
 
-    if (!opts.checkOwner) {
-      return result;
+    const userId = opts.checkOwner || opts.checkPublished;
+    const hasOwner = result.admins.some((user) => user.id === userId);
+
+    if(opts.checkPublished && !result.is_published && !hasOwner) {
+      throw Boom.notFound(`No hackathon with id ${id} was found`);
     }
 
-    const hasOwner = result.admins.some((user) => user.id === opts.checkOwner);
-
-    if (!hasOwner) {
+    if (opts.checkOwner && !hasOwner) {
       throw Boom.forbidden(`You must be a hackathon admin to do this`);
     }
 

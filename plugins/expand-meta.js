@@ -21,7 +21,7 @@
 //    and returned as parsed JSON.
 // 3. `true` will be translated to `1`, false will be translated
 //    to `0` and vice versa.
-const BOOLEAN_KEYS = ["deleted", "blocked", "is_public", "needs_hackers"];
+const BOOLEAN_KEYS = ["deleted", "blocked", "is_public", "is_published", "needs_hackers"];
 const expandResult = (obj) => {
   if (Array.isArray(obj)) {
     obj.forEach(expandResult);

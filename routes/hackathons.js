@@ -14,29 +14,63 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { limit, offset } = request.query;
         const includeDeleted = request.query.include_deleted;
-        const dbQuery = db
-          .select(
-            "id",
-            "name",
-            "slug",
-            "logo_url",
-            "start_at",
-            "end_at",
-            "org",
-            "city",
-            "country",
-            "tagline",
-            "color_scheme",
-            "created_at",
-            "updated_at",
-            "deleted",
-            "is_public",
-            "json_meta"
-          )
-          .from("hackathons")
-          .where(includeDeleted ? {} : {deleted: false});
+        const includeUnpublished = request.query.include_unpublished;
 
-        reply(paginate(dbQuery, {limit, offset}));
+        const columns = [
+          "id",
+          "name",
+          "slug",
+          "logo_url",
+          "start_at",
+          "end_at",
+          "org",
+          "city",
+          "country",
+          "tagline",
+          "color_scheme",
+          "created_at",
+          "updated_at",
+          "deleted",
+          "is_public",
+          "is_published",
+          "json_meta"
+        ];
+
+        const dbQuery = db
+          .select(columns)
+          .from("hackathons")
+          .where({is_published: true})
+          .andWhere({deleted: false})
+          .union(function () {
+            this.select(columns)
+              .from("hackathons")
+              .whereIn('id', function() {
+                this.select("hackathon_id")
+                  .from("hackathon_admins")
+                  .where("user_id", request.userId())
+                  .andWhere({deleted:false})
+            })
+          })
+
+        if(includeUnpublished) {
+          dbQuery.union(function() {
+            this.select(columns)
+              .from("hackathons")
+              .where({"is_published": false})
+          })
+        }
+
+        if(includeDeleted) {
+          dbQuery.union(function() {
+            this.select(columns)
+              .from("hackathons")
+              .where({"deleted": true})
+          })
+        }
+
+        const countQuery = db.count("*").from(dbQuery.as('res'))
+
+        reply(paginate(dbQuery, {limit, offset, countQuery}));
       },
       validate: {
         query: paginationWithDeleted
@@ -159,8 +193,11 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const ownerId = request.isSuperUser() ? false : request.userId();
+
         const response = ensureHackathon(hackathonId, {
-          allowDeleted: request.isSuperUser()
+          allowDeleted: request.isSuperUser(),
+          checkPublished: ownerId
         });
 
         reply(response);
