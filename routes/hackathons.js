@@ -42,7 +42,7 @@ const register = function (server, options, next) {
           .from("hackathons")
           .where({is_published: true})
           .andWhere({deleted: false})
-          .union(function() {
+          .union(function () {
             this.select(columns)
               .from("hackathons")
               .whereIn("id", function () {

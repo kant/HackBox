@@ -63,7 +63,11 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   });
 };
 
-export const ensureHackathon = (id, opts = {checkOwner: false, checkPublished: false, allowDeleted: false}) => {
+export const ensureHackathon = (id, opts = {
+  checkOwner: false,
+  checkPublished: false,
+  allowDeleted: false
+}) => {
   return getHackathon(id, {allowDeleted: opts.allowDeleted}).then((result) => {
     if (!result) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
