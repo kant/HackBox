@@ -49,6 +49,9 @@ export const paginationResults = pagination.keys({
 const userBase = {
   expertise: Joi.string().default(""),
   working_on: Joi.string().default(""),
+  primary_role: role,
+  product_focus: product,
+  country,
   meta,
   deleted: Joi.boolean()
 };

@@ -1,8 +1,9 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import ensure from "./helpers";
+import { users as mockUsers } from "../data/mock-data";
 
-
+/*
 // test search fields
 const testCoverageOfSearchFields = (field, value) => {
   test(`search should cover '${field}'`, (t) => {
@@ -36,78 +37,76 @@ const testCoverageOfSearchFields = (field, value) => {
 // that I know we should always get one and only one matching
 // result
 testCoverageOfSearchFields("name", "henrik");
-testCoverageOfSearchFields("email", "henrik@joreteg.com");
+testCoverageOfSearchFields("email", "hjoreteg@gmail.com");
 testCoverageOfSearchFields("bio", "some js dev");
 testCoverageOfSearchFields("working_on", "progressive web app");
 testCoverageOfSearchFields("expertise", "jsstuf");
+*/
 
-
-/*
-
-// a bit of re-usable code to avoid missing tests
-const runBooleanFilterTests = (type, itemTest) => {
-  test(`can filter via '${type}=true'`, (t) => {
-    ensure({
-      method: "GET",
-      url: `/hackathons/1/projects?${type}=true`,
-      hasPagination: true,
-      statusCode: 200,
-      test(result) {
-        t.ok(result.data.length, "should have at least one match");
-        t.ok(result.data.every((item) => itemTest(item)), "all results match");
-      }
-    }, t);
-  });
-
-  test(`can filter via '${type}=true' in global search`, (t) => {
-    ensure({
-      method: "GET",
-      url: `/project-search?${type}=true`,
-      hasPagination: true,
-      statusCode: 200,
-      test(result) {
-        t.ok(result.data.length, "should have at least one match");
-        t.ok(result.data.every((item) => itemTest(item)), "all results match");
-      }
-    }, t);
-  });
-
-  test(`can filter via '${type}=false'`, (t) => {
-    ensure({
-      method: "GET",
-      url: `/hackathons/1/projects?${type}=false`,
-      hasPagination: true,
-      statusCode: 200,
-      test(result) {
-        t.ok(result.data.length, "should have at least one match");
-        t.ok(result.data.every((item) => !itemTest(item)), "all results are negative");
-      }
-    }, t);
-  });
-
-  test(`can filter via '${type}=false' in global search`, (t) => {
-    ensure({
-      method: "GET",
-      url: `/project-search?${type}=false`,
-      hasPagination: true,
-      statusCode: 200,
-      test(result) {
-        t.ok(result.data.length, "should have at least one match");
-        t.ok(result.data.every((item) => !itemTest(item)), "all results are negative");
-      }
-    }, t);
-  });
+const containsId = (result, id) => {
+  return result.data.some((userItem) => userItem.id === id);
 };
 
-runBooleanFilterTests("needs_hackers", (item) => item.needs_hackers);
-runBooleanFilterTests("has_video", (item) => typeof item.video_id === "number");
+test(`can filter via 'has_project=true'`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/participants?has_project=true`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(containsId(result, mockUsers[0].id), "first user listed as participant");
+      t.ok(containsId(result, mockUsers[1].id), "second user listed as participant");
+      t.ok(!containsId(result, mockUsers[2].id), "third users not listed as participant");
+    }
+  }, t);
+});
+
+test(`can filter via 'has_project=true' in global search`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/user-search?has_project=true`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(containsId(result, mockUsers[0].id), "first user listed as participant");
+      t.ok(containsId(result, mockUsers[1].id), "second user listed as participant");
+      t.ok(!containsId(result, mockUsers[2].id), "third users not listed as participant");
+    }
+  }, t);
+});
+
+test(`can filter via 'has_project=false'`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/participants?has_project=false`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.equal(result.data.length, 0, "all users have projects");
+    }
+  }, t);
+});
+
+test(`can filter via 'has_project=false' in global search`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/user-search?has_project=false&limit=100`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(!containsId(result, mockUsers[0].id), "first user not listed");
+      t.ok(!containsId(result, mockUsers[1].id), "second user not listed");
+      t.ok(containsId(result, mockUsers[2].id), "third user is listed");
+    }
+  }, t);
+});
 
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`can filter via '${type}=${encodeURIComponent(value)}`, (t) => {
     ensure({
       method: "GET",
-      url: `/hackathons/1/projects?${type}=${value}`,
+      url: `/hackathons/1/participants?${type}=${value}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -120,7 +119,7 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`can filter via '${type}=${encodeURIComponent(value)} in global search`, (t) => {
     ensure({
       method: "GET",
-      url: `/project-search?${type}=${value}`,
+      url: `/user-search?${type}=${value}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -133,7 +132,7 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`should fail if invalid '${type}'`, (t) => {
     ensure({
       method: "GET",
-      url: `/hackathons/1/projects?${type}=SomethingSilly`,
+      url: `/hackathons/1/participants?${type}=SomethingSilly`,
       statusCode: 400
     }, t);
   });
@@ -141,34 +140,12 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`should fail if invalid '${type}' in global search`, (t) => {
     ensure({
       method: "GET",
-      url: `/project-search?${type}=SomethingSilly`,
+      url: `/user-search?${type}=SomethingSilly`,
       statusCode: 400
     }, t);
   });
 };
 
-runFixedTypeFilterTests("needed_role", "Developer", (item) => item.needed_role === "Developer");
-runFixedTypeFilterTests("product_focus", "Windows", (item) => item.product_focus === "Windows");
-runFixedTypeFilterTests("customer_type", "Consumers", (item) => item.customer_type === "Consumers");
-
-test(`can filter by hackathon country by sending 'country=USA' when searching globally`, (t) => {
-  ensure({
-    method: "GET",
-    url: `/project-search?country=USA`,
-    hasPagination: true,
-    statusCode: 200,
-    test(result) {
-      t.ok(result.data.length, "should have at least one match");
-      t.ok(result.data.every((item) => item.hackathon_id === 1), "all results match");
-    }
-  }, t);
-});
-
-test(`searching by country should fail if using invalid country`, (t) => {
-  ensure({
-    method: "GET",
-    url: `/project-search?country=BOGUS`,
-    statusCode: 400
-  }, t);
-});
-*/
+runFixedTypeFilterTests("role", "Developer", (item) => item.primary_role === "Developer");
+runFixedTypeFilterTests("product_focus", "Office", (item) => item.product_focus === "Office");
+runFixedTypeFilterTests("country", "USA", (item) => item.country === "USA");

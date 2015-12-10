@@ -210,6 +210,14 @@ test("super user can edit participant metadata", (t) => {
   }, t);
 });
 
+test("super user can delete participant from public hackathon", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/1/participants/${C_USER_ID}`,
+    statusCode: 204,
+    user: "a"
+  }, t);
+});
 
 test("super user can remove participant from non-public hackathon", (t) => {
   ensure({

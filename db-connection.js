@@ -63,7 +63,11 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   });
 };
 
-export const ensureHackathon = (id, opts = {checkOwner: false, checkPublished: false, allowDeleted: false}) => {
+export const ensureHackathon = (id, opts = {
+  checkOwner: false,
+  checkPublished: false,
+  allowDeleted: false
+}) => {
   return getHackathon(id, {allowDeleted: opts.allowDeleted}).then((result) => {
     if (!result) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
@@ -246,7 +250,11 @@ export const userSearch = (queryObj) => {
 
   const query = client("users")
     .leftJoin("participants", "participants.user_id", "=", "users.id")
-    .leftJoin("members", "members.user_id", "=", "users.id");
+    .leftJoin("members", function () {
+      this
+        .on("members.user_id", "=", "users.id")
+        .andOn("members.user_id", "=", "participants.user_id");
+    });
 
   if (include_deleted) {
     query.andWhere("users.deleted", false);
@@ -264,10 +272,10 @@ export const userSearch = (queryObj) => {
     });
   }
   if (role) {
-    query.andWhere("users.role", role);
+    query.andWhere("users.primary_role", role);
   }
   if (product_focus) {
-    query.andWhere("users.product_focus", role);
+    query.andWhere("users.product_focus", product_focus);
   }
   if (country) {
     query.andWhere("users.country", country);
@@ -283,8 +291,6 @@ export const userSearch = (queryObj) => {
   // set order by
   query.orderBy("users.name", "asc");
   query.select("users.*");
-
-  console.log(query.toString())
 
   return query;
 };

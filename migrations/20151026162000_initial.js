@@ -9,11 +9,14 @@ exports.up = function (knex) {
       t.string("given_name");
       t.string("email");
       t.text("bio");
+      t.string("country");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);
       t.string("working_on");
       t.string("expertise");
+      t.string("primary_role");
+      t.string("product_focus");
       t.text("json_profile");
       t.text("json_meta");
     })

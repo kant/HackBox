@@ -11,13 +11,16 @@ export const users = [
   {
     id: "9e4b5ba4-03e4-42ab-b4b3-04af1b4b6c70",
     name: "Henrik Joreteg",
-    email: "henrik@joreteg.com",
+    email: "hjoreteg@gmail.com",
     family_name: "Joreteg",
     given_name: "Henrik",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     bio: "Some JS dev",
     expertise: "JSstuff",
+    primary_role: "Developer",
+    product_focus: "Office",
+    country: "USA",
     working_on: "progressive web apps",
     json_profile: JSON.stringify({
       job_title: "JS Developer",
@@ -25,9 +28,6 @@ export const users = [
       photo_url: "https://static.joreteg.com/henrik_medium.jpg",
       address_1: "2508 Crane Dr.",
       address_2: "",
-      city: "West Richland",
-      state: "WA",
-      country: "USA",
       twitter: "HenrikJoreteg",
       facebook: "HenrikJoreteg",
       linkedin: "HenrikJoreteg"
@@ -43,6 +43,9 @@ export const users = [
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     expertise: "KidsBooks",
+    primary_role: "Developer",
+    product_focus: "Devices",
+    country: "India",
     working_on: "writing",
     bio: "I do not like green eggs and ham.",
     json_profile: JSON.stringify({
@@ -51,9 +54,6 @@ export const users = [
       photo_url: "https://placehold.it/150x150",
       address_1: "3 Whoville Street",
       address_2: "",
-      city: "Whoville",
-      state: "WA",
-      country: "USA",
       twitter: "GreenEggsAndHam",
       facebook: "GreenEggsAndHam",
       linkedin: "GreenEggsAndHam"
@@ -69,6 +69,9 @@ export const users = [
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     expertise: "persistance",
+    primary_role: "Marketing",
+    product_focus: "Windows",
+    country: "USA",
     working_on: "convincing cat to try green eggs and ham",
     bio: "Persistant creature",
     json_profile: JSON.stringify({
@@ -77,9 +80,6 @@ export const users = [
       photo_url: "https://placehold.it/150x150",
       address_1: "3 Whoville Street",
       address_2: "",
-      city: "Whoville",
-      state: "WA",
-      country: "USA",
       twitter: "SamIAm",
       facebook: "SamIAm",
       linkedin: "SamIAm"
@@ -100,6 +100,8 @@ while (count--) {
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     expertise: "",
+    primary_role: sample(participantTypes),
+    product_focus: sample(productTypes),
     working_on: "",
     json_profile: JSON.stringify({
       bio: faker.name.jobTitle(),
@@ -108,9 +110,6 @@ while (count--) {
       photo_url: faker.image.avatar(),
       address_1: faker.address.streetName(),
       address_2: faker.address.secondaryAddress(),
-      city: faker.address.city(),
-      state: faker.address.stateAbbr(),
-      country: faker.address.country(),
       twitter: faker.internet.userName(),
       facebook: faker.internet.userName(),
       linkedin: faker.internet.userName()
@@ -334,6 +333,13 @@ export const members = [
   {
     user_id: users[1].id,
     project_id: 1
+  },
+  // third user has project in hackathon #2
+  // this is important to test `has_project`
+  // filtering of user search
+  {
+    user_id: users[2].id,
+    project_id: 3
   }
 ];
 
