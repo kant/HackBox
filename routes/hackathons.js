@@ -39,8 +39,8 @@ const register = function (server, options, next) {
         const dbQuery = db
           .select(columns)
           .from("hackathons")
-          // .where({is_published: true})
-          .orWhere(includeDeleted ? {} : {deleted: false})
+          .where({is_published: true})
+          .andWhere({deleted: false})
           .union(function () {
             this.select(columns)
               .from("hackathons")
@@ -48,9 +48,25 @@ const register = function (server, options, next) {
                 this.select("hackathon_id")
                   .from("hackathon_admins")
                   .where("user_id", request.userId())
-                  .andWhere({is_published:false})
+                  .andWhere({deleted:false})
             })
-          });
+          })
+
+        if(includeUnpublished) {
+          dbQuery.union(function() {
+            this.select(columns)
+              .from("hackathons")
+              .where({"is_published": false})
+          })
+        }
+
+        if(includeDeleted) {
+          dbQuery.union(function() {
+            this.select(columns)
+              .from("hackathons")
+              .where({"deleted": true})
+          })
+        }
 
         const countQuery = db.count("*").from(dbQuery.as('res'))
 
