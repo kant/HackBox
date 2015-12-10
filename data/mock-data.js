@@ -211,7 +211,7 @@ export const hackathons = [
     country: "USA",
     color_scheme: "Azure blue",
     json_meta: JSON.stringify({}),
-    is_published: false,
+    is_published: true,
     is_public: true
   },
   {
@@ -228,7 +228,7 @@ export const hackathons = [
     country: "India",
     color_scheme: "Xbox green",
     json_meta: JSON.stringify({}),
-    is_published: true,
+    is_published: false,
     is_public: false
   }
 ];

@@ -15,30 +15,46 @@ const register = function (server, options, next) {
         const { limit, offset } = request.query;
         const includeDeleted = request.query.include_deleted;
         const includeUnpublished = request.query.include_unpublished;
-        const dbQuery = db
-          .select(
-            "id",
-            "name",
-            "slug",
-            "logo_url",
-            "start_at",
-            "end_at",
-            "org",
-            "city",
-            "country",
-            "tagline",
-            "color_scheme",
-            "created_at",
-            "updated_at",
-            "deleted",
-            "is_public",
-            "json_meta"
-          )
-          .from("hackathons")
-          .where(includeDeleted ? {} : {deleted: false})
-          .orWhere(includeUnpublished ? {} : {is_published: true});
 
-        reply(paginate(dbQuery, {limit, offset}));
+        const columns = [
+          "id",
+          "name",
+          "slug",
+          "logo_url",
+          "start_at",
+          "end_at",
+          "org",
+          "city",
+          "country",
+          "tagline",
+          "color_scheme",
+          "created_at",
+          "updated_at",
+          "deleted",
+          "is_public",
+          "is_published",
+          "json_meta"
+        ];
+
+        const dbQuery = db
+          .select(columns)
+          .from("hackathons")
+          // .where({is_published: true})
+          .orWhere(includeDeleted ? {} : {deleted: false})
+          .union(function () {
+            this.select(columns)
+              .from("hackathons")
+              .whereIn('id', function() {
+                this.select("hackathon_id")
+                  .from("hackathon_admins")
+                  .where("user_id", request.userId())
+                  .andWhere({is_published:false})
+            })
+          });
+
+        const countQuery = db.count("*").from(dbQuery.as('res'))
+
+        reply(paginate(dbQuery, {limit, offset, countQuery}));
       },
       validate: {
         query: paginationWithDeleted
