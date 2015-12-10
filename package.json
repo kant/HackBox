@@ -44,7 +44,8 @@
     "init-db": "npm run migrate && npm run seed-db",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
-    "pretest": "rm -f test.sqlite3 && NODE_ENV=test npm run init-db",
+    "rollback": "knex migrate:rollback",
+    "pretest": "npm run rollback && NODE_ENV=test npm run init-db",
     "seed-db": "knex seed:run",
     "start": "node server.js",
     "test": "NODE_ENV=test AUTH_ENABLED=true node test/index | tap-spec"
