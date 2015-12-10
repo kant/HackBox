@@ -16,9 +16,8 @@ test("fetch hackathon list", (t) => {
     url: "/hackathons?limit=12",
     hasPagination: true,
     test(result) {
-      console.log('got result: ' + JSON.stringify(result));
       t.equal(result.result_count, 1, "shouldn't include unpublished data");
-    },
+    }
   }, t);
 });
 
@@ -27,10 +26,10 @@ test("fetch hackathon as admin", (t) => {
     method: "GET",
     url: "/hackathons?limit=12&include_unpublished=true",
     hasPagination: true,
-    user:'a',
+    user: "a",
     test(result) {
       t.equal(result.result_count, 2, "should include unpublished data");
-    },
+    }
   }, t);
 });
 
@@ -60,7 +59,7 @@ test("user b can create a hackathon", (t) => {
       const value = result.meta && result.meta.some_key;
       t.equal(value, "some_value", "make sure meta keys are persisted");
       t.ok(result.admins.length, "should have creator listed as admin");
-      t.equal(result.is_published, false, "should be unpublished")
+      t.equal(result.is_published, false, "should be unpublished");
     },
     user: "b"
   }, t);

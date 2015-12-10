@@ -72,7 +72,7 @@ export const ensureHackathon = (id, opts = {checkOwner: false, checkPublished: f
     const userId = opts.checkOwner || opts.checkPublished;
     const hasOwner = result.admins.some((user) => user.id === userId);
 
-    if(opts.checkPublished && !result.is_published && !hasOwner) {
+    if (opts.checkPublished && !result.is_published && !hasOwner) {
       throw Boom.notFound(`No hackathon with id ${id} was found`);
     }
 

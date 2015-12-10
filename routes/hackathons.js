@@ -36,39 +36,41 @@ const register = function (server, options, next) {
           "json_meta"
         ];
 
+        /*eslint-disable no-valid-this */
         const dbQuery = db
           .select(columns)
           .from("hackathons")
           .where({is_published: true})
           .andWhere({deleted: false})
-          .union(function () {
+          .union(() => {
             this.select(columns)
               .from("hackathons")
-              .whereIn('id', function() {
+              .whereIn("id", () => {
                 this.select("hackathon_id")
                   .from("hackathon_admins")
                   .where("user_id", request.userId())
-                  .andWhere({deleted:false})
-            })
-          })
+                  .andWhere({deleted: false});
+              });
+          });
 
-        if(includeUnpublished) {
-          dbQuery.union(function() {
+        if (includeUnpublished) {
+          dbQuery.union(() => {
             this.select(columns)
               .from("hackathons")
-              .where({"is_published": false})
-          })
+              .where({"is_published": false});
+          });
         }
 
-        if(includeDeleted) {
-          dbQuery.union(function() {
+        if (includeDeleted) {
+          dbQuery.union(() => {
             this.select(columns)
               .from("hackathons")
-              .where({"deleted": true})
-          })
+              .where({"deleted": true});
+          });
         }
+        /*eslint-enable no-valid-this */
 
-        const countQuery = db.count("*").from(dbQuery.as('res'))
+        const countQuery = db.count("*").from(dbQuery.as("res"));
 
         reply(paginate(dbQuery, {limit, offset, countQuery}));
       },
