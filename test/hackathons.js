@@ -14,7 +14,22 @@ test("fetch hackathon list", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?limit=12",
-    hasPagination: true
+    hasPagination: true,
+    test(result) {
+      t.equal(result.result_count, 1, "shouldn't include unpublished data");
+    }
+  }, t);
+});
+
+test("fetch hackathon as admin", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?limit=12&include_unpublished=true",
+    hasPagination: true,
+    user: "a",
+    test(result) {
+      t.equal(result.result_count, 2, "should include unpublished data");
+    }
   }, t);
 });
 
@@ -28,6 +43,7 @@ test("user b can create a hackathon", (t) => {
     end_at: new Date(Date.now() + 86400 * 5),
     city: "Redmond",
     country: "USA",
+    is_published: false,
     meta: {
       some_key: "some_value"
     }
@@ -43,16 +59,35 @@ test("user b can create a hackathon", (t) => {
       const value = result.meta && result.meta.some_key;
       t.equal(value, "some_value", "make sure meta keys are persisted");
       t.ok(result.admins.length, "should have creator listed as admin");
+      t.equal(result.is_published, false, "should be unpublished");
     },
     user: "b"
   }, t);
 });
 
-test("get newly created hackathon", (t) => {
+test("get user b can get newly created hackathon", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/${hackathonId}`,
     schema: hackathon,
+    user: "b"
+  }, t);
+});
+
+test("get user a can get newly created hackathon", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    schema: hackathon,
+    user: "a"
+  }, t);
+});
+
+test("get user c cannot get newly created hackathon", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 404,
     user: "c"
   }, t);
 });
@@ -63,13 +98,24 @@ test("user b can update newly created hackathon", (t) => {
     url: `/hackathons/${hackathonId}`,
     payload: {
       name: "Bingcubator Hack 2015",
-      slug: "bingcubator-hack-2015"
+      slug: "bingcubator-hack-2015",
+      is_published: true
     },
     test(result) {
       t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
       t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
     },
     user: "b"
+  }, t);
+});
+
+
+test("get user c cannot get published hackathon", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 200,
+    user: "c"
   }, t);
 });
 
@@ -304,5 +350,3 @@ test("user b can't fetch with include_deleted", (t) => {
     user: "b"
   }, t);
 });
-
-

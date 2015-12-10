@@ -27,13 +27,15 @@ export const pagination = Joi.object().keys({
 });
 
 const includeDeleted = Joi.boolean().default(false);
+const includeUnpublished = Joi.boolean().default(false);
 
 export const deleted = Joi.object().keys({
   include_deleted: includeDeleted
 });
 
 export const paginationWithDeleted = pagination.keys({
-  include_deleted: includeDeleted
+  include_deleted: includeDeleted,
+  include_unpublished: includeUnpublished
 });
 
 export const paginationResults = pagination.keys({
@@ -95,6 +97,7 @@ const hackathonBase = {
   country,
   color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[0]),
   is_public: Joi.boolean().default(true),
+  is_published: Joi.boolean().default(false),
   deleted: Joi.boolean(),
   meta
 };
