@@ -99,13 +99,24 @@ test("user b can update newly created hackathon", (t) => {
     url: `/hackathons/${hackathonId}`,
     payload: {
       name: "Bingcubator Hack 2015",
-      slug: "bingcubator-hack-2015"
+      slug: "bingcubator-hack-2015",
+      is_published: true
     },
     test(result) {
       t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
       t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
     },
     user: "b"
+  }, t);
+});
+
+
+test("get user c cannot get published hackathon", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/${hackathonId}`,
+    statusCode: 200,
+    user: "c"
   }, t);
 });
 
