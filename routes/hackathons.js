@@ -1,4 +1,5 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
+/*eslint no-invalid-this: 0*/
 import Boom from "boom";
 import { newHackathon, hackathonUpdate, id,
   stringId, paginationWithDeleted } from "../data/validation";
@@ -36,16 +37,15 @@ const register = function (server, options, next) {
           "json_meta"
         ];
 
-        /*eslint-disable no-valid-this */
         const dbQuery = db
           .select(columns)
           .from("hackathons")
           .where({is_published: true})
           .andWhere({deleted: false})
-          .union(() => {
+          .union(function() {
             this.select(columns)
               .from("hackathons")
-              .whereIn("id", () => {
+              .whereIn("id", function () {
                 this.select("hackathon_id")
                   .from("hackathon_admins")
                   .where("user_id", request.userId())
@@ -54,7 +54,7 @@ const register = function (server, options, next) {
           });
 
         if (includeUnpublished) {
-          dbQuery.union(() => {
+          dbQuery.union(function () {
             this.select(columns)
               .from("hackathons")
               .where({"is_published": false});
@@ -62,13 +62,12 @@ const register = function (server, options, next) {
         }
 
         if (includeDeleted) {
-          dbQuery.union(() => {
+          dbQuery.union(function () {
             this.select(columns)
               .from("hackathons")
               .where({"deleted": true});
           });
         }
-        /*eslint-enable no-valid-this */
 
         const countQuery = db.count("*").from(dbQuery.as("res"));
 
