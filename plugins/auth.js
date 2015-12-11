@@ -73,9 +73,6 @@ const register = function (plugin, options, next) {
       return reply(Boom.forbidden(`You must be an admin to request deleted data`));
     }
 
-    if (request.query.include_unpublished && !request.isSuperUser()) {
-      return reply(Boom.forbidden(`You must be an admin to request unpublished data`));
-    }
     return reply.continue();
   });
 

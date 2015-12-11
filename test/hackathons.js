@@ -16,7 +16,7 @@ test("fetch hackathon list", (t) => {
     url: "/hackathons?limit=12",
     hasPagination: true,
     test(result) {
-      t.equal(result.result_count, 1, "shouldn't include unpublished data");
+      t.ok(result.data.every((item) => item.is_published), "shouldn't include unpublished data");
     }
   }, t);
 });
@@ -28,7 +28,7 @@ test("fetch hackathon as admin", (t) => {
     hasPagination: true,
     user: "a",
     test(result) {
-      t.equal(result.result_count, 2, "should include unpublished data");
+      t.ok(result.data.some((item) => !item.is_published), "should include unpublished data");
     }
   }, t);
 });
@@ -325,7 +325,7 @@ test("super user can delete other people's hackathons", (t) => {
 test("super user can fetch all hackathons with include_deleted", (t) => {
   ensure({
     method: "GET",
-    url: `/hackathons?include_deleted=true`,
+    url: `/hackathons?include_deleted=true&include_unpublished=true`,
     statusCode: 200,
     user: "a",
     hasPagination: true,

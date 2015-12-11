@@ -197,8 +197,9 @@ export const credentials = {
 
 export const hackathons = [
   {
-    name: "Hack the planet",
-    slug: "hack-the-planet",
+    name: "First Annual hack the planet",
+    slug: "inaugural-hack-the-planet",
+    tagline: "Because the planet needs hacking",
     description: "Yep, hack the planet!",
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(yesterday),
@@ -214,8 +215,9 @@ export const hackathons = [
     is_public: true
   },
   {
-    name: "Hack the planet, again!",
+    name: "Hack the planet, part two!",
     slug: "hack-the-planet-again",
+    tagline: "Hacking still needed",
     description: "No really, I'm serious... hack the planet!",
     logo_url: "http://example.com/uberhack.gif",
     start_at: new Date(yesterday),
@@ -229,6 +231,24 @@ export const hackathons = [
     json_meta: JSON.stringify({}),
     is_published: false,
     is_public: false
+  },
+  {
+    name: "Happy hack",
+    slug: "happy-hacker-gonna-hack",
+    tagline: "Smiling hackers",
+    description: "It's gonna be fun!",
+    logo_url: "http://example.com/happyhack.gif",
+    start_at: new Date(yesterday),
+    end_at: new Date(fiveDaysFromNow),
+    org: "Hackers LLC",
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    city: "Mumbai",
+    country: "India",
+    color_scheme: "Xbox green",
+    json_meta: JSON.stringify({}),
+    is_published: true,
+    is_public: true
   }
 ];
 

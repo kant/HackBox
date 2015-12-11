@@ -1,9 +1,10 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 /*eslint no-invalid-this: 0*/
 import Boom from "boom";
+import Joi from "joi";
 import { newHackathon, hackathonUpdate, id,
-  stringId, paginationWithDeleted } from "../data/validation";
-import db, { paginate, ensureHackathon } from "../db-connection";
+  stringId, paginationWithDeleted, country } from "../data/validation";
+import db, { paginate, ensureHackathon, hackathonSearch } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -11,70 +12,47 @@ const register = function (server, options, next) {
     path: "/hackathons",
     config: {
       description: "Fetch all hackathons",
+      notes: [
+        `The 'admins_contain' query paramater can either be a `,
+        `user ID or the string 'me' as an alias to fetch your own. `,
+        `Note that anytime you want to include unpublished entries `,
+        `you have to specify the 'include_unpublished=true' as well.`,
+        `So to list all of your own including unpublished do this: `,
+        `GET /hackathons?admins_contain=me&include_unpublished=true `,
+        `Only super users can request include_unpublished for users `,
+        `who are not themselves.`
+      ],
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const { limit, offset } = request.query;
-        const includeDeleted = request.query.include_deleted;
-        const includeUnpublished = request.query.include_unpublished;
+        const requestorId = request.userId();
+        const adminsContain = request.query.admins_contain;
 
-        const columns = [
-          "id",
-          "name",
-          "slug",
-          "logo_url",
-          "start_at",
-          "end_at",
-          "org",
-          "city",
-          "country",
-          "tagline",
-          "color_scheme",
-          "created_at",
-          "updated_at",
-          "deleted",
-          "is_public",
-          "is_published",
-          "json_meta"
-        ];
-
-        const dbQuery = db
-          .select(columns)
-          .from("hackathons")
-          .where({is_published: true})
-          .andWhere({deleted: false})
-          .union(function () {
-            this.select(columns)
-              .from("hackathons")
-              .whereIn("id", function () {
-                this.select("hackathon_id")
-                  .from("hackathon_admins")
-                  .where("user_id", request.userId())
-                  .andWhere({deleted: false});
-              });
-          });
-
-        if (includeUnpublished) {
-          dbQuery.union(function () {
-            this.select(columns)
-              .from("hackathons")
-              .where({"is_published": false});
-          });
+        // allow users to pass `me` instead of full user ID
+        // if they're just wanting to see their own hackathons
+        if (adminsContain === "me") {
+          request.query.admins_contain = requestorId;
         }
 
-        if (includeDeleted) {
-          dbQuery.union(function () {
-            this.select(columns)
-              .from("hackathons")
-              .where({"deleted": true});
-          });
+        const askingForOwn = request.query.admins_contain === requestorId;
+
+        if (request.query.include_unpublished) {
+          if (!request.isSuperUser() && !askingForOwn) {
+            return reply(Boom.forbidden(`Can only request your own unpublished unless admin`));
+          }
         }
 
-        const countQuery = db.count("*").from(dbQuery.as("res"));
+        const response = hackathonSearch(request.query);
+        const countQuery = db.count("*").from(response.as("res"));
 
-        reply(paginate(dbQuery, {limit, offset, countQuery}));
+        reply(paginate(response, {limit, offset, countQuery}));
       },
       validate: {
-        query: paginationWithDeleted
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          admins_contain: Joi.string(),
+          country
+        })
       }
     }
   });

@@ -294,3 +294,64 @@ export const userSearch = (queryObj) => {
 
   return query;
 };
+
+export const hackathonSearch = (queryObj) => {
+  const {
+    include_deleted, include_unpublished, country,
+    admins_contain, search
+  } = queryObj;
+
+  // we don't include all fields
+  // because some of them could be quite large
+  const columns = [
+    "id",
+    "name",
+    "slug",
+    "logo_url",
+    "start_at",
+    "end_at",
+    "org",
+    "city",
+    "country",
+    "tagline",
+    "color_scheme",
+    "created_at",
+    "updated_at",
+    "deleted",
+    "is_public",
+    "is_published",
+    "json_meta"
+  ];
+
+  const query = client.select(columns).from("hackathons");
+
+  if (search) {
+    query.where(function () {
+      this.where("name", "like", `%${search}%`)
+        .orWhere("slug", "like", `%${search}%`)
+        .orWhere("tagline", "like", `%${search}%`);
+    });
+  }
+
+  if (!include_unpublished) {
+    query.andWhere({is_published: true});
+  }
+
+  if (!include_deleted) {
+    query.andWhere({deleted: false});
+  }
+
+  if (admins_contain) {
+    query.whereIn("id", function () {
+      this.select("hackathon_id")
+        .from("hackathon_admins")
+        .where("user_id", admins_contain);
+    });
+  }
+
+  if (country) {
+    query.andWhere({country});
+  }
+
+  return query;
+};
