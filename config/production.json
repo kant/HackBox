@@ -2,7 +2,7 @@
   "db": {
     "client": "mysql",
     "connection": {
-      "database": "test",
+      "database": "$DB_CONNECTION_DATABASE",
       "host": "$DB_CONNECTION_HOST",
       "user": "$DB_CONNECTION_USER",
       "password": "$DB_CONNECTION_PASSWORD"
