@@ -32,6 +32,8 @@ So if you're seeing things go missing from request payloads, it's because they'r
 
 Currently using [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
 
+There are a few other exceptions specified via `/*eslint*/` comments in certain files.
+
 ## Ops setup and deploy
 
 This is deployed on Azure but is meant to be as flexible/configurable as possible. It's a secondary goal to make it configured to the point where it could be deployed by anybody from GitHub using a [Deploy to Azure button](http://www.bradygaster.com/post/the-deploy-to-azure-button).
