@@ -14,14 +14,14 @@ const register = function (server, options, next) {
       description: "Fetch all hackathons",
       notes: [
         `The 'admins_contain' query paramater can either be a `,
-        `user ID or the string 'me' as an alias to fetch your own. `,
+        `user ID or the string 'me' as an alias to fetch your own.<br/><br/>`,
         `Note that anytime you want to include unpublished entries `,
-        `you have to specify the 'include_unpublished=true' as well.`,
-        `So to list all of your own including unpublished do this: `,
-        `GET /hackathons?admins_contain=me&include_unpublished=true `,
-        `Only super users can request include_unpublished for users `,
+        `you have to specify the \`include_unpublished=true\` as well.`,
+        `So to list all of your own including unpublished you'd do: `,
+        `\`GET /hackathons?admins_contain=me&include_unpublished=true\`.<br/><br/>`,
+        `Only super users can request \`include_unpublished\` for users `,
         `who are not themselves.`
-      ],
+      ].join(""),
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const { limit, offset } = request.query;
