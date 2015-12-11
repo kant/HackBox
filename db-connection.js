@@ -169,6 +169,8 @@ export const paginate = (query, {limit, offset, countQuery}) => {
     }
   });
 
+  console.log(query.toString())
+
   return Promise.all([
     countQuery.count(),
     query

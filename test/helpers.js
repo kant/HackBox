@@ -74,6 +74,18 @@ export default (opts, t) => {
       t.ok(!parsed.hasOwnProperty("offset"), "should not have property: \"offset\"");
     }
 
+    // ensure we never get duplicates
+    if (parsed && parsed.data) {
+      const ids = {};
+      let hasDupes = false;
+      parsed.data.forEach(({id}) => {
+        if (ids[id]) {
+          hasDupes = true;
+        }
+      });
+      t.ok(!hasDupes, "no duplicate results");
+    }
+
     if (opts.schema) {
       if (opts.hasPagination) {
         parsed.data.forEach((item) => {

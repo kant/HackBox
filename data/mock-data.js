@@ -89,9 +89,10 @@ export const users = [
 ];
 
 count = 50;
+const dynamicallyGeneratedUsers = [];
 while (count--) {
   const name = faker.name.findName();
-  users.push(Object.assign({}, users[2], {
+  const user = Object.assign({}, users[2], {
     id: faker.random.uuid(),
     name,
     family_name: name.split(" ")[1],
@@ -115,7 +116,9 @@ while (count--) {
       linkedin: faker.internet.userName()
     }),
     json_meta: JSON.stringify({})
-  }));
+  });
+  users.push(user);
+  dynamicallyGeneratedUsers.push(user);
 }
 
 // fake decoded credentials
@@ -363,6 +366,16 @@ export const members = [
   }
 ];
 
+// add a user 3 to a bunch of projects in hackathon 2
+// this supports our testing for duplicate results
+count = 5;
+while (count--) {
+  members.push({
+    user_id: users[2].id,
+    project_id: count + 3
+  });
+}
+
 export const comments = [
   {
     body: "Try them and you may, I say.",
@@ -393,3 +406,11 @@ export const participants = [
     json_participation_meta: JSON.stringify({})
   }
 ];
+
+// add all dynamically generated users as participants of
+// hackathon 2
+dynamicallyGeneratedUsers.forEach(({id}) => participants.push({
+  user_id: id,
+  hackathon_id: 2,
+  json_participation_meta: JSON.stringify({})
+}));

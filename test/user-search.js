@@ -3,10 +3,11 @@ import test from "tape";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
 
-/*
+const USER_C_ID = mockUsers[2].id;
+
 // test search fields
 const testCoverageOfSearchFields = (field, value) => {
-  test(`search should cover '${field}'`, (t) => {
+  test(`search should cover '${field}' searching for ${value}`, (t) => {
     ensure({
       method: "GET",
       url: `/hackathons/1/participants?search=${value}`,
@@ -41,6 +42,39 @@ testCoverageOfSearchFields("email", "hjoreteg@gmail.com");
 testCoverageOfSearchFields("bio", "some js dev");
 testCoverageOfSearchFields("working_on", "progressive web app");
 testCoverageOfSearchFields("expertise", "jsstuf");
+
+
+/*
+// user C is on 5 different projects in hackathon two
+// ensuring there are no duplicates is part of the
+// standard tests performed by `ensure` on all results.
+// So this is one that's likely to cause that scenario
+test(`user C is on lots of projects, make sure there's no duplicates`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/2/participants?search=sam`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      console.log(result)
+      t.ok(result.data.length > 0, "has at least one result");
+      t.ok(result.data.some(({id}) => id === USER_C_ID), "contains sam");
+    }
+  }, t);
+});
+test(`user C is on lots of projects, make sure there's no duplicates in global search`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/user-search?search=sam`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      console.log(result)
+      t.ok(result.data.length > 0, "has at least one result");
+      t.ok(result.data.some(({id}) => id === USER_C_ID), "contains sam");
+    }
+  }, t);
+});
 */
 
 const containsId = (result, id) => {
