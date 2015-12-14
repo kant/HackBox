@@ -105,18 +105,20 @@ export const ensureProject = (hackathonId, id, opts = {checkOwner: false, allowD
     .where("views.project_id", "=", id)
     .as("views");
 
-  return client("projects").select("*", likesCount, sharesCount, viewsCount).where({id}).then(rows => {
-    const project = rows[0];
+  return client("projects")
+    .select("*", likesCount, sharesCount, viewsCount)
+    .where({id}).then((rows) => {
+      const project = rows[0];
 
-    if (!project || project.deleted && !opts.allowDeleted) {
-      throw Boom.notFound(`No project ${id} exists.`);
-    } else if (project.hackathon_id !== hackathonId) {
-      throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);
-    } else if (opts.checkOwner && project.owner_id !== opts.checkOwner) {
-      throw Boom.forbidden(`You must be the project owner to modify it`);
-    }
-    return project;
-  });
+      if (!project || project.deleted && !opts.allowDeleted) {
+        throw Boom.notFound(`No project ${id} exists.`);
+      } else if (project.hackathon_id !== hackathonId) {
+        throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);
+      } else if (opts.checkOwner && project.owner_id !== opts.checkOwner) {
+        throw Boom.forbidden(`You must be the project owner to modify it`);
+      }
+      return project;
+    });
 };
 
 export const ensureComment = (projectId, id, opts = {checkOwner: false}) => {
