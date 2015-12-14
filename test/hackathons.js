@@ -33,10 +33,17 @@ test("fetch hackathon as admin", (t) => {
   }, t);
 });
 
+// we'll use this to store results between tests
+// to ensure PUT doesn't accidentally change anything
+let createdHackathon;
+
 test("user b can create a hackathon", (t) => {
   const properties = {
     name: "Bingcubator Hack 2025",
     slug: "bingcubator-hack-2025",
+    description: "description",
+    tagline: "tagline",
+    header_image_url: "http://example.com/header.gif",
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(),
     end_at: new Date(Date.now() + 86400 * 5),
@@ -54,12 +61,14 @@ test("user b can create a hackathon", (t) => {
     statusCode: 201,
     payload: properties,
     test(result) {
+      createdHackathon = result;
       hackathonId = result.id;
       const value = result.meta && result.meta.some_key;
       t.equal(value, "some_value", "make sure meta keys are persisted");
       t.ok(result.admins.length, "should have creator listed as admin");
       t.equal(result.is_published, false, "should be unpublished");
       t.equal(result.color_scheme, "Visual Studio purple", "default should be populated");
+      t.ok(result.updated_at, "make sure this result has an updated_at");
     },
     user: "b"
   }, t);
@@ -93,21 +102,37 @@ test("get user c cannot get newly created hackathon", (t) => {
 });
 
 test("user b can update newly created hackathon", (t) => {
-  ensure({
-    method: "PUT",
-    url: `/hackathons/${hackathonId}`,
-    payload: {
-      name: "Bingcubator Hack 2015",
-      slug: "bingcubator-hack-2015",
-      is_published: true
-    },
-    test(result) {
-      t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
-      t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
-      t.equal(result.color_scheme, "Visual Studio purple", "update should no effect other fields");
-    },
-    user: "b"
-  }, t);
+  // make sure our updated at timestamp
+  // has waited long enough to actually be
+  // able to test if it's different
+  // this is important since we only store
+  // time down to the second
+  setTimeout(() => {
+    ensure({
+      method: "PUT",
+      url: `/hackathons/${hackathonId}`,
+      payload: {
+        is_published: true
+      },
+      test(result) {
+        t.equal(result.is_published, true, "should now be published");
+
+        // make sure nothing else has been edited by the update
+        t.ok(result.updated_at, "make sure this result has an updated at");
+        t.notEqual(createdHackathon.updated_at, result.updated_at, "`updated_at` should change");
+
+        // copy these properties over
+        createdHackathon.is_published = result.is_published;
+        createdHackathon.updated_at = result.updated_at;
+
+        // now the two should be identical, nothing else
+        // should have changed.
+        t.deepEqual(createdHackathon, result, "should now be equivalent");
+
+      },
+      user: "b"
+    }, t);
+  }, 1100);
 });
 
 

@@ -66,12 +66,18 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const ownerId = request.userId();
         let hackathonId;
+        const { payload } = request;
+
+        const now = new Date();
+
+        payload.created_at = now;
+        payload.updated_at = now;
 
         // Use transaction to insert hackathon and
         // corresponding entry in admins table
         const response = db.transaction((trx) => {
           return trx
-            .insert(request.payload)
+            .insert(payload)
             .into("hackathons")
             .then((rows) => {
               hackathonId = rows[0];
