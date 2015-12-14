@@ -30,7 +30,9 @@ exports.up = function (knex) {
       t.text("rules");
       t.text("schedule");
       t.text("quick_links");
+      t.text("resources");
       t.string("logo_url");
+      t.string("header_image_url");
       t.dateTime("start_at");
       t.dateTime("end_at");
       t.string("org");
@@ -39,6 +41,10 @@ exports.up = function (knex) {
       t.string("color_scheme");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
+      t.boolean("show_name").defaultTo(true);
+      t.boolean("show_judges").defaultTo(false);
+      t.boolean("show_rules").defaultTo(false);
+      t.boolean("show_schedule").defaultTo(false);
       t.boolean("deleted").defaultTo(false);
       t.boolean("is_public").defaultTo(true);
       t.boolean("is_published").defaultTo(false);

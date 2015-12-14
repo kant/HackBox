@@ -22,7 +22,9 @@
 // 3. `true` will be translated to `1`, false will be translated
 //    to `0` and vice versa.
 const BOOLEAN_KEYS = [
-  "deleted", "blocked", "is_public", "is_published", "needs_hackers", "has_project"
+  "deleted", "blocked", "is_public", "is_published",
+  "needs_hackers", "has_project", "show_name",
+  "show_rules", "show_judges", "show_schedule"
 ];
 
 const expandResult = (obj) => {

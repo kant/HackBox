@@ -89,21 +89,29 @@ const hackathonBase = {
   rules: emptyString,
   schedule: emptyString,
   quick_links: emptyString,
-  logo_url: Joi.string().max(255).uri().default("http://placehold.it/150x150"),
+  logo_url: Joi.string().max(255).uri(),
+  header_image_url: Joi.string().max(255).uri().empty("").default(""),
   start_at: Joi.date(),
   end_at: Joi.date(),
   org: emptyString,
   city: emptyString,
   country,
-  color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[0]),
-  is_public: Joi.boolean().default(true),
-  is_published: Joi.boolean().default(false),
+  color_scheme: Joi.any().valid(colorSchemes),
+  is_public: Joi.boolean(),
+  is_published: Joi.boolean(),
   deleted: Joi.boolean(),
+  show_name: Joi.boolean(),
+  show_judges: Joi.boolean(),
+  show_rules: Joi.boolean(),
+  show_schedule: Joi.boolean(),
   meta
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "logo_url", "start_at", "end_at", "city", "country");
+  .requiredKeys("name", "slug", "logo_url", "start_at", "end_at", "city", "country")
+  .keys({
+    color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[3])
+  });
 export const hackathon = newHackathon.keys({
   id,
   deleted: Joi.boolean()

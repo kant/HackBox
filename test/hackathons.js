@@ -59,6 +59,7 @@ test("user b can create a hackathon", (t) => {
       t.equal(value, "some_value", "make sure meta keys are persisted");
       t.ok(result.admins.length, "should have creator listed as admin");
       t.equal(result.is_published, false, "should be unpublished");
+      t.equal(result.color_scheme, "Visual Studio purple", "default should be populated");
     },
     user: "b"
   }, t);
@@ -103,6 +104,7 @@ test("user b can update newly created hackathon", (t) => {
     test(result) {
       t.equal(result.name, "Bingcubator Hack 2015", "name should have changed");
       t.equal(result.slug, "bingcubator-hack-2015", "slug should have changed");
+      t.equal(result.color_scheme, "Visual Studio purple", "update should no effect other fields");
     },
     user: "b"
   }, t);
