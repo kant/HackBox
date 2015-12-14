@@ -37,7 +37,6 @@ test("user b can create a hackathon", (t) => {
   const properties = {
     name: "Bingcubator Hack 2025",
     slug: "bingcubator-hack-2025",
-    description: "Yo!",
     logo_url: "http://example.com/hack.gif",
     start_at: new Date(),
     end_at: new Date(Date.now() + 86400 * 5),

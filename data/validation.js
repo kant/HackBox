@@ -103,7 +103,7 @@ const hackathonBase = {
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "description", "logo_url", "start_at", "end_at", "city", "country");
+  .requiredKeys("name", "slug", "logo_url", "start_at", "end_at", "city", "country");
 export const hackathon = newHackathon.keys({
   id,
   deleted: Joi.boolean()
