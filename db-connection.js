@@ -269,6 +269,23 @@ export const userSearch = (queryObj) => {
   let query;
 
   if (hackathon_id) {
+    /*
+      It would be nice to have this all written using knex's query building
+      capabilities, but I had trouble doing so.
+
+      The important thing to understand is that query creates a derived
+      table that contains user data with two additional fields:
+        - the related `participants.json_participation_meta`
+        - a derived field called 'has_project` that is coerced into a boolean
+
+      The reason it's written as `client.select().joinRaw(` rather than just
+      using `client.raw()` is because the latter doesn't allow for modifying
+      the query as we do later. For example, when using knex.raw `query.where`
+      isn't a function.
+
+      Also, please note that `has_project` only works when passing a `hackathon_id`
+      to scope it. This is enforced at the route level.
+    */
     const rawQuery = [
       "from (select users.*, participants.json_participation_meta,",
       "(select case when exists",
@@ -279,7 +296,7 @@ export const userSearch = (queryObj) => {
       "where participants.hackathon_id = ?) as derived"
     ].join(" ");
 
-    query = client.select("*").joinRaw(rawQuery, [hackathon_id, hackathon_id]);
+    query = client.select().joinRaw(rawQuery, [hackathon_id, hackathon_id]);
   } else {
     query = client("users");
   }

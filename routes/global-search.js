@@ -43,9 +43,8 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { query } = request;
         const { limit, offset } = query;
-        const gotHasProjectParam = query.has_project === true || query.has_project === false;
 
-        if (gotHasProjectParam && !query.hackathon_id) {
+        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
           return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
         }
         const response = userSearch(request.query);
