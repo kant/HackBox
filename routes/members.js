@@ -44,7 +44,8 @@ const register = function (server, options, next) {
         const checkOwner = request.isSuperUser() ? false : request.userId();
         const member = {
           user_id: userId,
-          project_id: projectId
+          project_id: projectId,
+          hackathon_id: hackathonId
         };
 
         const response = Promise.all([

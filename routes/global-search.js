@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Joi from "joi";
+import Boom from "boom";
 import { paginationWithDeleted, role, product,
   optionalId, customerType, country } from "../data/validation";
 import { paginate, projectSearch, userSearch } from "../db-connection";
@@ -40,7 +41,13 @@ const register = function (server, options, next) {
       description: "Search users",
       tags: ["api"],
       handler(request, reply) {
-        const { limit, offset } = request.query;
+        const { query } = request;
+        const { limit, offset } = query;
+        const gotHasProjectParam = query.has_project === true || query.has_project === false;
+
+        if (gotHasProjectParam && !query.hackathon_id) {
+          return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
+        }
         const response = userSearch(request.query);
 
         reply(paginate(response, {limit, offset}));

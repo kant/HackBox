@@ -24,12 +24,7 @@ const register = function (server, options, next) {
           query.hackathon_id = hackathonId;
 
           const countQuery = userSearch(query);
-
-          const withParticipantData = countQuery
-            .clone()
-            .select("participants.json_participation_meta");
-
-          return paginate(withParticipantData, {limit, offset, countQuery});
+          return paginate(countQuery.clone(), {limit, offset, countQuery});
         });
 
         reply(response);

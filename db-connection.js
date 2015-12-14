@@ -169,8 +169,6 @@ export const paginate = (query, {limit, offset, countQuery}) => {
     }
   });
 
-  console.log(query.toString())
-
   return Promise.all([
     countQuery.count(),
     query
@@ -250,49 +248,51 @@ export const userSearch = (queryObj) => {
     role, product_focus, country
   } = queryObj;
 
-  const query = client("users")
-    .leftJoin("participants", "participants.user_id", "=", "users.id")
-    .leftJoin("members", function () {
-      this
-        .on("members.user_id", "=", "users.id")
-        .andOn("members.user_id", "=", "participants.user_id");
-    });
+  let query;
 
-  if (include_deleted) {
-    query.andWhere("users.deleted", false);
-  }
   if (hackathon_id) {
-    query.andWhere("participants.hackathon_id", hackathon_id);
+    const rawQuery = [
+      "from (select users.*, participants.json_participation_meta,",
+      "(select case when exists",
+      "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
+      "then true else false end)",
+      "as has_project from users",
+      "inner join participants on participants.user_id = users.id",
+      "where participants.hackathon_id = ?) as derived"
+    ].join(" ");
+
+    query = client.select("*").joinRaw(rawQuery, [hackathon_id, hackathon_id]);
+  } else {
+    query = client("users");
+  }
+
+  if (!include_deleted) {
+    query.andWhere("deleted", false);
   }
   if (search) {
     query.where(function () {
-      this.where("users.name", "like", `%${search}%`)
-        .orWhere("users.email", "like", `%${search}%`)
-        .orWhere("users.bio", "like", `%${search}%`)
-        .orWhere("users.working_on", "like", `%${search}%`)
-        .orWhere("users.expertise", "like", `%${search}%`);
+      this.where("name", "like", `%${search}%`)
+        .orWhere("email", "like", `%${search}%`)
+        .orWhere("bio", "like", `%${search}%`)
+        .orWhere("working_on", "like", `%${search}%`)
+        .orWhere("expertise", "like", `%${search}%`);
     });
   }
   if (role) {
-    query.andWhere("users.primary_role", role);
+    query.andWhere("primary_role", role);
   }
   if (product_focus) {
-    query.andWhere("users.product_focus", product_focus);
+    query.andWhere("product_focus", product_focus);
   }
   if (country) {
-    query.andWhere("users.country", country);
+    query.andWhere("country", country);
   }
-  if (has_project === false || has_project === true) {
-    if (has_project) {
-      query.whereNotNull("members.user_id");
-    } else {
-      query.whereNull("members.user_id");
-    }
+  if (has_project === true || has_project === false) {
+    query.andWhere("has_project", has_project);
   }
 
   // set order by
-  query.orderBy("users.name", "asc");
-  query.select("users.*");
+  query.orderBy("name", "asc");
 
   return query;
 };

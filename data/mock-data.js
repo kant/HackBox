@@ -85,6 +85,32 @@ export const users = [
       linkedin: "SamIAm"
     }),
     json_meta: JSON.stringify({})
+  },
+  {
+    id: "76se6caa-921c-47f8-905e-d417c0eb78a8",
+    name: "Fishy",
+    family_name: "Fillet",
+    given_name: "Fisherton",
+    email: "f.ish@fishes.com",
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    expertise: "persistance",
+    primary_role: "Marketing",
+    product_focus: "Windows",
+    country: "USA",
+    working_on: "Swimming and eating",
+    bio: "Blub, blub, blub",
+    json_profile: JSON.stringify({
+      job_title: "Official Fish",
+      company_name: "Ocean Inc.",
+      photo_url: "https://placehold.it/150x150",
+      address_1: "4 Ocean Street",
+      address_2: "",
+      twitter: "fishy",
+      facebook: "fishy",
+      linkedin: "fishy"
+    }),
+    json_meta: JSON.stringify({})
   }
 ];
 
@@ -351,28 +377,32 @@ export const hackathonAdmins = [
 export const members = [
   {
     user_id: users[0].id,
-    project_id: 1
+    project_id: 1,
+    hackathon_id: 1
   },
   {
     user_id: users[1].id,
-    project_id: 1
+    project_id: 1,
+    hackathon_id: 1
   },
   // third user has project in hackathon #2
   // this is important to test `has_project`
   // filtering of user search
   {
     user_id: users[2].id,
-    project_id: 3
+    project_id: 3,
+    hackathon_id: 2
   }
 ];
 
-// add a user 3 to a bunch of projects in hackathon 2
+// add a user 4 to a bunch of projects in hackathon 2
 // this supports our testing for duplicate results
 count = 5;
 while (count--) {
   members.push({
-    user_id: users[2].id,
-    project_id: count + 3
+    user_id: users[3].id,
+    project_id: count + 3,
+    hackathon_id: 2
   });
 }
 
@@ -402,6 +432,11 @@ export const participants = [
   },
   {
     user_id: users[1].id,
+    hackathon_id: 2,
+    json_participation_meta: JSON.stringify({})
+  },
+  {
+    user_id: users[3].id,
     hackathon_id: 2,
     json_participation_meta: JSON.stringify({})
   }

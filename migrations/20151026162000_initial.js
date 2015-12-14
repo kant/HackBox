@@ -90,6 +90,7 @@ exports.up = function (knex) {
     .createTable("members", (t) => {
       t.string("user_id").notNull().references("users.id");
       t.integer("project_id").notNull().unsigned().references("projects.id");
+      t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.timestamp("joined_at").defaultTo(knex.fn.now());
     })
     .createTable("likes", (t) => {
