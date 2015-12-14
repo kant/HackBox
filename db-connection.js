@@ -89,7 +89,23 @@ export const ensureHackathon = (id, opts = {
 };
 
 export const ensureProject = (hackathonId, id, opts = {checkOwner: false, allowDeleted: false}) => {
-  return client("projects").where({id}).then((rows) => {
+  const likesCount = client.select()
+    .count("likes.project_id")
+    .from("likes")
+    .where("likes.project_id", "=", id)
+    .as("likes");
+  const sharesCount = client.select()
+    .count("shares.project_id")
+    .from("shares")
+    .where("shares.project_id", "=", id)
+    .as("shares");
+  const viewsCount = client.select()
+    .count("views.project_id")
+    .from("views")
+    .where("views.project_id", "=", id)
+    .as("views");
+
+  return client("projects").select("*", likesCount, sharesCount, viewsCount).where({id}).then(rows => {
     const project = rows[0];
 
     if (!project || project.deleted && !opts.allowDeleted) {
