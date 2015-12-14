@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { pagination, updateUser, stringId,
+import { updateUser, stringId,
   newUser, paginationWithDeleted } from "../data/validation";
 import db, { paginate, ensureUser } from "../db-connection";
 
@@ -14,30 +14,14 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const includeDeleted = request.query.include_deleted;
         const { limit, offset } = request.query;
-        const query = db("users").where(includeDeleted ? {} : {deleted: false});
+        const query = db("users")
+          .where(includeDeleted ? {} : {deleted: false})
+          .orderBy("name", "asc");
 
         reply(paginate(query, {limit, offset}));
       },
       validate: {
         query: paginationWithDeleted
-      }
-    }
-  });
-
-  server.route({
-    method: "GET",
-    path: "/auth-test",
-    config: {
-      description: "Temporary",
-      auth: {
-        strategy: "bearer",
-        mode: "try"
-      },
-      handler(request, reply) {
-        reply(request.auth);
-      },
-      validate: {
-        query: pagination
       }
     }
   });

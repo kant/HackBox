@@ -14,9 +14,11 @@ const register = function (server, options, next) {
         const { hackathonId, projectId } = request.params;
         const { limit, offset } = request.query;
 
-        const commentsQuery = db("comments").where({
-          project_id: projectId
-        });
+        const commentsQuery = db("comments")
+          .where({
+            project_id: projectId
+          })
+          .orderBy("created_at", "asc");
 
         const result = Promise.all([
           ensureProject(hackathonId, projectId),
