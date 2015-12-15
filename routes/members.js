@@ -19,7 +19,9 @@ const register = function (server, options, next) {
           db("members").where({project_id: projectId}).select("user_id")
         ]).then((results) => {
           const memberIds = results[1].map((member) => member.user_id);
-          return db("users").whereIn("id", memberIds);
+          return db("users")
+            .whereIn("id", memberIds)
+            .orderBy("name", "asc");
         });
 
         reply(result);

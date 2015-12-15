@@ -413,5 +413,7 @@ export const hackathonSearch = (queryObj) => {
     query.andWhere({country});
   }
 
+  query.orderBy("created_at", "desc");
+
   return query;
 };
