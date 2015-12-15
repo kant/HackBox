@@ -43,7 +43,7 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { userId, hackathonId, projectId } = request.params;
-        const checkOwner = request.isSuperUser() ? false : request.userId();
+        const checkMember = request.isSuperUser() ? false : request.userId();
         const member = {
           user_id: userId,
           project_id: projectId,
@@ -51,7 +51,7 @@ const register = function (server, options, next) {
         };
 
         const response = Promise.all([
-          ensureProject(hackathonId, projectId, {checkOwner}),
+          ensureProject(hackathonId, projectId, {checkMember}),
           ensureUser(userId),
           db("members").where(member)
         ]).then((result) => {
@@ -85,11 +85,12 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId, userId } = request.params;
-        const checkOwner = request.isSuperUser() ? false : request.userId();
+        const checkMember = request.isSuperUser() ? false : request.userId();
 
-        const response = Promise.all([
-          ensureProject(hackathonId, projectId, {checkOwner})
-        ]).then(() => {
+        const response = ensureProject(hackathonId, projectId, {checkMember}).then((project) => {
+          if (project.owner_id === request.userId()) {
+            throw Boom.forbidden(`An owner cannot remove themselves from a project`);
+          }
           return db("members").where({
             user_id: userId,
             project_id: projectId

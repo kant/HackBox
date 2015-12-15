@@ -88,7 +88,12 @@ export const ensureHackathon = (id, opts = {
   });
 };
 
-export const ensureProject = (hackathonId, id, opts = {checkOwner: false, allowDeleted: false}) => {
+export const ensureProject = (hackathonId, id, opts = {
+  checkOwner: false,
+  checkMember: false,
+  allowDeleted: false
+}) => {
+  // our count subqueries
   const likesCount = client.select()
     .count("likes.project_id")
     .from("likes")
@@ -105,20 +110,38 @@ export const ensureProject = (hackathonId, id, opts = {checkOwner: false, allowD
     .where("views.project_id", "=", id)
     .as("views");
 
-  return client("projects")
-    .select("*", likesCount, sharesCount, viewsCount)
-    .where({id}).then((rows) => {
-      const project = rows[0];
+  // our main aggregate query
+  const projectQuery = client("projects")
+    .select("projects.*", likesCount, sharesCount, viewsCount)
+    .where({id});
+  // member query which we'll use to augment project results
+  const memberQuery = client("users").distinct().select("users.*")
+    .leftOuterJoin("members", "members.user_id", "=", "users.id")
+    .where("members.project_id", "=", id)
+    .andWhere("members.hackathon_id", "=", hackathonId);
 
-      if (!project || project.deleted && !opts.allowDeleted) {
-        throw Boom.notFound(`No project ${id} exists.`);
-      } else if (project.hackathon_id !== hackathonId) {
-        throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);
-      } else if (opts.checkOwner && project.owner_id !== opts.checkOwner) {
-        throw Boom.forbidden(`You must be the project owner to modify it`);
-      }
-      return project;
-    });
+  return Promise.all([
+    projectQuery,
+    memberQuery
+  ]).then(([projectResult, members]) => {
+    const project = projectResult[0];
+
+    if (!project || project.deleted && !opts.allowDeleted) {
+      throw Boom.notFound(`No project ${id} exists.`);
+    } else if (project.hackathon_id !== hackathonId) {
+      throw Boom.notFound(`No project with id ${id} was found in hackathon ${hackathonId}.`);
+    } else if (opts.checkOwner && project.owner_id !== opts.checkOwner) {
+      throw Boom.forbidden(`You must be the project owner to modify it`);
+    }
+
+    if (opts.checkMember && !members.some((member) => member.id === opts.checkMember)) {
+      throw Boom.forbidden("you must be a project member to do this");
+    }
+
+    project.members = members;
+
+    return project;
+  });
 };
 
 export const ensureComment = (projectId, id, opts = {checkOwner: false}) => {
