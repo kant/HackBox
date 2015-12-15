@@ -53,13 +53,18 @@ export const paginationResults = pagination.keys({
   Users
 */
 const userBase = {
+  id: stringId,
   expertise: emptyString,
   working_on: emptyString,
   primary_role: role,
   product_focus: product,
   country,
   meta,
-  deleted: Joi.boolean()
+  deleted: Joi.boolean(),
+  name: Joi.string().min(1).max(140).trim(),
+  family_name: Joi.string().min(1).max(140).trim(),
+  given_name: Joi.string().min(1).max(140).trim(),
+  email: Joi.string().email().trim()
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
@@ -68,10 +73,10 @@ export const user = newUser.keys({
   expertise: stringWithDefault,
   working_on: stringWithDefault,
   deleted: Joi.boolean().required(),
-  name: Joi.string().min(1).max(140).trim().required(),
-  family_name: Joi.string().min(1).max(140).trim().required(),
-  given_name: Joi.string().min(1).max(140).trim().required(),
-  email: Joi.string().email().trim().required(),
+  name: userBase.name.required(),
+  family_name: userBase.family_name.required(),
+  given_name: userBase.given_name.required(),
+  email: userBase.email.required(),
   profile: meta.required()
 });
 
