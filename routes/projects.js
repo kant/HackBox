@@ -51,6 +51,7 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const payload = request.payload;
         const userId = request.userId();
+        let projectId;
 
         // always set the hackathon_id from the URL
         payload.hackathon_id = request.params.hackathonId;
@@ -69,11 +70,24 @@ const register = function (server, options, next) {
         }
 
         const response = ensureHackathon(hackathonId).then(() => {
-          return db("projects").insert(payload);
-        }).then((result) => {
-          return db("projects").where({id: result[0]});
-        }).then((result) => {
-          return request.generateResponse(result[0]).code(201);
+          return db.transaction((trx) => {
+            return trx("projects")
+              .insert(payload)
+              .then((results) => {
+                // store our project ID
+                projectId = results[0];
+                return trx("members")
+                  .insert({
+                    user_id: payload.owner_id,
+                    project_id: projectId,
+                    hackathon_id: hackathonId
+                  });
+              });
+          });
+        }).then(() => {
+          return ensureProject(hackathonId, projectId);
+        }).then((data) => {
+          return request.generateResponse(data).code(201);
         });
 
         reply(response);
@@ -140,16 +154,14 @@ const register = function (server, options, next) {
         }
 
         const response = ensureProject(hackathonId, projectId, {
-          checkOwner: ownerId,
+          checkMember: ownerId,
           allowDeleted: isSuperUser
         }).then(() => {
           return db("projects")
             .where(projectObj)
             .update(payload);
         }).then(() => {
-          return db("projects").where(projectObj);
-        }).then((result) => {
-          return result[0];
+          return ensureProject(hackathonId, projectId);
         });
 
         reply(response);

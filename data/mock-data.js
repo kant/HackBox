@@ -385,6 +385,11 @@ export const members = [
     project_id: 1,
     hackathon_id: 1
   },
+  {
+    user_id: users[1].id,
+    project_id: 2,
+    hackathon_id: 1
+  },
   // third user has project in hackathon #2
   // this is important to test `has_project`
   // filtering of user search

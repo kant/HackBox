@@ -65,6 +65,8 @@ test("new project is GET-able", (t) => {
     schema: project,
     statusCode: 200,
     test(result) {
+      t.equal(result.members.length, 1, "project should have one member");
+      t.equal(result.members[0].id, bUserId, "owner should be member");
       t.equal(result.owner_id, bUserId, "Owner ID should be user who created it");
     }
   }, t);
@@ -98,7 +100,7 @@ test("super users can edit created project", (t) => {
   }, t);
 });
 
-test("non owner (user 'c') cannot edit project", (t) => {
+test("non member (user 'c') cannot edit project", (t) => {
   ensure({
     method: "PUT",
     url: `/hackathons/1/projects/${createdProjectId}`,
@@ -110,7 +112,7 @@ test("non owner (user 'c') cannot edit project", (t) => {
   }, t);
 });
 
-test("non-owner (user 'c') cannot delete project", (t) => {
+test("non-member (user 'c') cannot delete project", (t) => {
   ensure({
     method: "DELETE",
     url: `/hackathons/1/projects/${createdProjectId}`,
@@ -308,4 +310,3 @@ test("track same project view again", (t) => {
     statusCode: 204
   }, t);
 });
-
