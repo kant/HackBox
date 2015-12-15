@@ -107,6 +107,47 @@ test("deleted users can re-activate themselves by signing up again", (t) => {
   }, t);
 });
 
+test("super users can add others by using 'trust_payload' paramater", (t) => {
+  const userProps = {
+    id: "some-id",
+    name: "some name",
+    family_name: "name",
+    given_name: "some",
+    email: "some@email.com"
+  };
+  ensure({
+    method: "POST",
+    url: `/users?trust_payload=true`,
+    payload: userProps,
+    statusCode: 201,
+    test(result) {
+      t.equal(result.id, userProps.id, "user should take id of user");
+      t.equal(result.name, userProps.name, "user should take name of user");
+      t.equal(result.family_name, userProps.family_name, "user should take family_name of user");
+      t.equal(result.given_name, userProps.given_name, "user should take given_name of user");
+      t.equal(result.email, userProps.email, "user should take email of user");
+    },
+    user: "a"
+  }, t);
+});
+
+test("regular users cannot pass 'trust_payload' paramater", (t) => {
+  const userProps = {
+    id: "some-id",
+    name: "some name",
+    family_name: "name",
+    given_name: "some",
+    email: "some@email.com"
+  };
+  ensure({
+    method: "POST",
+    url: `/users?trust_payload=true`,
+    payload: userProps,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
 test("getting a user has expected fields", (t) => {
   ensure({
     method: "GET",
