@@ -231,7 +231,7 @@ export const paginate = (query, {limit, offset, countQuery}) => {
 export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, needs_hackers, country,
-    needed_role, needed_expertise, product_focus, customer_type
+    needed_role, needed_expertise, product_focus, customer_type, has_member
   } = queryObj;
 
   const query = client("projects")
@@ -247,6 +247,14 @@ export const projectSearch = (queryObj) => {
       this.where("projects.title", "like", `%${search}%`)
         .orWhere("projects.tags", "like", `%${search}%`)
         .orWhere("projects.tagline", "like", `%${search}%`);
+    });
+  }
+
+  if (has_member) {
+    query.whereIn("projects.id", function () {
+      this.select("project_id")
+        .from("members")
+        .where("user_id", has_member);
     });
   }
 

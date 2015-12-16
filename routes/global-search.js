@@ -2,7 +2,7 @@
 import Joi from "joi";
 import Boom from "boom";
 import { paginationWithDeleted, role, product,
-  optionalId, customerType, country } from "../data/validation";
+  stringId, optionalId, customerType, country } from "../data/validation";
 import { paginate, projectSearch, userSearch } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -12,9 +12,20 @@ const register = function (server, options, next) {
     config: {
       description: "Filter projects accross all hackathons",
       tags: ["api"],
+      notes: [
+        `The 'has_member' query paramater can either be a `,
+        `user ID or the string 'me' as an alias to fetch your own.`
+      ].join(""),
       handler(request, reply) {
-        const { limit, offset } = request.query;
-        const response = projectSearch(request.query);
+        const { query } = request;
+        const { limit, offset } = query;
+
+        // allow alias "me" for searching for own
+        if (query.has_member === "me") {
+          query.has_member = request.userId();
+        }
+
+        const response = projectSearch(query);
 
         reply(paginate(response, {limit, offset}));
       },
@@ -28,6 +39,7 @@ const register = function (server, options, next) {
           product_focus: product,
           hackathon_id: optionalId,
           customer_type: customerType,
+          has_member: stringId,
           country
         })
       }

@@ -1,6 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { paginationWithDeleted, newProject,
+import { paginationWithDeleted, newProject, stringId,
   role, product, projectUpdate, id, customerType } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureProject, projectSearch } from "../db-connection";
 import Joi from "joi";
@@ -12,12 +12,21 @@ const register = function (server, options, next) {
     config: {
       description: "Fetch all projects",
       tags: ["api", "paginated", "list", "filterable"],
+      notes: [
+        `The 'has_member' query paramater can either be a `,
+        `user ID or the string 'me' as an alias to fetch your own.`
+      ].join(""),
       handler(request, reply) {
         const { query } = request;
         const { limit, offset } = query;
 
         // hardcode hackathon id to match
         query.hackathon_id = request.params.hackathonId;
+
+        // allow alias "me" for searching for own
+        if (query.has_member === "me") {
+          query.has_member = request.userId();
+        }
 
         const response = projectSearch(query);
 
@@ -34,7 +43,8 @@ const register = function (server, options, next) {
           needed_role: role,
           needed_expertise: Joi.string(),
           product_focus: product,
-          customer_type: customerType
+          customer_type: customerType,
+          has_member: stringId
         })
       }
     }
