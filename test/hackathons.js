@@ -376,3 +376,27 @@ test("user b can't fetch with include_deleted", (t) => {
     user: "b"
   }, t);
 });
+
+test("stats for 'people' and 'projects' in hackathon fetch are correct", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1`,
+    statusCode: 200,
+    test(result) {
+      t.equal(result.projects, 2, "hacakthon 1 has two projects in the mock data");
+      t.equal(result.participants, 2, "hacakthon 1 has two participants in the mock data");
+    }
+  }, t);
+});
+
+test("stats for 'people' and 'projects' in hackathon fetch are correct for #2", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/2`,
+    statusCode: 200,
+    test(result) {
+      t.equal(result.projects, 50, "hacakthon 1 has 50 projects in the mock data");
+      t.equal(result.participants, 52, "hacakthon 1 has 52 participants in the mock data");
+    }
+  }, t);
+});
