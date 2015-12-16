@@ -1,7 +1,9 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import ensure from "./helpers";
+import { users as mockUsers } from "../data/mock-data";
 
+const USER_B_ID = mockUsers[1].id;
 
 test("search should cover tags", (t) => {
   ensure({
@@ -188,3 +190,66 @@ test(`searching by country should fail if using invalid country`, (t) => {
     statusCode: 400
   }, t);
 });
+
+test(`can do global search for projects for a given user using 'has_member' param`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/project-search?has_member=${USER_B_ID}`,
+    statusCode: 200,
+    hasPagination: true,
+    test(result) {
+      t.equal(result.data.length, 2, "user B is on two projects");
+    }
+  }, t);
+});
+
+test(`can do global search using 'me' as 'has_member' param`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/project-search?has_member=me`,
+    statusCode: 200,
+    hasPagination: true,
+    test(result) {
+      t.equal(result.data.length, 2, "user B is on two projects");
+    },
+    user: "b"
+  }, t);
+});
+
+test(`hackathon specific search for projects for a given user using 'has_member' param`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects?has_member=${USER_B_ID}`,
+    statusCode: 200,
+    hasPagination: true,
+    test(result) {
+      t.equal(result.data.length, 2, "user B is on two projects");
+    }
+  }, t);
+});
+
+test(`hackathon specific search using 'me' as 'has_member' param`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/projects?has_member=me`,
+    statusCode: 200,
+    hasPagination: true,
+    test(result) {
+      t.equal(result.data.length, 2, "user B is on two projects");
+    },
+    user: "b"
+  }, t);
+});
+
+test(`projects in hackathon should be empty when scoped with 'has_member' param`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/2/projects?has_member=${USER_B_ID}`,
+    statusCode: 200,
+    hasPagination: true,
+    test(result) {
+      t.equal(result.data.length, 0, "user B is not in any projects in this hackathon");
+    }
+  }, t);
+});
+
