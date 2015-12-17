@@ -24,9 +24,7 @@ const register = function (server, options, next) {
           query.has_member = request.userId();
         }
 
-        console.log('starting project search')
         const response = projectSearch(query);
-        console.log('finished building query')
 
         reply(paginate(response, {limit, offset}));
       },

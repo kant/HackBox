@@ -54,7 +54,9 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 };
 
-runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => item.country === "United States");
+runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => {
+  return item.country === "United States";
+});
 runFixedTypeFilterTests("country", JSON.stringify(["United States", "India"]), (item) => {
   return item.country === "United States" || item.country === "India";
 });

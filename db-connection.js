@@ -254,7 +254,6 @@ export const paginate = (query, {limit, offset, countQuery}) => {
 
 // we use this for two different routes so it lives here for re-use
 export const projectSearch = (queryObj) => {
-  console.log('calling project search')
   const {
     hackathon_id, search, include_deleted, has_video, needs_hackers, country,
     needed_role, needed_expertise, product_focus, customer_type, has_member
@@ -298,18 +297,12 @@ export const projectSearch = (queryObj) => {
     query.whereIn("projects.needed_role", needed_role);
   }
   if (needed_expertise && needed_expertise.length) {
-    query.andWhere("projects.id", function () {
-      console.log('needed_expertise', needed_expertise)
+    query.where(function () {
       needed_expertise.forEach((expertise, index) => {
         // first time through we want to call `where`
         // then subsequesntly use `orWhere`
         const fnName = index === 0 ? "where" : "orWhere";
-        if (index === 0) {
-          this.where("id").where("projects.needed_expertise", "like", `%${expertise}%`)
-        } else {
-          this.orWhere("projects.needed_expertise", "like", `%${expertise}%`);
-          console.log('looping second')
-        }
+        this[fnName]("projects.needed_expertise", "like", `%${expertise}%`);
       });
     });
   }
@@ -326,8 +319,6 @@ export const projectSearch = (queryObj) => {
   // set order by
   query.orderBy("projects.created_at", "desc");
   query.select("projects.*");
-
-  console.log(query.toString())
 
   return query;
 };

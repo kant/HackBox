@@ -30,8 +30,6 @@ const register = function (server, options, next) {
 
         const response = projectSearch(query);
 
-        console.log('responding')
-
         reply(paginate(response, {limit, offset}));
       },
       validate: {

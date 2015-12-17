@@ -124,7 +124,6 @@ runBooleanFilterTests("has_video", (item) => typeof item.video_id === "number");
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`can filter via '${type}=${value}`, (t) => {
-    console.log(`/hackathons/1/projects?${type}=${JSON.stringify(value)}`)
     ensure({
       method: "GET",
       url: `/hackathons/1/projects?${type}=${JSON.stringify(value)}`,
@@ -138,7 +137,6 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 
   test(`can filter via '${type}=${value} in global search`, (t) => {
-    console.log('in global', `/project-search?${type}=${JSON.stringify(value)}`)
     ensure({
       method: "GET",
       url: `/project-search?${type}=${JSON.stringify(value)}`,
@@ -194,7 +192,7 @@ runFixedTypeFilterTests("needed_expertise", ["bostaff", "throwingstar"], (item) 
     item.needed_expertise.indexOf("throwingstar") !== -1;
 });
 
-test(`can filter by hackathon country by sending 'country=["United States"] when searching globally`, (t) => {
+test(`can filter hackathons with 'country=["United States"] when searching globally`, (t) => {
   ensure({
     method: "GET",
     url: `/project-search?country=${JSON.stringify(["United States"])}`,
@@ -215,7 +213,9 @@ test(`can filter by multiple countries 'country=["USA", "India"]' when searching
     statusCode: 200,
     test(result) {
       t.ok(result.data.length, "should have at least one match");
-      t.ok(result.data.every((item) => [1, 2].indexOf(item.hackathon_id) !== -1), "all results match");
+      t.ok(result.data.every((item) => {
+        return [1, 2].indexOf(item.hackathon_id) !== -1;
+      }), "all results match");
     }
   }, t);
 });
