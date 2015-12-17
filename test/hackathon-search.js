@@ -32,7 +32,7 @@ runSearchCoverageTest("tagline", "smiling");
 
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
-  test(`can filter hackathons via '${type}=${encodeURIComponent(value)}`, (t) => {
+  test(`can filter hackathons via '${type}=${value}`, (t) => {
     ensure({
       method: "GET",
       url: `/hackathons?${type}=${value}`,
@@ -54,7 +54,12 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 };
 
-runFixedTypeFilterTests("country", "United States", (item) => item.country === "United States");
+runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => {
+  return item.country === "United States";
+});
+runFixedTypeFilterTests("country", JSON.stringify(["United States", "India"]), (item) => {
+  return item.country === "United States" || item.country === "India";
+});
 
 test(`super user can request 'include_unpublished' for other users`, (t) => {
   ensure({

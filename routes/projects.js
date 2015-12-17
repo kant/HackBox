@@ -1,7 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import { paginationWithDeleted, newProject, stringId,
-  role, product, projectUpdate, id, customerType } from "../data/validation";
+import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
+  roleArray, productArray, projectUpdate, id, customerTypeArray } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureProject, projectSearch } from "../db-connection";
 import Joi from "joi";
 
@@ -40,10 +40,10 @@ const register = function (server, options, next) {
           search: Joi.string(),
           has_video: Joi.boolean(),
           needs_hackers: Joi.boolean(),
-          needed_role: role,
-          needed_expertise: Joi.string(),
-          product_focus: product,
-          customer_type: customerType,
+          needed_role: roleArray,
+          needed_expertise: neededExpertiseArray,
+          product_focus: productArray,
+          customer_type: customerTypeArray,
           has_member: stringId
         })
       }

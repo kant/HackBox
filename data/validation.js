@@ -16,13 +16,21 @@ export const stringWithDefault = emptyString.default("");
 export const emptyText = Joi.string().trim().empty("").max(1000);
 export const textWithDefault = emptyText.default("");
 export const role = Joi.string().valid(participantTypes).empty("");
+export const roleArray = Joi.array().items(role)
+  .description("Array of one or more valid participant types");
 export const customerType = Joi.string().valid(customerTypes).empty("");
+export const customerTypeArray = Joi.array().items(customerType)
+  .description("Array of one or more valid customer types");
+export const neededExpertiseArray = Joi.array().items(Joi.string());
 export const url = Joi.string().max(255).uri().empty("");
 export const urlWithDefault = url.default("");
 export const country = Joi.string().valid(countryList).empty("");
+export const countryArray = Joi.array().items(country)
+  .description("Array of one or more valid country");
 export const product = Joi.string().valid(productTypes).empty("");
-export const commaStringLong = Joi.array().items(Joi.string()).empty("");
-export const commaStringShort = commaStringLong.max(255);
+export const productArray = Joi.array().items(product)
+  .description("Array of one or more valid product types");
+export const arrayOfStrings = Joi.array().items(Joi.string()).empty("");
 
 /*
   Pagination
@@ -54,8 +62,8 @@ export const paginationResults = pagination.keys({
 */
 const userBase = {
   id: stringId,
-  expertise: commaStringLong,
-  working_on: commaStringLong,
+  expertise: arrayOfStrings,
+  working_on: arrayOfStrings,
   primary_role: role,
   product_focus: product,
   country,
@@ -73,8 +81,8 @@ export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
 export const user = newUser.keys({
   id: stringId.required(),
-  expertise: commaStringLong.default("[]"),
-  working_on: commaStringLong.default("[]"),
+  expertise: arrayOfStrings.default("[]"),
+  working_on: arrayOfStrings.default("[]"),
   deleted: Joi.boolean().required(),
   name: userBase.name.required(),
   family_name: userBase.family_name.required(),
@@ -166,9 +174,9 @@ const projectBase = {
   needs_hackers: Joi.boolean(),
   needed_role: role,
   product_focus: product,
-  needed_expertise: commaStringShort,
+  needed_expertise: arrayOfStrings,
   customer_type: customerType,
-  tags: commaStringShort,
+  tags: arrayOfStrings,
   deleted: Joi.boolean(),
   meta
 };
@@ -183,9 +191,9 @@ export const newProject = Joi.object(projectBase)
     needs_hackers: Joi.boolean().default(false),
     needed_role: role.default(""),
     product_focus: product.default(""),
-    needed_expertise: commaStringShort.default("[]"),
+    needed_expertise: arrayOfStrings.default("[]"),
     customer_type: customerType.default(""),
-    tags: commaStringShort.default("[]"),
+    tags: arrayOfStrings.default("[]"),
     meta: metaWithDefault,
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,

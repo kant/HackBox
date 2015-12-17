@@ -31,7 +31,7 @@ const testCoverageOfSearchFields = (field, value) => {
   test(`search should cover '${field}' in global search`, (t) => {
     ensure({
       method: "GET",
-      url: `/user-search?search=${value}`,
+      url: `/users?search=${value}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -79,7 +79,7 @@ test(`user D is on lots of projects, make sure there's no duplicates`, (t) => {
 test(`user D is on lots of projects, make sure there's no duplicates in global search`, (t) => {
   ensure({
     method: "GET",
-    url: `/user-search?search=fishy`,
+    url: `/users?search=fishy`,
     hasPagination: true,
     statusCode: 200,
     test(result) {
@@ -110,7 +110,7 @@ test(`can filter via 'has_project=true'`, (t) => {
 test(`cannot filter via 'has_project=true' in global search if not passing hackathon id`, (t) => {
   ensure({
     method: "GET",
-    url: `/user-search?has_project=true`,
+    url: `/users?has_project=true`,
     statusCode: 400
   }, t);
 });
@@ -118,7 +118,7 @@ test(`cannot filter via 'has_project=true' in global search if not passing hacka
 test(`can filter via 'has_project=true' in global search if passing hackathon_id`, (t) => {
   ensure({
     method: "GET",
-    url: `/user-search?has_project=true&hackathon_id=1`,
+    url: `/users?has_project=true&hackathon_id=1`,
     hasPagination: true,
     statusCode: 200,
     test(result) {
@@ -144,7 +144,7 @@ test(`can filter via 'has_project=false'`, (t) => {
 test(`can filter via 'has_project=false' in global search as long as passing hackathon_id`, (t) => {
   ensure({
     method: "GET",
-    url: `/user-search?has_project=false&hackathon_id=1&limit=100`,
+    url: `/users?has_project=false&hackathon_id=1&limit=100`,
     hasPagination: true,
     statusCode: 200,
     test(result) {
@@ -156,7 +156,7 @@ test(`can filter via 'has_project=false' in global search as long as passing hac
 
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
-  test(`can filter via '${type}=${encodeURIComponent(value)}`, (t) => {
+  test(`can filter via '${type}=${value}`, (t) => {
     ensure({
       method: "GET",
       url: `/hackathons/1/participants?${type}=${value}`,
@@ -169,10 +169,10 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
     }, t);
   });
 
-  test(`can filter via '${type}=${encodeURIComponent(value)} in global search`, (t) => {
+  test(`can filter via '${type}=${value} in global search`, (t) => {
     ensure({
       method: "GET",
-      url: `/user-search?${type}=${value}`,
+      url: `/users?${type}=${value}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -193,12 +193,27 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`should fail if invalid '${type}' in global search`, (t) => {
     ensure({
       method: "GET",
-      url: `/user-search?${type}=SomethingSilly`,
+      url: `/users?${type}=SomethingSilly`,
       statusCode: 400
     }, t);
   });
 };
 
-runFixedTypeFilterTests("role", "Developer", (item) => item.primary_role === "Developer");
-runFixedTypeFilterTests("product_focus", "Office", (item) => item.product_focus === "Office");
-runFixedTypeFilterTests("country", "United States", (item) => item.country === "United States");
+runFixedTypeFilterTests("role", JSON.stringify(["Developer"]), (item) => {
+  return item.primary_role === "Developer";
+});
+runFixedTypeFilterTests("role", JSON.stringify(["Developer", "Marketing"]), (item) => {
+  return item.primary_role === "Developer" || item.primary_role === "Marketing";
+});
+runFixedTypeFilterTests("product_focus", JSON.stringify(["Office"]), (item) => {
+  return item.product_focus === "Office";
+});
+runFixedTypeFilterTests("product_focus", JSON.stringify(["Office", "Windows"]), (item) => {
+  return item.product_focus === "Office" || item.product_focus === "Windows";
+});
+runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => {
+  return item.country === "United States";
+});
+runFixedTypeFilterTests("country", JSON.stringify(["United States", "India"]), (item) => {
+  return item.country === "United States" || item.country === "India";
+});
