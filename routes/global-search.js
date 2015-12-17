@@ -1,9 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Joi from "joi";
-import Boom from "boom";
-import { paginationWithDeleted, role, product,
-  stringId, optionalId, customerType, country } from "../data/validation";
-import { paginate, projectSearch, userSearch } from "../db-connection";
+import { paginationWithDeleted, roleArray, productArray, stringId,
+  optionalId, customerTypeArray, countryArray, neededExpertiseArray } from "../data/validation";
+import { paginate, projectSearch } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -25,7 +24,9 @@ const register = function (server, options, next) {
           query.has_member = request.userId();
         }
 
+        console.log('starting project search')
         const response = projectSearch(query);
+        console.log('finished building query')
 
         reply(paginate(response, {limit, offset}));
       },
@@ -34,43 +35,13 @@ const register = function (server, options, next) {
           search: Joi.string(),
           has_video: Joi.boolean(),
           needs_hackers: Joi.boolean(),
-          needed_role: role,
-          needed_expertise: Joi.string(),
-          product_focus: product,
+          needed_role: roleArray,
+          needed_expertise: neededExpertiseArray,
+          product_focus: productArray,
           hackathon_id: optionalId,
-          customer_type: customerType,
+          customer_type: customerTypeArray,
           has_member: stringId,
-          country
-        })
-      }
-    }
-  });
-
-  server.route({
-    method: "GET",
-    path: "/user-search",
-    config: {
-      description: "Search users",
-      tags: ["api"],
-      handler(request, reply) {
-        const { query } = request;
-        const { limit, offset } = query;
-
-        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
-          return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
-        }
-        const response = userSearch(request.query);
-
-        reply(paginate(response, {limit, offset}));
-      },
-      validate: {
-        query: paginationWithDeleted.keys({
-          search: Joi.string(),
-          hackathon_id: optionalId,
-          has_project: Joi.boolean(),
-          product_focus: product,
-          role,
-          country
+          country: countryArray
         })
       }
     }

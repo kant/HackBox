@@ -14,11 +14,20 @@ export const metaWithDefault = meta.default({});
 export const emptyString = Joi.string().trim().empty("");
 export const stringWithDefault = emptyString.default("");
 export const role = Joi.string().valid(participantTypes).empty("");
+export const roleArray = Joi.array().items(role)
+  .description("Array of one or more valid participant types");
 export const customerType = Joi.string().valid(customerTypes).empty("");
+export const customerTypeArray = Joi.array().items(customerType)
+  .description("Array of one or more valid customer types");
+export const neededExpertiseArray = Joi.array().items(Joi.string());
 export const url = Joi.string().max(255).uri().empty("");
 export const urlWithDefault = url.default("");
 export const country = Joi.string().valid(countryList).empty("");
+export const countryArray = Joi.array().items(country)
+  .description("Array of one or more valid country");
 export const product = Joi.string().valid(productTypes).empty("");
+export const productArray = Joi.array().items(product)
+  .description("Array of one or more valid product types");
 export const commaString = Joi.string()
   .empty("")
   .regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "must be comma delimited string")

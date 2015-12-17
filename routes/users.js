@@ -1,28 +1,37 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import Joi from "joi";
-import { updateUser, stringId,
-  newUser, paginationWithDeleted } from "../data/validation";
-import db, { paginate, ensureUser } from "../db-connection";
+import { updateUser, stringId, optionalId, countryArray,
+  productArray, roleArray, newUser, paginationWithDeleted } from "../data/validation";
+import db, { paginate, ensureUser, userSearch } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
     method: "GET",
     path: "/users",
     config: {
-      description: "Fetch all users",
-      tags: ["api", "paginated", "list"],
+      description: "Fetch users",
+      tags: ["api, paginated, list"],
       handler(request, reply) {
-        const includeDeleted = request.query.include_deleted;
-        const { limit, offset } = request.query;
-        const query = db("users")
-          .where(includeDeleted ? {} : {deleted: false})
-          .orderBy("name", "asc");
+        const { query } = request;
+        const { limit, offset } = query;
 
-        reply(paginate(query, {limit, offset}));
+        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
+          return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
+        }
+        const response = userSearch(request.query);
+
+        reply(paginate(response, {limit, offset}));
       },
       validate: {
-        query: paginationWithDeleted
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          hackathon_id: optionalId,
+          has_project: Joi.boolean(),
+          product_focus: productArray,
+          role: roleArray,
+          country: countryArray
+        })
       }
     }
   });

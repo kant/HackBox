@@ -123,10 +123,11 @@ runBooleanFilterTests("has_video", (item) => typeof item.video_id === "number");
 
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
-  test(`can filter via '${type}=${encodeURIComponent(value)}`, (t) => {
+  test(`can filter via '${type}=${value}`, (t) => {
+    console.log(`/hackathons/1/projects?${type}=${JSON.stringify(value)}`)
     ensure({
       method: "GET",
-      url: `/hackathons/1/projects?${type}=${value}`,
+      url: `/hackathons/1/projects?${type}=${JSON.stringify(value)}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -136,10 +137,11 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
     }, t);
   });
 
-  test(`can filter via '${type}=${encodeURIComponent(value)} in global search`, (t) => {
+  test(`can filter via '${type}=${value} in global search`, (t) => {
+    console.log('in global', `/project-search?${type}=${JSON.stringify(value)}`)
     ensure({
       method: "GET",
-      url: `/project-search?${type}=${value}`,
+      url: `/project-search?${type}=${JSON.stringify(value)}`,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -166,14 +168,36 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 };
 
-runFixedTypeFilterTests("needed_role", "Developer", (item) => item.needed_role === "Developer");
-runFixedTypeFilterTests("product_focus", "Windows", (item) => item.product_focus === "Windows");
-runFixedTypeFilterTests("customer_type", "Consumers", (item) => item.customer_type === "Consumers");
+runFixedTypeFilterTests("needed_role", ["Developer"], (item) => {
+  return item.needed_role === "Developer";
+});
+runFixedTypeFilterTests("needed_role", ["Developer", "Services"], (item) => {
+  return item.needed_role === "Developer" || item.needed_role === "Services";
+});
+runFixedTypeFilterTests("product_focus", ["Windows"], (item) => {
+  return item.product_focus === "Windows";
+});
+runFixedTypeFilterTests("product_focus", ["Windows", "Consumer Services"], (item) => {
+  return item.product_focus === "Windows" || item.product_focus === "Consumer Services";
+});
+runFixedTypeFilterTests("customer_type", ["Consumers"], (item) => {
+  return item.customer_type === "Consumers";
+});
+runFixedTypeFilterTests("customer_type", ["Consumers", "Developers"], (item) => {
+  return item.customer_type === "Consumers" || item.customer_type === "Developers";
+});
+runFixedTypeFilterTests("needed_expertise", ["bostaff"], (item) => {
+  return item.needed_expertise.indexOf("bostaff") !== -1;
+});
+runFixedTypeFilterTests("needed_expertise", ["bostaff", "throwingstar"], (item) => {
+  return item.needed_expertise.indexOf("bostaff") !== -1 ||
+    item.needed_expertise.indexOf("throwingstar") !== -1;
+});
 
-test(`can filter by hackathon country by sending 'country=USA' when searching globally`, (t) => {
+test(`can filter by hackathon country by sending 'country=["USA"] when searching globally`, (t) => {
   ensure({
     method: "GET",
-    url: `/project-search?country=USA`,
+    url: `/project-search?country=${JSON.stringify(["USA"])}`,
     hasPagination: true,
     statusCode: 200,
     test(result) {
@@ -182,6 +206,20 @@ test(`can filter by hackathon country by sending 'country=USA' when searching gl
     }
   }, t);
 });
+
+test(`can filter by multiple countries 'country=["USA", "India"]' when searching globally`, (t) => {
+  ensure({
+    method: "GET",
+    url: `/project-search?country=${JSON.stringify(["USA", "India"])}`,
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.data.length, "should have at least one match");
+      t.ok(result.data.every((item) => [1, 2].indexOf(item.hackathon_id) !== -1), "all results match");
+    }
+  }, t);
+});
+
 
 test(`searching by country should fail if using invalid country`, (t) => {
   ensure({

@@ -1,8 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import Joi from "joi";
-import { paginationWithDeleted, id, role,
-  country, product, stringId, newParticipant } from "../data/validation";
+import { paginationWithDeleted, id, roleArray,
+  countryArray, productArray, stringId, newParticipant } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser,
   ensureParticipant, userSearch } from "../db-connection";
 
@@ -36,9 +36,9 @@ const register = function (server, options, next) {
         query: paginationWithDeleted.keys({
           search: Joi.string(),
           has_project: Joi.boolean(),
-          product_focus: product,
-          role,
-          country
+          product_focus: productArray,
+          role: roleArray,
+          country: countryArray
         })
       }
     }

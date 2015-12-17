@@ -229,6 +229,7 @@ export const paginate = (query, {limit, offset, countQuery}) => {
 
 // we use this for two different routes so it lives here for re-use
 export const projectSearch = (queryObj) => {
+  console.log('calling project search')
   const {
     hackathon_id, search, include_deleted, has_video, needs_hackers, country,
     needed_role, needed_expertise, product_focus, customer_type, has_member
@@ -268,25 +269,40 @@ export const projectSearch = (queryObj) => {
   if (needs_hackers === false || needs_hackers === true) {
     query.andWhere("projects.needs_hackers", needs_hackers);
   }
-  if (needed_role) {
-    query.andWhere("projects.needed_role", needed_role);
+  if (needed_role && needed_role.length) {
+    query.whereIn("projects.needed_role", needed_role);
   }
-  if (needed_expertise) {
-    query.andWhere("projects.needed_expertise", "like", `%${needed_expertise}%`);
+  if (needed_expertise && needed_expertise.length) {
+    query.andWhere("projects.id", function () {
+      console.log('needed_expertise', needed_expertise)
+      needed_expertise.forEach((expertise, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        if (index === 0) {
+          this.where("id").where("projects.needed_expertise", "like", `%${expertise}%`)
+        } else {
+          this.orWhere("projects.needed_expertise", "like", `%${expertise}%`);
+          console.log('looping second')
+        }
+      });
+    });
   }
-  if (product_focus) {
-    query.andWhere("projects.product_focus", product_focus);
+  if (product_focus && product_focus.length) {
+    query.whereIn("projects.product_focus", product_focus);
   }
-  if (customer_type) {
-    query.andWhere("projects.customer_type", customer_type);
+  if (customer_type && customer_type.length) {
+    query.whereIn("projects.customer_type", customer_type);
   }
-  if (country) {
-    query.andWhere("hackathons.country", "=", country);
+  if (country && country.length) {
+    query.whereIn("hackathons.country", country);
   }
 
   // set order by
   query.orderBy("projects.created_at", "desc");
   query.select("projects.*");
+
+  console.log(query.toString())
 
   return query;
 };
@@ -344,14 +360,14 @@ export const userSearch = (queryObj) => {
         .orWhere("expertise", "like", `%${search}%`);
     });
   }
-  if (role) {
-    query.andWhere("primary_role", role);
+  if (role && role.length) {
+    query.whereIn("primary_role", role);
   }
-  if (product_focus) {
-    query.andWhere("product_focus", product_focus);
+  if (product_focus && product_focus.length) {
+    query.whereIn("product_focus", product_focus);
   }
-  if (country) {
-    query.andWhere("country", country);
+  if (country && country.length) {
+    query.whereIn("country", country);
   }
   if (has_project === true || has_project === false) {
     query.andWhere("has_project", has_project);
@@ -417,8 +433,8 @@ export const hackathonSearch = (queryObj) => {
     });
   }
 
-  if (country) {
-    query.andWhere({country});
+  if (country && country.length) {
+    query.whereIn("country", country);
   }
 
   query.orderBy("created_at", "desc");
