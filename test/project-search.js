@@ -194,10 +194,10 @@ runFixedTypeFilterTests("needed_expertise", ["bostaff", "throwingstar"], (item) 
     item.needed_expertise.indexOf("throwingstar") !== -1;
 });
 
-test(`can filter by hackathon country by sending 'country=["USA"] when searching globally`, (t) => {
+test(`can filter by hackathon country by sending 'country=["United States"] when searching globally`, (t) => {
   ensure({
     method: "GET",
-    url: `/project-search?country=${JSON.stringify(["USA"])}`,
+    url: `/project-search?country=${JSON.stringify(["United States"])}`,
     hasPagination: true,
     statusCode: 200,
     test(result) {

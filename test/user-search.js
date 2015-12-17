@@ -195,9 +195,9 @@ runFixedTypeFilterTests("product_focus", JSON.stringify(["Office"]), (item) => {
 runFixedTypeFilterTests("product_focus", JSON.stringify(["Office", "Windows"]), (item) => {
   return item.product_focus === "Office" || item.product_focus === "Windows";
 });
-runFixedTypeFilterTests("country", JSON.stringify(["USA"]), (item) => {
-  return item.country === "USA";
+runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => {
+  return item.country === "United States";
 });
-runFixedTypeFilterTests("country", JSON.stringify(["USA", "India"]), (item) => {
-  return item.country === "USA" || item.country === "India";
+runFixedTypeFilterTests("country", JSON.stringify(["United States", "India"]), (item) => {
+  return item.country === "United States" || item.country === "India";
 });
