@@ -13,7 +13,8 @@ test("search should cover tags", (t) => {
     statusCode: 200,
     test(result) {
       t.ok(result.data.some((item) => {
-        return item.tags.toLowerCase().indexOf("social") !== -1;
+        const tags = item.tags.map((tag) => tag.toLowerCase());
+        return tags.indexOf("social") !== -1;
       }));
     }
   }, t);

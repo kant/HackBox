@@ -22,7 +22,7 @@ const getProjectProps = (overrides) => {
     inspiration: "Because... yoyos!",
     how_it_will_work: "Play with yoyos.",
     needs_hackers: true,
-    tags: ["Yoyo", "Social"].join(),
+    tags: ["Yoyo", "Social"],
     video_id: 49,
     meta: {
       is_awesome: true

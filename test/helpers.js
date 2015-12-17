@@ -69,6 +69,24 @@ export default (opts, t) => {
     if (opts.hasPagination) {
       const result = Joi.validate(parsed, paginationResults, {allowUnknown: true});
       t.ok(!result.error, "has pagination");
+
+      /*
+      // some correctness checks for all pagination data
+      t.equal(result.result_count, result.data.length,
+        "result count should always be result length"
+      );
+      t.ok(result.data.length <= result.limit,
+        "result length should never be more than limit"
+      );
+      t.ok(result.result_count <= result.total_count,
+        "result count should never be greater than total_count"
+      );
+      if (result.limit > result.total_count) {
+        t.ok(result.total_count === result.result_count,
+          "if we're returning less than total limit"
+        );
+      }
+      */
     } else if (parsed) {
       t.ok(!parsed.hasOwnProperty("limit"), "should not have property: \"limit\"");
       t.ok(!parsed.hasOwnProperty("offset"), "should not have property: \"offset\"");
@@ -90,17 +108,17 @@ export default (opts, t) => {
       if (opts.hasPagination) {
         parsed.data.forEach((item) => {
           const result = Joi.validate(item, opts.schema, {allowUnknown: opts.allowUnknown});
-          t.ok(!result.error, "each result in data matches schema");
           if (result.error) {
             console.log(result.error);
           }
+          t.ok(!result.error, "each result in data matches schema");
         });
       } else {
         const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
-        t.ok(!result.error, "matches schema");
         if (result.error) {
           console.log(result.error);
         }
+        t.ok(!result.error, "matches schema");
       }
     }
 

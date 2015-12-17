@@ -11,18 +11,18 @@ export const id = optionalId.required();
 export const stringId = Joi.string().min(1).max(140).trim();
 export const meta = Joi.object();
 export const metaWithDefault = meta.default({});
-export const emptyString = Joi.string().trim().empty("");
+export const emptyString = Joi.string().trim().empty("").max(255);
 export const stringWithDefault = emptyString.default("");
+export const emptyText = Joi.string().trim().empty("").max(1000);
+export const textWithDefault = emptyText.default("");
 export const role = Joi.string().valid(participantTypes).empty("");
 export const customerType = Joi.string().valid(customerTypes).empty("");
 export const url = Joi.string().max(255).uri().empty("");
 export const urlWithDefault = url.default("");
 export const country = Joi.string().valid(countryList).empty("");
 export const product = Joi.string().valid(productTypes).empty("");
-export const commaString = Joi.string()
-  .empty("")
-  .regex(/^[0-9a-zA-Z]+(,[0-9a-zA-Z]+)*$/, "must be comma delimited string")
-  .max(255);
+export const commaStringLong = Joi.array().items(Joi.string()).empty("");
+export const commaStringShort = commaStringLong.max(255);
 
 /*
   Pagination
@@ -54,8 +54,8 @@ export const paginationResults = pagination.keys({
 */
 const userBase = {
   id: stringId,
-  expertise: emptyString,
-  working_on: emptyString,
+  expertise: commaStringLong,
+  working_on: commaStringLong,
   primary_role: role,
   product_focus: product,
   country,
@@ -73,8 +73,8 @@ export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
 export const user = newUser.keys({
   id: stringId.required(),
-  expertise: stringWithDefault,
-  working_on: stringWithDefault,
+  expertise: commaStringLong.default("[]"),
+  working_on: commaStringLong.default("[]"),
   deleted: Joi.boolean().required(),
   name: userBase.name.required(),
   family_name: userBase.family_name.required(),
@@ -100,12 +100,12 @@ const hackathonBase = {
   name: Joi.string().min(1).max(140).trim(),
   slug: Joi.string().lowercase().max(255).regex(/^[a-z0-9\-]*$/).trim(),
   tagline: emptyString,
-  description: emptyString,
-  judges: emptyString,
-  rules: emptyString,
-  schedule: emptyString,
-  quick_links: emptyString,
-  resources: emptyString,
+  description: emptyText,
+  judges: emptyText,
+  rules: emptyText,
+  schedule: emptyText,
+  quick_links: emptyText,
+  resources: emptyText,
   logo_url: url,
   header_image_url: url,
   start_at: Joi.date(),
@@ -128,15 +128,15 @@ export const newHackathon = Joi.object(hackathonBase)
   .requiredKeys("name", "slug", "logo_url", "start_at", "end_at", "city", "country")
   .keys({
     color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[3]),
-    tagline: stringWithDefault,
-    description: stringWithDefault,
-    judges: stringWithDefault,
-    rules: stringWithDefault,
-    schedule: stringWithDefault,
-    quick_links: stringWithDefault,
-    resources: stringWithDefault,
-    org: stringWithDefault,
-    city: stringWithDefault,
+    tagline: hackathonBase.tagline.default(""),
+    description: hackathonBase.description.default(""),
+    judges: hackathonBase.judges.default(""),
+    rules: hackathonBase.rules.default(""),
+    schedule: hackathonBase.schedule.default(""),
+    quick_links: hackathonBase.quick_links.default(""),
+    resources: hackathonBase.resources.default(""),
+    org: hackathonBase.org.default(""),
+    city: hackathonBase.org.default(""),
     meta: metaWithDefault,
     logo_url: urlWithDefault,
     header_image_url: urlWithDefault
@@ -154,21 +154,21 @@ const projectBase = {
   owner_id: stringId,
   video_id: optionalId,
   title: Joi.string().min(1).max(120),
-  tagline: Joi.string().min(1).max(255),
+  tagline: emptyString,
   status: emptyString,
-  description: emptyString,
+  description: emptyText,
   image_url: url,
   code_repo_url: url,
   prototype_url: url,
   supporting_files_url: url,
-  inspiration: emptyString,
-  how_it_will_work: emptyString,
+  inspiration: emptyText,
+  how_it_will_work: emptyText,
   needs_hackers: Joi.boolean(),
   needed_role: role,
   product_focus: product,
-  needed_expertise: commaString,
+  needed_expertise: commaStringShort,
   customer_type: customerType,
-  tags: commaString,
+  tags: commaStringShort,
   deleted: Joi.boolean(),
   meta
 };
@@ -176,16 +176,16 @@ export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
   .requiredKeys("title", "tagline", "description", "needs_hackers")
   .keys({
-    status: stringWithDefault,
-    description: stringWithDefault,
-    inspiration: stringWithDefault,
-    how_it_will_work: stringWithDefault,
+    status: projectBase.status.default(""),
+    description: projectBase.description.default(""),
+    inspiration: projectBase.inspiration.default(""),
+    how_it_will_work: projectBase.how_it_will_work.default(""),
     needs_hackers: Joi.boolean().default(false),
     needed_role: role.default(""),
     product_focus: product.default(""),
-    needed_expertise: commaString.default(""),
+    needed_expertise: commaStringShort.default("[]"),
     customer_type: customerType.default(""),
-    tags: commaString.default(""),
+    tags: commaStringShort.default("[]"),
     meta: metaWithDefault,
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,

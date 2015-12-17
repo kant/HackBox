@@ -270,7 +270,7 @@ export const projectSearch = (queryObj) => {
   if (search) {
     query.where(function () {
       this.where("projects.title", "like", `%${search}%`)
-        .orWhere("projects.tags", "like", `%${search}%`)
+        .orWhere("projects.json_tags", "like", `%${search}%`)
         .orWhere("projects.tagline", "like", `%${search}%`);
     });
   }
@@ -365,8 +365,8 @@ export const userSearch = (queryObj) => {
       this.where("name", "like", `%${search}%`)
         .orWhere("email", "like", `%${search}%`)
         .orWhere("bio", "like", `%${search}%`)
-        .orWhere("working_on", "like", `%${search}%`)
-        .orWhere("expertise", "like", `%${search}%`);
+        .orWhere("json_working_on", "like", `%${search}%`)
+        .orWhere("json_expertise", "like", `%${search}%`);
     });
   }
   if (role) {
