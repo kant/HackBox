@@ -185,4 +185,4 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
 
 runFixedTypeFilterTests("role", "Developer", (item) => item.primary_role === "Developer");
 runFixedTypeFilterTests("product_focus", "Office", (item) => item.product_focus === "Office");
-runFixedTypeFilterTests("country", "USA", (item) => item.country === "USA");
+runFixedTypeFilterTests("country", "United States", (item) => item.country === "United States");

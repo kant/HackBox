@@ -170,10 +170,10 @@ runFixedTypeFilterTests("needed_role", "Developer", (item) => item.needed_role =
 runFixedTypeFilterTests("product_focus", "Windows", (item) => item.product_focus === "Windows");
 runFixedTypeFilterTests("customer_type", "Consumers", (item) => item.customer_type === "Consumers");
 
-test(`can filter by hackathon country by sending 'country=USA' when searching globally`, (t) => {
+test(`can filter by hackathon 'country=United States' when searching globally`, (t) => {
   ensure({
     method: "GET",
-    url: `/project-search?country=USA`,
+    url: `/project-search?country=${encodeURIComponent("United States")}`,
     hasPagination: true,
     statusCode: 200,
     test(result) {

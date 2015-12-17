@@ -54,7 +54,7 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 };
 
-runFixedTypeFilterTests("country", "USA", (item) => item.country === "USA");
+runFixedTypeFilterTests("country", "United States", (item) => item.country === "United States");
 
 test(`super user can request 'include_unpublished' for other users`, (t) => {
   ensure({
