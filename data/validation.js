@@ -30,7 +30,7 @@ export const countryArray = Joi.array().items(country)
 export const product = Joi.string().valid(productTypes).empty("");
 export const productArray = Joi.array().items(product)
   .description("Array of one or more valid product types");
-export const arrayOfStrings = Joi.array().items(Joi.string()).empty("");
+export const arrayOfStrings = Joi.array().items(Joi.string());
 
 /*
   Pagination
@@ -81,8 +81,8 @@ export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
 export const user = newUser.keys({
   id: stringId.required(),
-  expertise: arrayOfStrings.default("[]"),
-  working_on: arrayOfStrings.default("[]"),
+  expertise: arrayOfStrings.default([]),
+  working_on: arrayOfStrings.default([]),
   deleted: Joi.boolean().required(),
   name: userBase.name.required(),
   family_name: userBase.family_name.required(),
@@ -191,9 +191,9 @@ export const newProject = Joi.object(projectBase)
     needs_hackers: Joi.boolean().default(false),
     needed_role: role.default(""),
     product_focus: product.default(""),
-    needed_expertise: arrayOfStrings.default("[]"),
+    needed_expertise: arrayOfStrings.default([]),
     customer_type: customerType.default(""),
-    tags: arrayOfStrings.default("[]"),
+    tags: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,

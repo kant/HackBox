@@ -53,6 +53,8 @@ test("create a new project", (t) => {
       createdProjectId = result.id;
       const value = result.meta && result.meta.is_awesome;
       t.equal(value, true, "make sure meta keys are persisted");
+      t.ok(Array.isArray(result.needed_expertise), "needed_expertise is an array");
+      t.ok(Array.isArray(result.tags), "tags is an array");
     },
     user: "b"
   }, t);
