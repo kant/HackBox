@@ -174,30 +174,22 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
           this.select("project_id")
             .from("members")
             .where("user_id", userId);
-        });
+        })
+        .as(table);
   };
 
-  const userQuery = client("users").where(query);
+  const userQuery = client("users")
+    .select("*", statQuery("shares"), statQuery("likes"), statQuery("views")).where(query);
 
-  return Promise.all([
-    userQuery,
-    statQuery("shares"),
-    statQuery("likes"),
-    statQuery("views")])
-    .then(([rows, sharesCount, viewsCount, likesCount]) => {
+  return userQuery.then((rows) => {
+    const user = rows[0];
 
-      const user = rows[0];
+    if (!user || user && user.deleted && !opts.allowDeleted) {
+      throw Boom.notFound(`User id ${userId} was not found.`);
+    }
 
-      if (!user || user && user.deleted && !opts.allowDeleted) {
-        throw Boom.notFound(`User id ${userId} was not found.`);
-      }
-
-      user.shares = sharesCount[0]["count(*)"];
-      user.views = viewsCount[0]["count(*)"];
-      user.likes = likesCount[0]["count(*)"];
-
-      return user;
-    });
+    return user;
+  });
 };
 
 export const ensureParticipant = (hackathonId, userId, opts = {includeUser: false}) => {
