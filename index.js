@@ -56,7 +56,8 @@ server.register([
     register: HapiSwagger,
     options: {
       protocol: config.https ? "https" : "http",
-      enableDocumentationPage: false
+      enableDocumentationPage: false,
+      apiVersion: "1.0"
     }
   },
   Bell,
