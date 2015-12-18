@@ -27,6 +27,15 @@ test("add a new participant", (t) => {
   }, t);
 });
 
+test("get individual participant", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/participants/${C_USER_ID}`,
+    statusCode: 200,
+    schema: participantSchema
+  }, t);
+});
+
 test("cannot add same participant again", (t) => {
   ensure({
     method: "POST",
