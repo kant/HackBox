@@ -49,12 +49,17 @@ const expandResult = (obj) => {
   return obj;
 };
 
+const JSON_KEYS = [
+  "meta", "profile", "participation_meta",
+  "expertise", "working_on", "tags", "needed_expertise"
+];
+
 const stringifyKeys = (obj) => {
   if (Array.isArray(obj)) {
     obj.forEach(stringifyKeys);
   } else {
     for (const key in obj) {
-      if (key === "meta" || key === "profile" || key === "participation_meta") {
+      if (JSON_KEYS.indexOf(key) !== -1) {
         obj[`json_${key}`] = JSON.stringify(obj[key]);
         delete obj[key];
       }

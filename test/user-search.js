@@ -14,8 +14,16 @@ const testCoverageOfSearchFields = (field, value) => {
       hasPagination: true,
       statusCode: 200,
       test(result) {
+        let firstResultValue = result.data[0][field];
+        if (!Array.isArray(firstResultValue)) {
+          firstResultValue = [firstResultValue];
+        }
         t.equal(result.data.length, 1, "should only find one");
-        t.ok(result.data[0][field].toLowerCase().indexOf(value) !== -1, "field contains value");
+        t.ok(
+          firstResultValue.some((item) => {
+            return item.toLowerCase().indexOf(value) !== -1;
+          })
+        );
       }
     }, t);
   });
@@ -27,8 +35,16 @@ const testCoverageOfSearchFields = (field, value) => {
       hasPagination: true,
       statusCode: 200,
       test(result) {
+        let firstResultValue = result.data[0][field];
+        if (!Array.isArray(firstResultValue)) {
+          firstResultValue = [firstResultValue];
+        }
         t.equal(result.data.length, 1, "should only find one");
-        t.ok(result.data[0][field].toLowerCase().indexOf(value) !== -1, "field contains value");
+        t.ok(
+          firstResultValue.some((item) => {
+            return item.toLowerCase().indexOf(value) !== -1;
+          })
+        );
       }
     }, t);
   });

@@ -13,8 +13,8 @@ exports.up = function (knex) {
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();
       t.boolean("deleted").defaultTo(false);
-      t.string("working_on");
-      t.string("expertise");
+      t.text("json_working_on");
+      t.text("json_expertise");
       t.string("primary_role");
       t.string("product_focus");
       t.text("json_profile");
@@ -66,10 +66,10 @@ exports.up = function (knex) {
       t.text("how_it_will_work");
       t.boolean("needs_hackers").defaultTo(false);
       t.string("needed_role");
-      t.string("needed_expertise");
+      t.text("json_needed_expertise");
       t.string("product_focus");
       t.string("customer_type");
-      t.string("tags");
+      t.text("json_tags");
       t.integer("video_id");
       t.timestamp("created_at").defaultTo(knex.fn.now());
       t.timestamp("updated_at").nullable();

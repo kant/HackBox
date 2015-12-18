@@ -96,8 +96,8 @@ test("deleted users can re-activate themselves by signing up again", (t) => {
     method: "POST",
     url: `/users`,
     payload: {
-      working_on: "stuff,other things",
-      expertise: "javascript"
+      working_on: ["stuff", "other things"],
+      expertise: ["javascript"]
     },
     statusCode: 201,
     test(result) {
