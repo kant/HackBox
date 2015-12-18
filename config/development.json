@@ -15,7 +15,11 @@
       "tableName": "knex_migrations"
     }
   },
-  "logEvents": {},
+  "logEvents": {
+    "log": "*",
+    "response": "*",
+    "error": "*"
+  },
   "serverDebug": true,
   "https": false
 }

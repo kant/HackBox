@@ -30,6 +30,12 @@ Running the tests will also seed the DB with test data.
 Run the tests with `npm test`
 
 
+## Remote deployment
+
+As of this writing the API is deployed to Azure here: https://hackbox-api.azurewebsites.net/documentation
+
+Production logs available here: https://hackbox-api.scm.azurewebsites.net/api/vfs/LogFiles/Application/index.html
+
 ## API documentation
 
 The API is generates its own documentation based on metadata provided with each route. Since the documentation is generated from the actual route data itself, that helps mitigate out-of-date documentation. 
