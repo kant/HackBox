@@ -101,7 +101,7 @@ server.views({
 });
 
 server.start(() => {
-  process.stdout.write(`api server started at ${server.info.uri}\n`);
+  server.log(["info", "start"], `api server started at ${server.info.uri}\n`);
 });
 
 module.exports = server;

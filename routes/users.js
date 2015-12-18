@@ -87,7 +87,8 @@ const register = function (server, options, next) {
           } else {
             return db("users").insert(userProps);
           }
-        }).then(() => {
+        }).then((res) => {
+          request.log(["database", "response", "insert"], res);
           return ensureUser(userProps.id);
         }).then((result) => {
           return request.generateResponse(result).code(201);
