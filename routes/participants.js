@@ -45,6 +45,26 @@ const register = function (server, options, next) {
   });
 
   server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/participants/{userId}",
+    config: {
+      description: "Get individual participant of a hackathon",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, userId } = request.params;
+        const response = ensureParticipant(hackathonId, userId, {includeUser: true});
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          userId: stringId
+        }
+      }
+    }
+  });
+
+  server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/participants/{userId}",
     config: {
