@@ -11,7 +11,7 @@ const register = function (server, options, next) {
     path: "/users",
     config: {
       description: "Fetch users",
-      tags: ["api, paginated, list"],
+      tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const { query } = request;
         const { limit, offset } = query;
