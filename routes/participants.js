@@ -23,8 +23,7 @@ const register = function (server, options, next) {
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          const countQuery = userSearch(query);
-          return paginate(countQuery.clone(), {limit, offset, countQuery});
+          return paginate(userSearch(query), {limit, offset});
         });
 
         reply(response);
