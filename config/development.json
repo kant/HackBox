@@ -1,14 +1,21 @@
 {
   "db": {
-    "client": "sqlite3",
+    "client": "mysql",
     "connection": {
-      "filename": "./dev.sqlite3"
+      "database": "hackbox",
+      "host": "localhost",
+      "user": "root",
+      "password": "pass"
+    },
+    "pool": {
+      "min": 2,
+      "max": 10
+    },
+    "migrations": {
+      "tableName": "knex_migrations"
     }
   },
-  "logEvents": {
-    "log": "*",
-    "response": "*"
-  },
+  "logEvents": {},
   "serverDebug": true,
   "https": false
 }

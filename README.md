@@ -2,37 +2,67 @@
 
 This is a node.js api server written using [hapi](http://hapijs.com) framework. 
 
-It's written in ES6 transpiled with Babel to allow full ES6 support. In order to use all of the ES6 features we're using [babel.js](https://babeljs.io) transpiler via the [require hook](https://babeljs.io/docs/usage/require/) as can be seen in index.js.
+It's written in ES6 transpiled with Babel to allow full ES6 support. In order to use all of the ES6 features we're using [babel.js](https://babeljs.io) transpiler via the [require hook](https://babeljs.io/docs/usage/require/) as can be seen in server.js.
 
 ## Running Locally
+
+Make sure MySQL is installed and running locally. If you use these settings for your local DB you won't have to mess with configs:
+
+```json
+{
+  "database": "hackbox",
+  "host": "localhost",
+  "user": "root",
+  "password": "pass"
+}
+```
+
+Once it's up and running you can run the server with:
 
 ```
 npm install
 npm start
-open http://localhost:3000
+open http://localhost:3000/documentation
 ```
+
+Running the tests will also seed the DB with test data.
+
+Run the tests with `npm test`
+
 
 ## API documentation
 
-The API is set up to generate its own documentation based on metadata provided with each server route. Since the documentation is generated from the actual route data itself, that helps mitigate out-of-date documentation. 
+The API is generates its own documentation based on metadata provided with each route. Since the documentation is generated from the actual route data itself, that helps mitigate out-of-date documentation. 
 
-You can see the list of routes by running the server as described above and visiting: `/docs` in a browser. 
+To see it, run the server as described above and visit: `http://localhost:3000/documentation` in a browser.
+
+It's using Swagger UI which also includes a test client so you can query the API from the browser:
+
+![screenshot of docs page](https://cldup.com/1HYizp2fQc.png)
+
 
 ## On route configs
 
-As much as possible the routes are strictly validated. That means each API endpoint will only let data through that passes validation for that route. 
+As much as possible the routes are strictly validated. That means each API endpoint will only let data through that passes validation for that route. It uses [Joi](https://github.com/hapijs/joi/blob/master/API.md) for this.
 
 All routes should have validation rules for anything it expects to trust.
 
-Note that we've set a global server config that will strip unkown keys from the JSON payloads of requests.
+There's a global server config **that will strip all unkown keys from the JSON payloads** of requests.
+
+This means that you'll can't just send more data and expect it to be available inside you're route handlers.
+
+This protects against issues like [mass assignment](http://brakemanscanner.org/docs/warning_types/mass_assignment/).
 
 So if you're seeing things go missing from request payloads, it's because they're not being validated and therefore, ignored.
 
+
 ## Linting setup
 
-Currently using [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
+This repo uses [Walmart's eslint config for ES6-node](https://github.com/walmartlabs/eslint-config-defaults) with only a few tweaks as can be seen in `.eslintrc` there are some modifications in the `data` folder to allow for `snake_case` key names for API output.
 
 There are a few other exceptions specified via `/*eslint*/` comments in certain files.
+
+Linting is automatically run after the test suite or can be run via `npm run lint`.
 
 ## Ops setup and deploy
 
@@ -52,242 +82,102 @@ This allows us to check-in all the config files, allows configs to have arbitrar
 
 To repeat: **please avoid putting any sensitive data** into this code repository. 
 
+
 ## Running scripts
 
-Run `npm run` to see all available scripts.
-
-`npm run lint` will run linting tests on the whole project.
-
-`npm run init-db` will create and seed a local SQLite3 database to use for development.
-
-
-## RESTful routes
-
-Draft of potential routes. 
-
-The actual registered routes can be seen by running the server and visiting `/docs`.
-
-```
-// managing hackathons (editing would be admin-only functionality)
-GET    /hackathons (paginated list)
-POST   /hackathons
-PUT    /hackathons/{id}
-DELETE /hackathons/{id}
-GET    /hackathons/{id}
-
-// edits to users would happen as a root resource
-GET    /users (paginated, filterable list)
-POST   /users
-PUT    /users/{id}
-DELETE /users/{id}
-GET    /users/{id}
-
-// filtered user lists would still be available 
-// through hackathon resource but editing would happen
-// at root level for `/users`
-GET    /hackathons/{id}/participants (paginated, filterable list)
-POST   /hackathons/{id}/participants/{user_id}
-DELETE /hackathons/{id}/participants/{user_id}
-
-// managing projects in hackathons
-GET    /hackathons/projects (paginated, filterable list)
-POST   /hackathons/projects
-PUT    /hackathons/projects/{id}
-DELETE /hackathons/projects/{id}
-GET    /hackathons/projects/{id}
-
-// manage project members
-// owner is fixed
-POST   /hackathons/{id}/projects/{id}/members/{user_id}
-DELETE /hackathons/{id}/projects/{id}/members/{user_id}
-
-// project comments
-GET    /hackathons/{id}/projects/{id}/comments/ (list, possibly paginated?)
-POST   /hackathons/{id}/projects/{id}/comments/
-DELETE /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
-PUT    /hackathons/{id}/projects/{id}/comments/{id} (is this desired functinality?)
-
-// project likes/shares/stats
-POST   /hackathons/{id}/projects/{id}/likes
-DELETE /hackathons/{id}/projects/{id}/likes
-POST   /hackathons/{id}/projects/{id}/views
-POST   /hackathons/{id}/projects/{id}/shares
-
-
-```
+Run `npm run` to list all available scripts.
 
 ## CORS
 
 In order to support easily building web clients to interract with this API, the **C**ross **O**rigin **R**esource **S**haring policy for the API is open to all domains.
 
-## Potentially existing/fixed data sources
+## Fixed data sources
 
-These were all pulled from search/filter pages of the staging site. 
+There are some fixed data sources, such as valid country names, etc.
 
-Is this what should exist? Should these be fixed, or editable?
+These are all located in `/data/fixed-data` and available through the API using the `/data-sets/*` routes.
 
-- Hack Venue Country list
-  - USA
-  - India
-  - China
-  - UK
-  - Brazil
-  - Czech Republic
-  - Denmark
-  - Estonia
-  - Finland
-  - France
-  - Hong Kong SAR
-  - Ireland
-  - Israel
-  - Russia
-  - Serbia
-  - Sweden
-  - Switzerland
-  - Taiwan
-  - S4
-  - TechReady
-- Participant roles:
-  - Developer
-  - Services
-  - PM
-  - IT operations
-  - Sales
-  - Marketing
-  - Service Eng
-  - Sales
-  - Design
-  - Content Publishing
-  - Data Science
-  - Design Research
-  - Business Programs & Ops
-  - Supply Chain & Ops
-  - Evangelism
-  - HW Engineering
-  - HR
-  - Legal & Corporate Affairs
-  - Finance
-- Project categories
-  - Azure
-  - Office
-  - Bing
-  - Windows 10
-  - Skype
-  - Dynamics
-  - Xbox
-  - SQL
-  - Visual Studio
-  - HoloLens
-  - Windows Phone
-  - Cortana
-  - SQL
-  - MSIT
-  - Exchange
-  - Power BI
-  - Machine Learning
-  - Mobile
-  - Intune
-  - Yammer
-- Expertise Types
-  - JavaScript
-  - Azure
-  - Android
-  - C#
-  - IoT
-  - Python
-  - Cortana
-  - iOS
-  - Skype
-- Product/service types
-  - Windows
-  - Devices
-  - Consumer Services
-  - Cloud + Enterprise
-  - Office
-  - Dynamics
-  - 3rd Party Platforms
-  - Misc
-  - Other
-- Customer Types
-  - Consumers
-  - MS Employees/Culture
-  - Developers
-  - Business
-  - Students/Schools
-  - IT Pros
-  - Millennnials
-  - MS Groups
-  - Tech for Good
-  - Advertisers
-  - Industries
-  - Other
+Clients using the api should retrieve the available options from the API when rendering UI to users. So that there's only one source of truth for what should be considered valid options for countries, participant roles, etc.
 
+## db diagram
 
-## basic structure
+Created with [Mondraw](http://monodraw.helftone.com/) original file in `/graphics`
 
 
 ```
-┌──────────────────────┐     ┌───────────────────┐    ┌───────────────────┐
-│ projects             │     │ hackathons        │    │ users             │
-├──────────────────────┤     ├───────────────────┤    ├───────────────────┤
-│ id                   │     │ id                │    │ id                │
-│ owner_id             │     │ name              │    │ email             │
-│ hackathon_id         │     │ slug              │    │ display_name      │
-│ venue_id             │     │ location (text)   │    │ super_user (bool) │
-│ video_id             │     │ description       │    │ created_at        │
-│ title                │  ┌─┼│ logo_url          │    │ updated_at        │
-│ tagline              │  │  │ start_date        │    │ meta (JSON)       │
-│ status (need info)   │  │  │ end_date          │    │ profile (JSON):   │
-│ description          │  │  │ contact_name      │    │   (not enforced)  │
-│ image_url            │  │  │ contact_email     │    │   first_name      │
-│ code_repository_url  │╲ │  │ created_at        │    │   preferred_first │
-│ prototype_url        │──┘  │ updated_at        │ ┌─┼│   last_name       │
-│ supporting_files     │╱    └───────────────────┘ │  │   username        │
-│ inspiration          │               ┼           │  │   bio             │
-│ how_it_will_work     │               │           │  │   job_title       │
-│ needs_hackers        │              ╱│╲          │  │   company_name    │
-│ tags                 │     ┌───────────────────┐ │  │   discipline      │
-│ created_at           │     │ participants      │ │  │   profession      │
-│ updated_at           │     ├───────────────────┤╲│  │   area            │
-│ roles_needed         │     │ user_id           │─┘  │   reports_to      │
-│ skills_needed        │     │ hackathon_id      │╱   │   photo           │
-│ views                │     └───────────────────┘    │   city            │
-│ meta (JSON)          │                              │   state           │
-│                      │     ┌───────────────────┐    │   country         │
-└──────────────────────┘     │ comments          │    │   twitter         │
-            ┼                ├───────────────────┤    └───────────────────┘
-            │               ╱│  id               │╲             ┼
-            ├────────────────│  user_id          │──────────────┤
-            │               ╲│  project_id       │╱             │
-            │                │  text             │              │
-            │                │  created_at       │              │
-            │                └───────────────────┘              │
-            │                ┌───────────────────┐              │
-            │                │ members           │              │
-            │               ╱├───────────────────┤╲             │
-            ├────────────────│ user_id           │──────────────│
-            │               ╲│ project_id        │╱             │
-            │                └───────────────────┘              │
-            │                ┌───────────────────┐              │
-            │                │ likes             │              │
-            │               ╱├───────────────────┤╲             │
-            ├────────────────│ user_id           │──────────────┤
-            │               ╲│ project_id        │╱             │
-            │                └───────────────────┘              │
-            │                ┌───────────────────┐              │
-            │                │ shares            │              │
-            │               ╱├───────────────────┤╲             │
-            ├────────────────│ user_id           │──────────────┤
-            │               ╲│ project_id        │╱             │
-            │                └───────────────────┘              │
-            │                ┌───────────────────┐              │
-            │                │ views             │              │
-            │               ╱├───────────────────┤╲             │
-            └────────────────│ user_id           │──────────────┘
-                            ╲│ project_id        │╱
-                             └───────────────────┘
+                               ┌───────────────────┐      ┌───────────────────┐
+                               │ hackathons        │      │ hackathon_admins  │
+┌──────────────────────┐       ├───────────────────┤     ╱├───────────────────┤╲
+│ projects             │       │ id                │  ┌───│ user_id           │──┐
+├──────────────────────┤       │ name              │  │  ╲│ hackathon_id      │╱ │
+│ id                   │       │ slug              │  │   └───────────────────┘  │
+│ owner_id             │       │ tagline           │  │                          │
+│ hackathon_id         │       │ description       │  │   ┌───────────────────┐  │
+│ title                │       │ judges            │  │   │ participants      │  │
+│ tagline              │       │ rules             │  │  ╱├───────────────────┤╲ │
+│ status               │       │ schedule          │  ├───│ user_id           │──┤
+│ description          │       │ quick_links       │  │  ╲│ hackathon_id      │╱ │
+│ image_url            │       │ resources         │  │   └───────────────────┘  │
+│ code_repo_url        │       │ logo_url          │  │                          │
+│ prototype_url        │       │ header_image_url  │  │   ┌───────────────────┐  │
+│ supporting_files_url │╲      │ start_at          │  │   │ users             │  │
+│ inspiration          │──────┼│ end_at            │┼─┘   ├───────────────────┤  │
+│ how_it_will_work     │╱      │ org               │      │ id                │  │
+│ needs_hackers        │       │ city              │      │ name              │  │
+│ needed_role          │       │ country           │      │ family_name       │  │
+│ json_needed_expertise│       │ color_scheme      │      │ given_name        │  │
+│ product_focus        │       │ created_at        │      │ email             │  │
+│ customer_type        │       │ updated_at        │      │ bio               │  │
+│ json_tags            │       │ show_name         │      │ country           │  │
+│ video_id             │       │ show_judges       │      │ created_at        │┼─┘
+│ created_at           │       │ show_rules        │      │ updated_at        │
+│ updated_at           │       │ show_schedule     │      │ deleted           │
+│ deleted              │       │ deleted           │      │ json_working_on   │
+│ json_meta            │       │ is_public         │      │ json_expertise    │
+└──────────────────────┘       │ is_published      │      │ primary_role      │
+            ┼                  │ json_meta         │      │ product_focus     │
+            │                  └───────────────────┘      │ json_profile      │
+            │                            │                │ json_meta         │
+            │                            │                └───────────────────┘
+            │                            │                          ┼
+            │                            │                          │
+            │                           ╱│╲                         │
+            │                  ┌───────────────────┐                │
+            │                  │ members           │                │
+            │                  ├───────────────────┤                │
+            │                 ╱│ user_id           │╲               │
+            ├──────────────────│ project_id        │────────────────┤
+            │                 ╲│ hackathon_id      │╱               │
+            │                  │ joined_at         │                │
+            │                  └───────────────────┘                │
+            │                  ┌───────────────────┐                │
+            │                  │ comments          │                │
+            │                  ├───────────────────┤                │
+            │                 ╱│  id               │╲               │
+            ├──────────────────│  user_id          │────────────────┤
+            │                 ╲│  project_id       │╱               │
+            │                  │  body             │                │
+            │                  │  created_at       │                │
+            │                  └───────────────────┘                │
+            │                  ┌───────────────────┐                │
+            │                  │ likes             │                │
+            │                 ╱├───────────────────┤╲               │
+            ├──────────────────│ user_id           │────────────────┤
+            │                 ╲│ project_id        │╱               │
+            │                  │ created_at        │                │
+            │                  └───────────────────┘                │
+            │                  ┌───────────────────┐                │
+            │                  │ shares            │                │
+            │                 ╱├───────────────────┤╲               │
+            ├──────────────────│ user_id           │────────────────┤
+            │                 ╲│ project_id        │╱               │
+            │                  │ created_at        │                │
+            │                  └───────────────────┘                │
+            │                  ┌───────────────────┐                │
+            │                  │ views             │                │
+            │                 ╱├───────────────────┤╲               │
+            └──────────────────│ user_id           │────────────────┘
+                              ╲│ project_id        │╱
+                               │ created_at        │
+                               └───────────────────┘
 ```
-
-## Running tests
-
-`npm test`

@@ -2,7 +2,7 @@
   "db": {
     "client": "mysql",
     "connection": {
-      "database": "hackbox-api-staging",
+      "database": "$DB_CONNECTION_DATABASE",
       "host": "$DB_CONNECTION_HOST",
       "user": "$DB_CONNECTION_USER",
       "password": "$DB_CONNECTION_PASSWORD"
@@ -17,7 +17,8 @@
   },
   "logEvents": {
     "log": "*",
-    "response": "*"
+    "response": "*",
+    "error": "*"
   },
   "serverDebug": false,
   "https": true
