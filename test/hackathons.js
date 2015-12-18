@@ -13,7 +13,7 @@ let hackathonId;
 test("fetch hackathon list", (t) => {
   ensure({
     method: "GET",
-    url: "/hackathons?limit=12",
+    url: "/hackathons",
     hasPagination: true,
     test(result) {
       t.ok(result.data.every((item) => item.is_published), "shouldn't include unpublished data");
@@ -24,7 +24,7 @@ test("fetch hackathon list", (t) => {
 test("fetch hackathon as admin", (t) => {
   ensure({
     method: "GET",
-    url: "/hackathons?limit=12&include_unpublished=true",
+    url: "/hackathons?include_unpublished=true",
     hasPagination: true,
     user: "a",
     test(result) {

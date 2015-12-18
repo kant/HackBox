@@ -43,9 +43,8 @@ const register = function (server, options, next) {
         }
 
         const response = hackathonSearch(request.query);
-        const countQuery = db.count("*").from(response.as("res"));
 
-        reply(paginate(response, {limit, offset, countQuery}));
+        reply(paginate(response, {limit, offset}));
       },
       validate: {
         query: paginationWithDeleted.keys({
