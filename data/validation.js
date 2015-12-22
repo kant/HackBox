@@ -14,6 +14,7 @@ export const metaWithDefault = meta.default({});
 export const emptyString = Joi.string().trim().empty("").max(255);
 export const stringWithDefault = emptyString.default("");
 export const emptyText = Joi.string().trim().empty("").max(1000);
+export const emptyTextLarge = Joi.string().trim().empty("").max(10000);
 export const textWithDefault = emptyText.default("");
 export const role = Joi.string().valid(participantTypes).empty("");
 export const roleArray = Joi.array().items(role)
@@ -164,13 +165,13 @@ const projectBase = {
   title: Joi.string().min(1).max(120),
   tagline: emptyString,
   status: emptyString,
-  description: emptyText,
+  description: emptyTextLarge,
   image_url: url,
   code_repo_url: url,
   prototype_url: url,
   supporting_files_url: url,
-  inspiration: emptyText,
-  how_it_will_work: emptyText,
+  inspiration: emptyTextLarge,
+  how_it_will_work: emptyTextLarge,
   needs_hackers: Joi.boolean(),
   needed_role: role,
   product_focus: product,
