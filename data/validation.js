@@ -23,7 +23,7 @@ export const customerType = Joi.string().valid(customerTypes).empty("");
 export const customerTypeArray = Joi.array().items(customerType)
   .description("Array of one or more valid customer types");
 export const neededExpertiseArray = Joi.array().items(Joi.string());
-export const url = Joi.string().max(255).uri().empty("");
+export const url = Joi.string().max(2000).uri().empty("");
 export const urlWithDefault = url.default("");
 export const country = Joi.string().valid(countryList).empty("");
 export const countryArray = Joi.array().items(country)
