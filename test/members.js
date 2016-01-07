@@ -9,7 +9,7 @@ const B_USER_ID = mockUsers[1].id;
 const C_USER_ID = mockUsers[2].id;
 const D_USER_ID = mockUsers[3].id;
 
-test("user 'c' fetch members for a project owned by 'b'", (t) => {
+test("user 'c' can fetch members for a project owned by user 'b'", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/2/members",
