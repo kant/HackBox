@@ -12,10 +12,9 @@ const register = function (server, options, next) {
       tags: ["api", "list"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
-        const checkOwner = request.isSuperUser() ? false : request.userId();
 
         const result = Promise.all([
-          ensureProject(hackathonId, projectId, {checkOwner}),
+          ensureProject(hackathonId, projectId),
           db("members").where({project_id: projectId}).select("user_id")
         ]).then((results) => {
           const memberIds = results[1].map((member) => member.user_id);
