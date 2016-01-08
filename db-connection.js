@@ -150,7 +150,10 @@ export const ensureProject = (hackathonId, id, opts = {
         .where({id: project.owner_id});
 
       result = ownerQuery.then((users) => {
-        project.owner = users[0];
+        const owner = users[0];
+        if (owner) {
+          project.owner = owner;
+        }
         return project;
       });
     }
