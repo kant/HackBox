@@ -51,7 +51,7 @@ const register = function (server, options, next) {
         const response = ensureProject(hackathonId, projectId).then(() => {
           return db("likes").where(likeData);
         }).then((result) => {
-          if (!request.query.omit_user && result.length > 0) {
+          if (likeData.user_id !== null && result.length > 0) {
             throw Boom.preconditionFailed(`User ${userId} has already liked project ${projectId}`);
           }
         }).then(() => {
