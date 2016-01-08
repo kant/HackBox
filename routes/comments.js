@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
+import Joi from "joi";
 import { id, newComment, pagination } from "../data/validation";
 import db, { paginate, ensureProject, ensureComment } from "../db-connection";
 
@@ -48,11 +49,15 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
 
+        if (request.query.omit_user && !request.isSuperUser()) {
+          return reply(Boom.forbidden("only super users can pass 'omit_user'"));
+        }
+
         const response = ensureProject(hackathonId, projectId).then(() => {
           return db("comments").insert({
             project_id: projectId,
             body: request.payload.body,
-            user_id: request.userId(),
+            user_id: request.query.omit_user ? null : request.userId(),
             created_at: new Date()
           });
         }).then((res) => {
@@ -68,7 +73,10 @@ const register = function (server, options, next) {
           hackathonId: id,
           projectId: id
         },
-        payload: newComment
+        payload: newComment,
+        query: {
+          omit_user: Joi.boolean()
+        }
       }
     }
   });

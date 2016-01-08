@@ -5,6 +5,7 @@ import { comment } from "../data/validation";
 
 let cUserComment;
 let bUserComment;
+let anonComment;
 
 test("fetch comments for a project", (t) => {
   ensure({
@@ -47,6 +48,21 @@ test("create a comment as user c", (t) => {
   }, t);
 });
 
+test("as super user, can create an empty comment with user omitted", (t) => {
+  ensure({
+    method: "POST",
+    url: "/hackathons/1/projects/1/comments?omit_user=true",
+    statusCode: 201,
+    payload: {
+      body: " "
+    },
+    user: "a",
+    test(result) {
+      anonComment = result.id;
+    }
+  }, t);
+});
+
 test("get the new comment", (t) => {
   ensure({
     method: "GET",
@@ -60,6 +76,10 @@ test("get the new comment", (t) => {
       t.ok(
         result.data.some((item) => item.id === cUserComment),
         "make sure the added comment2 is listed in results"
+      );
+      t.ok(
+        result.data.some((item) => item.id === anonComment),
+        "make sure the added anon comment is listed in results"
       );
     }
   }, t);
