@@ -9,7 +9,7 @@ const B_USER_ID = mockUsers[1].id;
 const C_USER_ID = mockUsers[2].id;
 const D_USER_ID = mockUsers[3].id;
 
-test("fetch members for a project", (t) => {
+test("user 'c' can fetch members for a project owned by user 'b'", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/2/members",
@@ -19,7 +19,8 @@ test("fetch members for a project", (t) => {
       result.forEach((item) => {
         t.ok(Joi.validate(item, user), "each result should be a user");
       });
-    }
+    },
+    user: "c"
   }, t);
 });
 
