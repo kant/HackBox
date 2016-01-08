@@ -196,7 +196,8 @@ const register = function (server, options, next) {
         const { hackathonId, projectId } = request.params;
 
         const response = ensureProject(hackathonId, projectId, {
-          allowDeleted: request.isSuperUser()
+          allowDeleted: request.isSuperUser(),
+          includeOwner: true
         });
 
         reply(response);
