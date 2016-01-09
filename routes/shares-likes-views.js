@@ -8,10 +8,6 @@ const trackEvent = function (type) {
   return function (request, reply) {
     const { hackathonId, projectId } = request.params;
 
-    if (request.query.omit_user && !request.isSuperUser()) {
-      return reply(Boom.forbidden("only super users can pass 'omit_user'"));
-    }
-
     const response = ensureProject(hackathonId, projectId).then(() => {
       return db(type).insert({
         user_id: request.query.omit_user ? null : request.userId(),
@@ -34,10 +30,6 @@ const register = function (server, options, next) {
       tags: ["api", "action", "stats"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
-
-        if (request.query.omit_user && !request.isSuperUser()) {
-          return reply(Boom.forbidden("only super users can pass 'omit_user'"));
-        }
 
         // we'll track user ID from session/token once we have it
         // hardcoding for now

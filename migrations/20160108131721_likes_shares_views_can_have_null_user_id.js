@@ -4,8 +4,7 @@ exports.up = function (knex) {
   return knex.schema
     .raw("alter table likes modify user_id VARCHAR(255)")
     .raw("alter table views modify user_id VARCHAR(255)")
-    .raw("alter table shares modify user_id VARCHAR(255)")
-    .raw("alter table comments modify user_id VARCHAR(255)");
+    .raw("alter table shares modify user_id VARCHAR(255)");
 };
 
 exports.down = function () {
@@ -13,6 +12,5 @@ exports.down = function () {
   // return knex.schema
   //   .raw("alter table likes modify user_id VARCHAR(255) NOT NULL")
   //   .raw("alter table views modify user_id VARCHAR(255) NOT NULL")
-  //   .raw("alter table shares modify user_id VARCHAR(255) NOT NULL")
-  //   .raw("alter table comments modify user_id VARCHAR(255) NOT NULL");
+  //   .raw("alter table shares modify user_id VARCHAR(255) NOT NULL");
 };

@@ -69,6 +69,10 @@ const register = function (plugin, options, next) {
   // only super users can ever request `include_deleted` as
   // a query param
   plugin.ext("onPreHandler", (request, reply) => {
+    if (request.query.omit_user && !request.isSuperUser()) {
+      return reply(Boom.forbidden("only super users can pass 'omit_user'"));
+    }
+
     if (request.query.include_deleted && !request.isSuperUser()) {
       return reply(Boom.forbidden(`You must be an admin to request deleted data`));
     }
