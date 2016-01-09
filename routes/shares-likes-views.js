@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
+import Joi from "joi";
 import { id } from "../data/validation";
 import db, { ensureProject } from "../db-connection";
 
@@ -9,7 +10,7 @@ const trackEvent = function (type) {
 
     const response = ensureProject(hackathonId, projectId).then(() => {
       return db(type).insert({
-        user_id: request.userId(),
+        user_id: request.query.omit_user ? null : request.userId(),
         project_id: projectId
       });
     }).then(() => {
@@ -35,14 +36,14 @@ const register = function (server, options, next) {
         const userId = request.userId();
 
         const likeData = {
-          user_id: userId,
+          user_id: request.query.omit_user ? null : userId,
           project_id: projectId
         };
 
         const response = ensureProject(hackathonId, projectId).then(() => {
           return db("likes").where(likeData);
         }).then((result) => {
-          if (result.length > 0) {
+          if (likeData.user_id !== null && result.length > 0) {
             throw Boom.preconditionFailed(`User ${userId} has already liked project ${projectId}`);
           }
         }).then(() => {
@@ -57,6 +58,9 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
+        },
+        query: {
+          omit_user: Joi.boolean()
         }
       }
     }
@@ -104,6 +108,9 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
+        },
+        query: {
+          omit_user: Joi.boolean()
         }
       }
     }
@@ -120,6 +127,9 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
+        },
+        query: {
+          omit_user: Joi.boolean()
         }
       }
     }
