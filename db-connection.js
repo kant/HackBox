@@ -91,7 +91,8 @@ export const ensureHackathon = (id, opts = {
 export const ensureProject = (hackathonId, id, opts = {
   checkOwner: false,
   checkMember: false,
-  allowDeleted: false
+  allowDeleted: false,
+  includeOwner: false
 }) => {
   // our count subqueries
   const likesCount = client.select()
@@ -114,6 +115,7 @@ export const ensureProject = (hackathonId, id, opts = {
   const projectQuery = client("projects")
     .select("projects.*", likesCount, sharesCount, viewsCount)
     .where({id});
+
   // member query which we'll use to augment project results
   const memberQuery = client("users").distinct().select("users.*")
     .leftOuterJoin("members", "members.user_id", "=", "users.id")
@@ -140,7 +142,23 @@ export const ensureProject = (hackathonId, id, opts = {
 
     project.members = members;
 
-    return project;
+    let result = project;
+
+    if (opts.includeOwner) {
+      const ownerQuery = client("users")
+        .select("users.name")
+        .where({id: project.owner_id});
+
+      result = ownerQuery.then((users) => {
+        const owner = users[0];
+        if (owner) {
+          project.owner = owner;
+        }
+        return project;
+      });
+    }
+
+    return result;
   });
 };
 
