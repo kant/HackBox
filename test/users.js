@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
 import { user } from "../data/validation";
@@ -156,9 +157,9 @@ test("getting a user has expected fields", (t) => {
     schema: user,
     test(result) {
       t.strictEqual(result.deleted, false, "ensure deleted is false");
-      t.notEqual(result.likes, undefined, "user should have likes");
-      t.notEqual(result.shares, undefined, "user should have shares");
-      t.notEqual(result.views, undefined, "user should have views");
+      t.ok(_.isNumber(result.likes), "user should have likes");
+      t.ok(_.isNumber(result.shares), "user should have shares");
+      t.ok(_.isNumber(result.views), "user should have views");
     }
   }, t);
 });
