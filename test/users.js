@@ -156,6 +156,9 @@ test("getting a user has expected fields", (t) => {
     schema: user,
     test(result) {
       t.strictEqual(result.deleted, false, "ensure deleted is false");
+      t.notEqual(result.likes, undefined, "user should have likes");
+      t.notEqual(result.shares, undefined, "user should have shares");
+      t.notEqual(result.views, undefined, "user should have views");
     }
   }, t);
 });
