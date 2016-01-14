@@ -187,20 +187,19 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
 
   const statQuery = function (table) {
     return client.select()
-      .count("*").from(table)
-        .whereIn("project_id", function () {
-          this.select("project_id")
-            .from("members")
-            .where("user_id", userId);
-        })
-        .as(table);
+      .count("*")
+      .from(table)
+      .innerJoin("members", "members.project_id", `${table}.project_id`)
+      .where("members.user_id", userId)
+      .as(table);
   };
 
   const userQuery = client("users")
-    .select("*", statQuery("shares"), statQuery("likes"), statQuery("views")).where(query);
+    .select("*", statQuery("likes"), statQuery("shares"), statQuery("views"))
+    .where(query);
 
-  return userQuery.then((rows) => {
-    const user = rows[0];
+  return userQuery.then((users) => {
+    const user = users[0];
 
     if (!user || user && user.deleted && !opts.allowDeleted) {
       throw Boom.notFound(`User id ${userId} was not found.`);
