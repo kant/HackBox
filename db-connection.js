@@ -190,7 +190,7 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
       .count("*")
       .from(table)
       .innerJoin("members", "members.project_id", `${table}.project_id`)
-      .where(`${table}.user_id`, userId)
+      .where("members.user_id", userId)
       .as(table);
   };
 
