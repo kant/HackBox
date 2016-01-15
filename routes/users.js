@@ -2,7 +2,8 @@
 import Boom from "boom";
 import Joi from "joi";
 import { updateUser, stringId, optionalId, countryArray,
-  productArray, roleArray, newUser, paginationWithDeleted } from "../data/validation";
+  productArray, roleArray, newUser, paginationWithDeleted,
+  sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -30,7 +31,9 @@ const register = function (server, options, next) {
           has_project: Joi.boolean(),
           product_focus: productArray,
           role: roleArray,
-          country: countryArray
+          country: countryArray,
+          sort_col: Joi.any().valid("given_name", "family_name"),
+          sort_direction: sortDirection
         })
       }
     }

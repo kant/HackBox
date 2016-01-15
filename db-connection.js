@@ -335,7 +335,7 @@ export const projectSearch = (queryObj) => {
 export const userSearch = (queryObj) => {
   const {
     search, hackathon_id, has_project, include_deleted,
-    role, product_focus, country
+    role, product_focus, country, sort_col, sort_direction
   } = queryObj;
 
   let query;
@@ -398,8 +398,13 @@ export const userSearch = (queryObj) => {
     query.andWhere("has_project", has_project);
   }
 
-  // set order by
-  query.orderBy("name", "asc");
+  const orderByCol = sort_col || "given_name";
+  const orderByDirection = sort_direction || "asc";
+  if (orderByCol === "given_name") {
+    query.orderByRaw(`given_name ${orderByDirection}, family_name ${orderByDirection}`);
+  } else if (orderByCol === "family_name") {
+    query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
+  }
 
   return query;
 };

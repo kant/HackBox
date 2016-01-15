@@ -20,7 +20,8 @@ test("fetch hackathon list sorted by created_at desc by default", (t) => {
     hasPagination: true,
     test(result) {
       t.ok(result.data.every((item) => item.is_published), "shouldn't include unpublished data");
-      t.ok(result.data[0].created_at >= result.data[1].created_at, "should include ordered results");
+      t.ok(result.data[0].created_at >= result.data[1].created_at,
+        "should include ordered results");
     }
   }, t);
 });

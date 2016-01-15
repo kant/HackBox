@@ -7,11 +7,77 @@ import { user } from "../data/validation";
 
 const aUserId = mockUsers[0].id;
 const bUserId = mockUsers[1].id;
+const henrikJoreteg = mockUsers[0];
+const drSeuss = mockUsers[1];
 
 test("fetch all users", (t) => {
   ensure({
     method: "GET",
     url: "/users",
+    hasPagination: true
+  }, t);
+});
+
+test("fetch all users sorted by given_name asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/users?limit=50&sort_col=given_name&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      const givenNames = _.pluck(result.data, "given_name");
+      const drSeussIndex = _.indexOf(givenNames, drSeuss.given_name);
+      const henrikJoretegIndex = _.indexOf(givenNames, henrikJoreteg.given_name);
+      t.ok(drSeussIndex < henrikJoretegIndex, "should be sorted by given_name");
+    }
+  }, t);
+});
+
+test("fetch all users sorted by given_name desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/users?limit=50&sort_col=given_name&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      const givenNames = _.pluck(result.data, "given_name");
+      const drSeussIndex = _.indexOf(givenNames, drSeuss.given_name);
+      const henrikJoretegIndex = _.indexOf(givenNames, henrikJoreteg.given_name);
+      t.ok(henrikJoretegIndex < drSeussIndex, "should be sorted by given_name");
+    }
+  }, t);
+});
+
+test("fetch all users sorted by family_name asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/users?limit=50&sort_col=family_name&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      const familyNames = _.pluck(result.data, "family_name");
+      const drSeussIndex = _.indexOf(familyNames, drSeuss.family_name);
+      const henrikJoretegIndex = _.indexOf(familyNames, henrikJoreteg.family_name);
+      t.ok(henrikJoretegIndex < drSeussIndex, "should be sorted by family_name");
+    }
+  }, t);
+});
+
+test("fetch all users sorted by family_name desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/users?limit=50&sort_col=family_name&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      const familyNames = _.pluck(result.data, "family_name");
+      const drSeussIndex = _.indexOf(familyNames, drSeuss.family_name);
+      const henrikJoretegIndex = _.indexOf(familyNames, henrikJoreteg.family_name);
+      t.ok(drSeussIndex < henrikJoretegIndex, "should be sorted by family_name");
+    }
+  }, t);
+});
+
+test("fetch all users sorted by family_name", (t) => {
+  ensure({
+    method: "GET",
+    url: "/users?sort_col=family_name",
     hasPagination: true
   }, t);
 });
