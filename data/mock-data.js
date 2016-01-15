@@ -2,8 +2,8 @@ import sample from "lodash.sample";
 import faker from "faker";
 import { participantTypes, customerTypes, productTypes } from "./fixed-data";
 
-const yesterday = new Date(Date.now() - 86400);
-const fiveDaysFromNow = new Date(Date.now() + 86400 * 5);
+const daysAgo = (numDays) => new Date(Date.now() - 86400 * numDays);
+const daysFromNow = (numDays) => new Date(Date.now() + 86400 * numDays);
 
 let count;
 
@@ -231,8 +231,8 @@ export const hackathons = [
     tagline: "Because the planet needs hacking",
     description: "Yep, hack the planet!",
     logo_url: "http://example.com/hack.gif",
-    start_at: new Date(yesterday),
-    end_at: new Date(fiveDaysFromNow),
+    start_at: daysAgo(1),
+    end_at: daysFromNow(5),
     org: "Hackers Inc.",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -249,8 +249,8 @@ export const hackathons = [
     tagline: "Hacking still needed",
     description: "No really, I'm serious... hack the planet!",
     logo_url: "http://example.com/uberhack.gif",
-    start_at: new Date(yesterday),
-    end_at: new Date(fiveDaysFromNow),
+    start_at: daysAgo(2),
+    end_at: daysFromNow(4),
     org: "Hackers LLC",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
@@ -267,8 +267,8 @@ export const hackathons = [
     tagline: "Smiling hackers",
     description: "It's gonna be fun!",
     logo_url: "http://example.com/happyhack.gif",
-    start_at: new Date(yesterday),
-    end_at: new Date(fiveDaysFromNow),
+    start_at: daysAgo(3),
+    end_at: daysFromNow(3),
     org: "Hackers LLC",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),

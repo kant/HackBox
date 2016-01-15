@@ -407,7 +407,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, search
+    admins_contain, search, sort_col, sort_direction
   } = queryObj;
 
   // we don't include all fields
@@ -462,7 +462,15 @@ export const hackathonSearch = (queryObj) => {
     query.whereIn("country", country);
   }
 
-  query.orderBy("created_at", "desc");
+  let orderByCol = sort_col;
+  let orderByDirection = sort_direction;
+  if (!orderByCol) {
+    orderByCol = "created_at";
+    orderByDirection = "desc";
+  } else if (!sort_direction) {
+    orderByDirection = "asc";
+  }
+  query.orderBy(orderByCol, orderByDirection);
 
   return query;
 };
