@@ -16,6 +16,32 @@ test("fetch participants for a hackathon", (t) => {
   }, t);
 });
 
+test("fetch participants for a hackathon ordered by joined_at asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/participants?sort_col=joined_at&sort_direction=asc",
+    hasPagination: true,
+    schema: participantSchema,
+    test(result) {
+      t.ok(result.data[0].id, mockUsers[0].id, "oldest joined user is first");
+      t.ok(result.data[1].id, mockUsers[1].id, "newest joined user is last");
+    }
+  }, t);
+});
+
+test("fetch participants for a hackathon ordered by joined_at desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/participants?sort_col=joined_at&sort_direction=desc",
+    hasPagination: true,
+    schema: participantSchema,
+    test(result) {
+      t.ok(result.data[0].id, mockUsers[1].id, "newest joined user is first");
+      t.ok(result.data[1].id, mockUsers[0].id, "oldest joined user is last");
+    }
+  }, t);
+});
+
 test("add a new participant", (t) => {
   ensure({
     method: "POST",

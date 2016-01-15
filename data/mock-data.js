@@ -428,21 +428,25 @@ export const participants = [
   {
     user_id: users[0].id,
     hackathon_id: 1,
+    joined_at: daysAgo(4),
     json_participation_meta: JSON.stringify({icecream: true})
   },
   {
     user_id: users[1].id,
     hackathon_id: 1,
+    joined_at: daysAgo(3),
     json_participation_meta: JSON.stringify({icecream: true})
   },
   {
     user_id: users[1].id,
     hackathon_id: 2,
+    joined_at: daysAgo(2),
     json_participation_meta: JSON.stringify({})
   },
   {
     user_id: users[3].id,
     hackathon_id: 2,
+    joined_at: daysAgo(1),
     json_participation_meta: JSON.stringify({})
   }
 ];

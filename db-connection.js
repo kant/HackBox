@@ -7,6 +7,7 @@
 import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
+import _ from "lodash";
 import { db } from "./config";
 
 const client = knex(db);
@@ -338,6 +339,8 @@ export const userSearch = (queryObj) => {
     role, product_focus, country, sort_col, sort_direction
   } = queryObj;
 
+  const orderByCol = sort_col || "given_name";
+  const orderByDirection = sort_direction || "asc";
   let query;
 
   if (hackathon_id) {
@@ -358,17 +361,32 @@ export const userSearch = (queryObj) => {
       Also, please note that `has_project` only works when passing a `hackathon_id`
       to scope it. This is enforced at the route level.
     */
-    const rawQuery = [
-      "from (select users.*, participants.json_participation_meta,",
+    let rawQuery = [
+      "select users.*, participants.json_participation_meta,",
       "(select case when exists",
       "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
       "then true else false end)",
       "as has_project from users",
       "inner join participants on participants.user_id = users.id",
-      "where participants.hackathon_id = ?) as derived"
+      "where participants.hackathon_id = ?"
     ].join(" ");
+    const rawQueryVars = [hackathon_id, hackathon_id];
 
-    query = client.select().joinRaw(rawQuery, [hackathon_id, hackathon_id]);
+    /*
+      We need to sort by joined_at in the query that includes participants
+      since this query is used to create a derived table from which we have
+      no reference to the participants table.
+
+      We have to concat the orderByDirection because `joinRaw()` turns the
+      direction into a string like `'asc'`if we pass it as a ?. Instead, let's
+      just double check the value is legit even though it should have already
+      been verified in the route.
+    */
+    if (orderByCol === "joined_at" && _.includes(["asc", "desc"], orderByDirection)) {
+      rawQuery += ` order by participants.joined_at ${orderByDirection}`;
+    }
+
+    query = client.select().joinRaw(`from (${rawQuery}) as derived`, rawQueryVars);
   } else {
     query = client("users");
   }
@@ -398,8 +416,7 @@ export const userSearch = (queryObj) => {
     query.andWhere("has_project", has_project);
   }
 
-  const orderByCol = sort_col || "given_name";
-  const orderByDirection = sort_direction || "asc";
+  // order by joined_at happens in the hackathon rawQuery above
   if (orderByCol === "given_name") {
     query.orderByRaw(`given_name ${orderByDirection}, family_name ${orderByDirection}`);
   } else if (orderByCol === "family_name") {

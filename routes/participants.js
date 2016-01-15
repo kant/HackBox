@@ -2,7 +2,8 @@
 import Boom from "boom";
 import Joi from "joi";
 import { paginationWithDeleted, id, roleArray,
-  countryArray, productArray, stringId, newParticipant } from "../data/validation";
+  countryArray, productArray, stringId, newParticipant,
+  sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser,
   ensureParticipant, userSearch } from "../db-connection";
 
@@ -37,7 +38,9 @@ const register = function (server, options, next) {
           has_project: Joi.boolean(),
           product_focus: productArray,
           role: roleArray,
-          country: countryArray
+          country: countryArray,
+          sort_col: Joi.any().valid("given_name", "family_name", "joined_at"),
+          sort_direction: sortDirection
         })
       }
     }
