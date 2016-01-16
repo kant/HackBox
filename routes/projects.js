@@ -1,7 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
-  roleArray, productArray, projectUpdate, id, customerTypeArray } from "../data/validation";
+  roleArray, productArray, projectUpdate, id, customerTypeArray,
+  sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureProject, projectSearch } from "../db-connection";
 import Joi from "joi";
 
@@ -44,7 +45,9 @@ const register = function (server, options, next) {
           needed_expertise: neededExpertiseArray,
           product_focus: productArray,
           customer_type: customerTypeArray,
-          has_member: stringId
+          has_member: stringId,
+          sort_col: Joi.any().valid("created_at", "title"),
+          sort_direction: sortDirection
         })
       }
     }

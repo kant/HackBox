@@ -1,7 +1,7 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
   max-statements: [2, 30],
-  complexity: [2, 15],
+  complexity: [2, 20],
   no-invalid-this: 0
 */
 import knex from "knex";
@@ -266,7 +266,8 @@ export const paginate = (query, {limit, offset}) => {
 export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, needs_hackers, country,
-    needed_role, needed_expertise, product_focus, customer_type, has_member
+    needed_role, needed_expertise, product_focus, customer_type, has_member,
+    sort_col, sort_direction
   } = queryObj;
 
   const query = client("projects")
@@ -326,8 +327,10 @@ export const projectSearch = (queryObj) => {
     query.whereIn("hackathons.country", country);
   }
 
-  // set order by
-  query.orderBy("projects.created_at", "desc");
+  const orderByCol = sort_col || "created_at";
+  const orderByDirection = sort_direction || "desc";
+  query.orderBy(`projects.${orderByCol}`, orderByDirection);
+
   query.select("projects.*");
 
   return query;

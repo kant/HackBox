@@ -303,7 +303,7 @@ export const projects = [
     customer_type: "Consumers",
     json_tags: JSON.stringify(["Yo", "Social"]),
     video_id: 47,
-    created_at: faker.date.recent(),
+    created_at: daysAgo(2),
     updated_at: faker.date.recent(),
     json_meta: JSON.stringify({
       is_awesome: true
@@ -329,7 +329,7 @@ export const projects = [
     customer_type: "Developers",
     json_tags: JSON.stringify(["Bing", "News", "Bingcubator", "ASGEA"]),
     video_id: null,
-    created_at: faker.date.recent(),
+    created_at: daysAgo(1),
     updated_at: faker.date.recent(),
     json_meta: JSON.stringify({})
   }
