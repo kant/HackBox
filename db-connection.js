@@ -1,12 +1,13 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
   max-statements: [2, 30],
-  complexity: [2, 15],
+  complexity: [2, 20],
   no-invalid-this: 0
 */
 import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
+import _ from "lodash";
 import { db } from "./config";
 
 const client = knex(db);
@@ -265,7 +266,8 @@ export const paginate = (query, {limit, offset}) => {
 export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, needs_hackers, country,
-    needed_role, needed_expertise, product_focus, customer_type, has_member
+    needed_role, needed_expertise, product_focus, customer_type, has_member,
+    sort_col, sort_direction
   } = queryObj;
 
   const query = client("projects")
@@ -325,8 +327,10 @@ export const projectSearch = (queryObj) => {
     query.whereIn("hackathons.country", country);
   }
 
-  // set order by
-  query.orderBy("projects.created_at", "desc");
+  const orderByCol = sort_col || "created_at";
+  const orderByDirection = sort_direction || "desc";
+  query.orderBy(`projects.${orderByCol}`, orderByDirection);
+
   query.select("projects.*");
 
   return query;
@@ -335,9 +339,11 @@ export const projectSearch = (queryObj) => {
 export const userSearch = (queryObj) => {
   const {
     search, hackathon_id, has_project, include_deleted,
-    role, product_focus, country
+    role, product_focus, country, sort_col, sort_direction
   } = queryObj;
 
+  const orderByCol = sort_col || "given_name";
+  const orderByDirection = sort_direction || "asc";
   let query;
 
   if (hackathon_id) {
@@ -358,17 +364,32 @@ export const userSearch = (queryObj) => {
       Also, please note that `has_project` only works when passing a `hackathon_id`
       to scope it. This is enforced at the route level.
     */
-    const rawQuery = [
-      "from (select users.*, participants.json_participation_meta,",
+    let rawQuery = [
+      "select users.*, participants.json_participation_meta,",
       "(select case when exists",
       "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
       "then true else false end)",
       "as has_project from users",
       "inner join participants on participants.user_id = users.id",
-      "where participants.hackathon_id = ?) as derived"
+      "where participants.hackathon_id = ?"
     ].join(" ");
+    const rawQueryVars = [hackathon_id, hackathon_id];
 
-    query = client.select().joinRaw(rawQuery, [hackathon_id, hackathon_id]);
+    /*
+      We need to sort by joined_at in the query that includes participants
+      since this query is used to create a derived table from which we have
+      no reference to the participants table.
+
+      We have to concat the orderByDirection because `joinRaw()` turns the
+      direction into a string like `'asc'`if we pass it as a ?. Instead, let's
+      just double check the value is legit even though it should have already
+      been verified in the route.
+    */
+    if (orderByCol === "joined_at" && _.includes(["asc", "desc"], orderByDirection)) {
+      rawQuery += ` order by participants.joined_at ${orderByDirection}`;
+    }
+
+    query = client.select().joinRaw(`from (${rawQuery}) as derived`, rawQueryVars);
   } else {
     query = client("users");
   }
@@ -398,8 +419,12 @@ export const userSearch = (queryObj) => {
     query.andWhere("has_project", has_project);
   }
 
-  // set order by
-  query.orderBy("name", "asc");
+  // order by joined_at happens in the hackathon rawQuery above
+  if (orderByCol === "given_name") {
+    query.orderByRaw(`given_name ${orderByDirection}, family_name ${orderByDirection}`);
+  } else if (orderByCol === "family_name") {
+    query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
+  }
 
   return query;
 };
@@ -407,7 +432,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, search
+    admins_contain, search, sort_col, sort_direction
   } = queryObj;
 
   // we don't include all fields
@@ -462,7 +487,15 @@ export const hackathonSearch = (queryObj) => {
     query.whereIn("country", country);
   }
 
-  query.orderBy("created_at", "desc");
+  let orderByCol = sort_col;
+  let orderByDirection = sort_direction;
+  if (!orderByCol) {
+    orderByCol = "created_at";
+    orderByDirection = "desc";
+  } else if (!sort_direction) {
+    orderByDirection = "asc";
+  }
+  query.orderBy(orderByCol, orderByDirection);
 
   return query;
 };

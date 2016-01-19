@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import { project } from "../data/validation";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
@@ -39,6 +40,54 @@ test("fetch projects", (t) => {
     method: "GET",
     url: "/hackathons/1/projects",
     hasPagination: true
+  }, t);
+});
+
+test("fetch projects by created_at desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?sort_col=created_at&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].created_at > result.data[1].created_at, "should be sorted desc");
+    }
+  }, t);
+});
+
+test("fetch projects by created_at asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?sort_col=created_at&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].created_at < result.data[1].created_at, "should be sorted asc");
+    }
+  }, t);
+});
+
+test("fetch projects by title desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?sort_col=title&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      const resultTitles = _.pluck(result.data, "title");
+      const sortedTitles = _(resultTitles.sort()).reverse().value();
+      t.equal(resultTitles, sortedTitles, "should be sorted desc");
+    }
+  }, t);
+});
+
+test("fetch projects by title asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?sort_col=title&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      const resultTitles = _.pluck(result.data, "title");
+      const sortedTitles = resultTitles.sort();
+      t.equal(resultTitles, sortedTitles, "should be sorted asc");
+    }
   }, t);
 });
 

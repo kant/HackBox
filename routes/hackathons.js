@@ -3,7 +3,8 @@
 import Boom from "boom";
 import Joi from "joi";
 import { newHackathon, hackathonUpdate, id,
-  stringId, paginationWithDeleted, countryArray } from "../data/validation";
+  stringId, paginationWithDeleted, countryArray,
+  sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, hackathonSearch } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -50,7 +51,9 @@ const register = function (server, options, next) {
         query: paginationWithDeleted.keys({
           search: Joi.string(),
           admins_contain: Joi.string(),
-          country: countryArray
+          country: countryArray,
+          sort_col: Joi.any().valid("start_at", "end_at", "name"),
+          sort_direction: sortDirection
         })
       }
     }

@@ -216,3 +216,8 @@ export const comment = newComment.keys({
   project_id: id,
   created_at: Joi.date()
 }).requiredKeys("id", "user_id", "project_id", "body", "created_at");
+
+/*
+  Sorting
+*/
+export const sortDirection = Joi.any().valid("asc", "desc");
