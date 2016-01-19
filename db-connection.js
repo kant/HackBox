@@ -262,6 +262,7 @@ export const projectSearch = (queryObj) => {
 
   const query = client("projects")
     .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
+    .innerJoin("users", "projects.owner_id", "users.id")
     .andWhere(include_deleted ? {} : {"projects.deleted": false});
 
   if (hackathon_id) {
@@ -321,7 +322,7 @@ export const projectSearch = (queryObj) => {
   const orderByDirection = sort_direction || "desc";
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
-  query.select("projects.*");
+  query.select("projects.*", "users.name as owner_name");
 
   return query;
 };
