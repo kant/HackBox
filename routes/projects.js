@@ -4,7 +4,8 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
   sortDirection } from "../data/validation";
 import db, {
-  paginate, ensureHackathon, ensureProject, projectSearch, withProjectMembers
+  paginate, ensureHackathon, ensureProject, projectSearch,
+  addProjectMembersToPagination
 } from "../db-connection";
 import Joi from "joi";
 
@@ -33,7 +34,7 @@ const register = function (server, options, next) {
 
         const response = projectSearch(query);
 
-        reply(withProjectMembers(paginate(response, {limit, offset})));
+        reply(addProjectMembersToPagination(paginate(response, {limit, offset})));
       },
       validate: {
         params: {

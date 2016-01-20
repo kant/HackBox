@@ -343,7 +343,7 @@ const addMembersToProjects = (projects, usersByProject) => {
   });
 };
 
-export const withProjectMembers = (paginationQuery) => {
+export const addProjectMembersToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "id");
     const membersQuery = client("members")
