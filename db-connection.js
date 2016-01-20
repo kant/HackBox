@@ -115,7 +115,13 @@ export const ensureProject = (hackathonId, id, opts = {
   // our main aggregate query
   const projectQuery = client("projects")
     .select("projects.*", likesCount, sharesCount, viewsCount)
-    .where({id});
+    .where({"projects.id": id});
+
+  if (opts.includeOwner) {
+    projectQuery
+      .select("users.name as owner_name")
+      .innerJoin("users", "projects.owner_id", "users.id");
+  }
 
   // member query which we'll use to augment project results
   const memberQuery = client("users").distinct().select("users.*")
@@ -143,23 +149,7 @@ export const ensureProject = (hackathonId, id, opts = {
 
     project.members = members;
 
-    let result = project;
-
-    if (opts.includeOwner) {
-      const ownerQuery = client("users")
-        .select("users.name")
-        .where({id: project.owner_id});
-
-      result = ownerQuery.then((users) => {
-        const owner = users[0];
-        if (owner) {
-          project.owner = owner;
-        }
-        return project;
-      });
-    }
-
-    return result;
+    return project;
   });
 };
 
@@ -272,6 +262,7 @@ export const projectSearch = (queryObj) => {
 
   const query = client("projects")
     .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
+    .innerJoin("users", "projects.owner_id", "users.id")
     .andWhere(include_deleted ? {} : {"projects.deleted": false});
 
   if (hackathon_id) {
@@ -331,7 +322,7 @@ export const projectSearch = (queryObj) => {
   const orderByDirection = sort_direction || "desc";
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
-  query.select("projects.*");
+  query.select("projects.*", "users.name as owner_name");
 
   return query;
 };

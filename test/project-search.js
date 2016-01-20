@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
 
@@ -30,6 +31,18 @@ test("search should cover title", (t) => {
       t.ok(result.data.some((item) => {
         return item.title === "Yo!";
       }));
+    }
+  }, t);
+});
+
+test("search should include owner name", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?search=Yo!",
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(!_.isEmpty(result.data[0].owner_name), "should include owner_name in results");
     }
   }, t);
 });

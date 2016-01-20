@@ -119,7 +119,7 @@ test("new project is GET-able", (t) => {
       t.equal(result.members.length, 1, "project should have one member");
       t.equal(result.members[0].id, bUserId, "owner should be member");
       t.equal(result.owner_id, bUserId, "Owner ID should be user who created it");
-      t.equal(result.owner.name, bUserName, "Owner name should be present");
+      t.equal(result.owner_name, bUserName, "Owner name should be present");
     }
   }, t);
 });
