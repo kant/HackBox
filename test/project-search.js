@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
 
@@ -255,6 +256,23 @@ test(`can do global search using 'me' as 'has_member' param`, (t) => {
   }, t);
 });
 
+test("global search should include members", (t) => {
+  ensure({
+    method: "GET",
+    url: "/project-search?search=Yo!",
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.data.some((item) => {
+        return _.some(item.members, (member) => {
+          return member.id === mockUsers[0].id &&
+            member.name === mockUsers[0].name;
+        });
+      }));
+    }
+  }, t);
+});
+
 test(`hackathon specific search for projects for a given user using 'has_member' param`, (t) => {
   ensure({
     method: "GET",
@@ -292,3 +310,19 @@ test(`projects in hackathon should be empty when scoped with 'has_member' param`
   }, t);
 });
 
+test("hackathon specific search should include members", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects?search=Yo!",
+    hasPagination: true,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.data.some((item) => {
+        return _.some(item.members, (member) => {
+          return member.id === mockUsers[0].id &&
+            member.name === mockUsers[0].name;
+        });
+      }));
+    }
+  }, t);
+});

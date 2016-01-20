@@ -336,6 +336,29 @@ export const projectSearch = (queryObj) => {
   return query;
 };
 
+const addMembersToProjects = (projects, usersByProject) => {
+  return _.map(projects, (project) => {
+    project.members = _.map(usersByProject[project.id], (user) => _.pick(user, ["id", "name"]));
+    return project;
+  });
+};
+
+export const withProjectMembers = (paginationQuery) => {
+  return paginationQuery.then((pagination) => {
+    const projectIds = _.pluck(pagination.data, "id");
+    const membersQuery = client("members")
+      .select("members.project_id", "users.id", "users.name")
+      .innerJoin("users", "members.user_id", "users.id")
+      .whereIn("members.project_id", projectIds);
+
+    return membersQuery.then((users) => {
+      const usersByProject = _.groupBy(users, "project_id");
+      pagination.data = addMembersToProjects(pagination.data, usersByProject);
+      return pagination;
+    });
+  });
+};
+
 export const userSearch = (queryObj) => {
   const {
     search, hackathon_id, has_project, include_deleted,

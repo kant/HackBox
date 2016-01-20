@@ -2,7 +2,7 @@
 import Joi from "joi";
 import { paginationWithDeleted, roleArray, productArray, stringId,
   optionalId, customerTypeArray, countryArray, neededExpertiseArray } from "../data/validation";
-import { paginate, projectSearch } from "../db-connection";
+import { paginate, projectSearch, withProjectMembers } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -26,7 +26,7 @@ const register = function (server, options, next) {
 
         const response = projectSearch(query);
 
-        reply(paginate(response, {limit, offset}));
+        reply(withProjectMembers(paginate(response, {limit, offset})));
       },
       validate: {
         query: paginationWithDeleted.keys({
