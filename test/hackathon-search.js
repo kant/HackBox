@@ -68,7 +68,7 @@ test(`super user can request 'include_unpublished' for other users`, (t) => {
     hasPagination: true,
     statusCode: 200,
     test(result) {
-      t.equal(result.data.length, 2, "should have two matches");
+      t.equal(result.data.length, 3, "should have three matches");
       t.ok(result.data.some((item) => !item.is_published), "some should be be unpublished");
     }
   }, t);

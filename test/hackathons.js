@@ -147,6 +147,44 @@ test("user b can create a hackathon", (t) => {
   }, t);
 });
 
+test("user b can create a hackathon with very long fields", (t) => {
+  const properties = {
+    name: "Big Hack",
+    slug: "big-hack",
+    description: "descriptio".repeat(1000), // 10000 characters
+    judges: "judgesjudg".repeat(1000), // 10000 characters
+    rules: "rulesrules".repeat(1000), // 10000 characters
+    schedule: "schedulesc".repeat(1000), // 10000 characters
+    tagline: "tagline",
+    header_image_url: "http://example.com/header.gif",
+    logo_url: "http://example.com/hack.gif",
+    start_at: new Date(),
+    end_at: new Date(Date.now() + 86400 * 5),
+    city: "Redmond",
+    country: "United States",
+    is_published: false,
+    meta: {
+      some_key: "some_value"
+    }
+  };
+
+  ensure({
+    method: "POST",
+    url: "/hackathons",
+    statusCode: 201,
+    payload: properties,
+    test(result) {
+      const value = result.meta && result.meta.some_key;
+      t.equal(value, "some_value", "make sure meta keys are persisted");
+      t.ok(result.admins.length, "should have creator listed as admin");
+      t.equal(result.is_published, false, "should be unpublished");
+      t.equal(result.color_scheme, "Visual Studio purple", "default should be populated");
+      t.ok(result.updated_at, "make sure this result has an updated_at");
+    },
+    user: "b"
+  }, t);
+});
+
 test("get user b can get newly created hackathon", (t) => {
   ensure({
     method: "GET",
