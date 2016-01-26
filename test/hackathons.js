@@ -114,7 +114,10 @@ test("user b can create a hackathon", (t) => {
   const properties = {
     name: "Bingcubator Hack 2025",
     slug: "bingcubator-hack-2025",
-    description: "description",
+    description: "description".repeat(200), // 2200 characters
+    judges: "judges".repeat(200), // 1200 characters
+    rules: "rules".repeat(300), // 1500 characters
+    schedule: "schedule".repeat(200), // 1600 characters
     tagline: "tagline",
     header_image_url: "http://example.com/header.gif",
     logo_url: "http://example.com/hack.gif",
