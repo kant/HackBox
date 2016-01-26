@@ -44,7 +44,8 @@
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
-    "pretest": "npm run rollback && npm run init-db",
+    "pretest": "npm run reset-db && npm run init-db",
+    "reset-db": "node reset-db.js",
     "seed-db": "knex seed:run",
     "start": "node server.js",
     "test": "AUTH_ENABLED=true node test/index | tap-spec && npm run lint"
