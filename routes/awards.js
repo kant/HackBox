@@ -204,22 +204,21 @@ const register = function (server, options, next) {
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
-        const ensureCategoryNotYetApplied = db("awards_award_categories")
+        const ensureCategoryNotYetAppliedQuery = db("awards_award_categories")
           .where({award_id: awardId, award_category_id: awardCategoryId})
-          .count("* as count")
-          .then((results) => {
-            const count = results[0].count;
-            if (count > 0) {
-              throw Boom.forbidden(`Award category ${awardCategoryId} already applied.`);
-            }
-          });
+          .count("* as count");
 
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
           ensureAward(hackathonId, awardId),
           ensureAwardCategory(hackathonId, awardCategoryId),
-          ensureCategoryNotYetApplied
-        ]).then(() => {
+          ensureCategoryNotYetAppliedQuery
+        ]).then((result) => {
+          const existingCategoryAppliedCount = result[3][0].count;
+          if (existingCategoryAppliedCount > 0) {
+            throw Boom.forbidden(`Award category ${awardCategoryId} already applied.`);
+          }
+
           return db("awards_award_categories")
             .insert({award_id: awardId, award_category_id: awardCategoryId});
         })
