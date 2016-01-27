@@ -1,4 +1,5 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
+import Boom from "boom";
 import _ from "lodash";
 import { id, newAwardCategory, awardCategoryUpdate } from "../data/validation";
 import db, { ensureHackathon, ensureAwardCategory } from "../db-connection";
@@ -46,13 +47,20 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const payload = request.payload;
+        const parentId = payload.parent_id;
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
         payload.hackathon_id = hackathonId;
 
-        const response = ensureHackathon(hackathonId, {checkOwner})
-          .then(() => {
+        const response = Promise.all([
+          ensureHackathon(hackathonId, {checkOwner}),
+          parentId ? ensureAwardCategory(hackathonId, parentId) : null
+        ])
+          .then((result) => {
+            if (parentId && result[1].parent_id !== null) {
+              throw Boom.forbidden(`Award Categories can only be two levels deep`);
+            }
             return db("award_categories").insert(payload);
           })
           .then((result) => {
@@ -112,14 +120,14 @@ const register = function (server, options, next) {
           ensureHackathon(hackathonId, {checkOwner}),
           ensureAwardCategory(hackathonId, awardCategoryId)
         ])
-        .then(() => {
-          return db("award_categories")
-            .update(payload)
-            .where({hackathon_id: hackathonId, id: awardCategoryId});
-        })
-        .then(() => {
-          return ensureAwardCategory(hackathonId, awardCategoryId);
-        });
+          .then(() => {
+            return db("award_categories")
+              .update(payload)
+              .where({hackathon_id: hackathonId, id: awardCategoryId});
+          })
+          .then(() => {
+            return ensureAwardCategory(hackathonId, awardCategoryId);
+          });
 
         reply(response);
       },

@@ -23,6 +23,18 @@ test("create a new award category as admin of hackathon", (t) => {
   }, t);
 });
 
+test("can't create a new award category if not an admin of hackathon", (t) => {
+  ensure({
+    method: "POST",
+    url: "/hackathons/1/award_categories",
+    payload: {
+      name: "Bronze Winners"
+    },
+    statusCode: 403,
+    user: "c"
+  }, t);
+});
+
 test("create a child award category as admin of hackathon", (t) => {
   ensure({
     method: "POST",
@@ -42,15 +54,17 @@ test("create a child award category as admin of hackathon", (t) => {
   }, t);
 });
 
-test("can't create a new award category if not an admin of hackathon", (t) => {
+test("can't create a child of an already child award category as admin of hackathon", (t) => {
   ensure({
     method: "POST",
     url: "/hackathons/1/award_categories",
-    payload: {
-      name: "Bronze Winners"
-    },
     statusCode: 403,
-    user: "c"
+    payload: {
+      name: "Teal Winners",
+      parent_id: createdChildAwardCategoryId
+    },
+    schema: newAwardCategory,
+    user: "b"
   }, t);
 });
 
