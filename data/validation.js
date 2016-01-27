@@ -218,6 +218,40 @@ export const comment = newComment.keys({
 }).requiredKeys("id", "user_id", "project_id", "body", "created_at");
 
 /*
+  Award
+*/
+const awardBase = {
+  name: Joi.string().min(1).max(140).trim(),
+  meta: metaWithDefault,
+  award_categories: Joi.array().items(id)
+};
+export const awardUpdate = Joi.object(awardBase).keys({
+  project_id: optionalId
+});
+export const newAward = Joi.object(awardBase).keys({
+  project_id: id
+});
+export const award = newAward.keys({
+  id,
+  hackathon_id: id
+});
+
+/*
+  Award Category
+*/
+const awardCategoryBase = {
+  id,
+  parent_id: id,
+  name: Joi.string().min(1).max(140).trim()
+};
+export const awardCategoryUpdate = Joi.object(awardCategoryBase);
+export const newAwardCategory = Joi.object(awardCategoryBase)
+  .keys({
+    hackathon_id: id
+  });
+export const awardCategory = newAwardCategory;
+
+/*
   Sorting
 */
 export const sortDirection = Joi.any().valid("asc", "desc");

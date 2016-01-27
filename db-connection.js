@@ -513,3 +513,34 @@ export const hackathonSearch = (queryObj) => {
 
   return query;
 };
+
+export const ensureAward = (hackathonId, id) => {
+  const awardQuery = client("awards")
+    .select("*")
+    .where({hackathon_id: hackathonId, id});
+  return awardQuery.then((awards) => {
+    const award = awards[0];
+    if (!award) {
+      throw Boom.notFound(`No award ${id} exists.`);
+    }
+    return award;
+  });
+};
+
+export const addAwardProjectsToPagination = (paginationQuery) => {
+  return paginationQuery.then((pagination) => {
+    const projectIds = _.pluck(pagination.data, "project_id");
+    const projectsQuery = client("projects")
+      .select("*")
+      .whereIn("id", projectIds);
+
+    return projectsQuery.then((projects) => {
+      const projectsById = _.groupBy(projects, "id");
+      pagination.data = _.map(pagination.data, (award) => {
+        award.project = projectsById[award.project_id];
+        return award;
+      });
+      return pagination;
+    });
+  });
+};

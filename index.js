@@ -17,6 +17,7 @@ import DataSetRoutes from "./routes/data-sets";
 import CommentRoutes from "./routes/comments";
 import StatsRoutes from "./routes/shares-likes-views";
 import DocumentationRoutes from "./routes/documentation";
+import AwardsRoutes from "./routes/awards";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
@@ -84,6 +85,7 @@ server.register([
   DataSetRoutes,
   StatsRoutes,
   DocumentationRoutes,
+  AwardsRoutes,
   ExpandMetaPlugin
 ], (err) => {
   if (err) {
