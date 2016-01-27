@@ -30,6 +30,8 @@ test("create a new award as admin of hackathon", (t) => {
       t.equal(result.name, "Best app", "name is persisted");
       t.equal(result.project_id, validProjectId, "project_id is persisted");
       t.ok(result.meta && result.meta.color === "blue", "make sure meta keys are persisted");
+      t.ok(result.award_categories && result.award_categories.length === 0,
+        "award categories should be empty");
     },
     user: "b"
   }, t);
@@ -137,6 +139,59 @@ test("non-hackathon admin can not edit created award", (t) => {
     },
     statusCode: 403,
     user: "c"
+  }, t);
+});
+
+test("hackathon admin can add a category to an award", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/1/awards/${createdAwardId}/award_categories/2`,
+    statusCode: 204,
+    user: "b"
+  }, t);
+});
+
+test("award should have category after adding", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/awards/${createdAwardId}`,
+    schema: award,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.award_categories && result.award_categories[0].id === 2,
+        "should have new category");
+    }
+  }, t);
+});
+
+test("hackathon admin can't double-add a category to an award", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/1/awards/${createdAwardId}/award_categories/2`,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
+test("hackathon admin can remove a category from an award", (t) => {
+  ensure({
+    method: "DELETE",
+    url: `/hackathons/1/awards/${createdAwardId}/award_categories/2`,
+    statusCode: 204,
+    user: "b"
+  }, t);
+});
+
+test("award should not have category after removing", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/awards/${createdAwardId}`,
+    schema: award,
+    statusCode: 200,
+    test(result) {
+      t.ok(result.award_categories && result.award_categories.length === 0,
+        "should not have any categories");
+    }
   }, t);
 });
 

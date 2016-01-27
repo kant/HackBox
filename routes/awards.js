@@ -2,17 +2,8 @@
 import Boom from "boom";
 import _ from "lodash";
 import { id, newAward, awardUpdate, pagination } from "../data/validation";
-import db, { ensureHackathon, ensureAward, paginate,
+import db, { ensureHackathon, ensureAward, ensureAwardCategory, paginate,
   addAwardProjectsToPagination } from "../db-connection";
-
-const coundValidChildAwardQueries = (hackathonId, awardCategories) => {
-  return db("award_categories")
-    .whereIn("id", awardCategories)
-    .where({hackathon_id: hackathonId})
-    .whereNotNull("parent_id")
-    .count("id as count")
-    .then((result) => result[0].count);
-};
 
 const register = function (server, options, next) {
   server.route({
@@ -58,20 +49,24 @@ const register = function (server, options, next) {
 
         payload.hackathon_id = hackathonId;
 
+        const countValidAwardCategoriesQuery = db("award_categories")
+          .whereIn("id", awardCategoryIds)
+          .where({hackathon_id: hackathonId})
+          .whereNotNull("parent_id")
+          .count("* as count");
+
         let awardId;
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
-          awardCategoryIds ? coundValidChildAwardQueries(hackathonId, awardCategoryIds) : null
+          awardCategoryIds ? countValidAwardCategoriesQuery : null
         ])
           .then((result) => {
-            // verify all specified award_category_ids are valid
             if (awardCategoryIds) {
-              const awardCategoriesCount = result[1];
-              if (awardCategoriesCount !== awardCategoryIds.length) {
+              const count = result[1][0].count;
+              if (count !== awardCategoryIds.length) {
                 throw Boom.forbidden(`Invalid award categories specified.`);
               }
             }
-
             return db("awards").insert(payload);
           }).then((awards) => {
             awardId = awards[0];
@@ -191,6 +186,87 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           awardId: id
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "PUT",
+    path: "/hackathons/{hackathonId}/awards/{awardId}/award_categories/{awardCategoryId}",
+    config: {
+      description: "Add a category to an award",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, awardId, awardCategoryId } = request.params;
+
+        const checkOwner = request.isSuperUser() ? false : request.userId();
+
+        const ensureCategoryNotYetApplied = db("awards_award_categories")
+          .where({award_id: awardId, award_category_id: awardCategoryId})
+          .count("* as count")
+          .then((results) => {
+            const count = results[0].count;
+            if (count > 0) {
+              throw Boom.forbidden(`Award category ${awardCategoryId} already applied.`);
+            }
+          });
+
+        const response = Promise.all([
+          ensureHackathon(hackathonId, {checkOwner}),
+          ensureAward(hackathonId, awardId),
+          ensureAwardCategory(hackathonId, awardCategoryId),
+          ensureCategoryNotYetApplied
+        ]).then(() => {
+          return db("awards_award_categories")
+            .insert({award_id: awardId, award_category_id: awardCategoryId});
+        })
+        .then(() => {
+          return request.generateResponse().code(204);
+        });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          awardId: id,
+          awardCategoryId: id
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "DELETE",
+    path: "/hackathons/{hackathonId}/awards/{awardId}/award_categories/{awardCategoryId}",
+    config: {
+      description: "Remove a category from an award",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, awardId, awardCategoryId } = request.params;
+
+        const checkOwner = request.isSuperUser() ? false : request.userId();
+
+        const response = Promise.all([
+          ensureHackathon(hackathonId, {checkOwner}),
+          ensureAward(hackathonId, awardId)
+        ]).then(() => {
+          return db("awards_award_categories")
+            .where({award_id: awardId, award_category_id: awardCategoryId})
+            .del();
+        })
+        .then(() => {
+          return request.generateResponse().code(204);
+        });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          awardId: id,
+          awardCategoryId: id
         }
       }
     }
