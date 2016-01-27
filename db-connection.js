@@ -1,6 +1,7 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
   max-statements: [2, 30],
+  max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
 */
@@ -518,12 +519,12 @@ export const ensureAward = (hackathonId, id, opts = {includeCategories: false}) 
   const awardQuery = client("awards")
     .select("*")
     .where({hackathon_id: hackathonId, id});
-  const awardCategoriesQuery = client("award_categories")
+  const awardCategoriesQuery = client("awards_award_categories")
     .innerJoin(
-      "awards_award_categories",
-      "award_categories.id",
+      "award_categories",
+      "awards_award_categories.award_category_id",
       "=",
-      "awards_award_categories.award_category_id"
+      "award_categories.id"
     )
     .where("awards_award_categories.award_id", id)
     .select("award_categories.*");
@@ -543,17 +544,38 @@ export const ensureAward = (hackathonId, id, opts = {includeCategories: false}) 
   });
 };
 
-export const addAwardProjectsToPagination = (paginationQuery) => {
+export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "project_id");
     const projectsQuery = client("projects")
       .select("*")
       .whereIn("id", projectIds);
 
-    return projectsQuery.then((projects) => {
+    const awardIds = _.pluck(pagination.data, "id");
+    const awardCategoriesQuery = client("awards_award_categories")
+      .innerJoin(
+        "award_categories",
+        "awards_award_categories.award_category_id",
+        "=",
+        "award_categories.id"
+      )
+      .whereIn("awards_award_categories.award_id", awardIds)
+      .select("awards_award_categories.award_id", "award_categories.*");
+
+    return Promise.all([
+      projectsQuery,
+      awardCategoriesQuery
+    ]).then(([projects, awardCategories]) => {
       const projectsById = _.groupBy(projects, "id");
+      const awardCategoriesByAwardId = _(awardCategories)
+        .groupBy("award_id")
+        .mapValues((categories) => {
+          return _.map(categories, (category) => _.omit(category, "award_id"));
+        })
+        .value();
       pagination.data = _.map(pagination.data, (award) => {
         award.project = projectsById[award.project_id];
+        award.award_categories = awardCategoriesByAwardId[award.id] || [];
         return award;
       });
       return pagination;

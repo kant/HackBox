@@ -3,7 +3,7 @@ import Boom from "boom";
 import _ from "lodash";
 import { id, newAward, awardUpdate, pagination } from "../data/validation";
 import db, { ensureHackathon, ensureAward, ensureAwardCategory, paginate,
-  addAwardProjectsToPagination } from "../db-connection";
+  addAwardProjectsAndCategoriesToPagination } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -20,7 +20,9 @@ const register = function (server, options, next) {
           .select("*")
           .where({hackathon_id: hackathonId})
           .orderBy("awards.name", "asc");
-        const response = addAwardProjectsToPagination(paginate(getAwardsQuery, {limit, offset}));
+        const response = addAwardProjectsAndCategoriesToPagination(
+          paginate(getAwardsQuery, {limit, offset})
+        );
 
         reply(response);
       },

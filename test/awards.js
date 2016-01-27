@@ -1,18 +1,11 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import { award } from "../data/validation";
 import ensure from "./helpers";
 
 let createdAwardId;
 const validProjectId = 1;
-
-test("fetch awards", (t) => {
-  ensure({
-    method: "GET",
-    url: "/hackathons/1/awards",
-    hasPagination: true
-  }, t);
-});
 
 test("create a new award as admin of hackathon", (t) => {
   ensure({
@@ -98,6 +91,18 @@ test("new award is GET-able", (t) => {
     test(result) {
       t.equal(result.project_id, validProjectId, "award should be correct project");
       t.equal(result.name, "Best app", "Name should be correct");
+    }
+  }, t);
+});
+
+test("fetch awards", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/awards",
+    hasPagination: true,
+    test(result) {
+      t.ok(_.isObject(result.data[0].project), "awards have projects");
+      t.ok(_.isArray(result.data[0].award_categories), "awards have award categories");
     }
   }, t);
 });
