@@ -122,7 +122,7 @@ const register = function (server, options, next) {
         ]).then(() => {
           return db("awards")
             .update(payload)
-            .where({id: awardId});
+            .where({hackathon_id: hackathonId, id: awardId});
         }).then(() => {
           if (awardCategories) {
             return db("awards_award_categories")

@@ -515,10 +515,10 @@ export const hackathonSearch = (queryObj) => {
 };
 
 export const ensureAward = (hackathonId, id) => {
-  const awardQuery = client("awards")
+  const query = client("awards")
     .select("*")
     .where({hackathon_id: hackathonId, id});
-  return awardQuery.then((awards) => {
+  return query.then((awards) => {
     const award = awards[0];
     if (!award) {
       throw Boom.notFound(`No award ${id} exists.`);
@@ -542,5 +542,18 @@ export const addAwardProjectsToPagination = (paginationQuery) => {
       });
       return pagination;
     });
+  });
+};
+
+export const ensureAwardCategory = (hackathonId, id) => {
+  const query = client("award_categories")
+    .select("*")
+    .where({hackathon_id: hackathonId, id});
+  return query.then((awardCategories) => {
+    const awardCategory = awardCategories[0];
+    if (!awardCategory) {
+      throw Boom.notFound(`No award category ${id} exists.`);
+    }
+    return awardCategory;
   });
 };

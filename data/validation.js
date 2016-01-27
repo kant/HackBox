@@ -240,16 +240,15 @@ export const award = newAward.keys({
   Award Category
 */
 const awardCategoryBase = {
-  id,
-  parent_id: id,
+  parent_id: optionalId.allow(null),
   name: Joi.string().min(1).max(140).trim()
 };
 export const awardCategoryUpdate = Joi.object(awardCategoryBase);
-export const newAwardCategory = Joi.object(awardCategoryBase)
-  .keys({
-    hackathon_id: id
-  });
-export const awardCategory = newAwardCategory;
+export const newAwardCategory = Joi.object(awardCategoryBase);
+export const awardCategory = newAwardCategory.keys({
+  id,
+  hackathon_id: id
+});
 
 /*
   Sorting
