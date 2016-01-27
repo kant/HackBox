@@ -20,18 +20,11 @@ const register = function (server, options, next) {
         const response = getAwardCategoriesQuery
           .then((awardCategories) => {
             const [children, parents] = _.partition(awardCategories, "parent_id");
-            const r = _(children)
-              .groupBy("parent_id")
-              .toArray()
-              .map((group) => {
-                const parent = _.find(parents, (p) => p.id === group[0].parent_id);
-                return {
-                  root: parent,
-                  children: group
-                };
-              })
-              .value();
-            return r;
+            const childrenByParentId = _.groupBy(children, "parent_id");
+            return _.map(parents, (parent) => {
+              parent.children = childrenByParentId[parent.id];
+              return parent;
+            });
           });
 
         reply(response);
@@ -150,18 +143,28 @@ const register = function (server, options, next) {
         const { hackathonId, awardCategoryId } = request.params;
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
+        const childrenQuery = db("award_categories")
+          .select("id")
+          .where({parent_id: awardCategoryId});
+
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
-          ensureAwardCategory(hackathonId, awardCategoryId)
+          ensureAwardCategory(hackathonId, awardCategoryId),
+          childrenQuery
         ])
-        .then(() => {
+        .then((results) => {
+          const childrenIds = _.pluck(results[2], "id");
+          const destroyAwardCategoryIds = (childrenIds || []).concat(awardCategoryId);
           return db("award_categories")
-            .where({id: awardCategoryId})
-            .del();
+            .whereIn("id", destroyAwardCategoryIds)
+            .del()
+            .then(() => {
+              return destroyAwardCategoryIds;
+            });
         })
-        .then(() => {
+        .then((destroyAwardCategoryIds) => {
           return db("awards_award_categories")
-            .where({award_category_id: awardCategoryId})
+            .whereIn("award_category_id", destroyAwardCategoryIds)
             .del();
         })
         .then(() => {

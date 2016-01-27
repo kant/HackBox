@@ -61,7 +61,20 @@ test("new award category is GET-able", (t) => {
     schema: awardCategory,
     statusCode: 200,
     test(result) {
-      t.equal(result.name, "Grand Prize Winners", "Name should be correct");
+      t.equal(result.name, "Grand Prize Winners", "name should be correct");
+    }
+  }, t);
+});
+
+test("new child award category is GET-able", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/award_categories/${createdChildAwardCategoryId}`,
+    schema: awardCategory,
+    statusCode: 200,
+    test(result) {
+      t.equal(result.parent_id, createdAwardCategoryId, "parent is correct");
+      t.equal(result.name, "Blue Winners", "name should be correct");
     }
   }, t);
 });
@@ -73,8 +86,8 @@ test("fetch award_categories", (t) => {
     statusCode: 200,
     test(result) {
       t.equal(result.length, 1, "should have 1 tree");
-      t.equal(result[0].root.name, "Grand Prize Winners", "root should be correct");
-      t.equal(result[0].root.id, createdAwardCategoryId, "root id be correct");
+      t.equal(result[0].name, "Grand Prize Winners", "root should be correct");
+      t.equal(result[0].id, createdAwardCategoryId, "root id be correct");
       t.equal(result[0].children.length, 1, "tree should have 1 child");
       t.equal(result[0].children[0].id, createdChildAwardCategoryId, "child id should be correct");
       t.equal(result[0].children[0].name, "Blue Winners", "child should be correct");
@@ -144,6 +157,15 @@ test("make sure award category is no longer retrievable", (t) => {
   ensure({
     method: "GET",
     url: `/hackathons/1/award_categories/${createdAwardCategoryId}`,
+    statusCode: 404,
+    user: "b"
+  }, t);
+});
+
+test("make sure children of deleted award category are no longer retrievable", (t) => {
+  ensure({
+    method: "GET",
+    url: `/hackathons/1/award_categories/${createdChildAwardCategoryId}`,
     statusCode: 404,
     user: "b"
   }, t);
