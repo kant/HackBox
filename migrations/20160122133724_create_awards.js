@@ -18,6 +18,7 @@ exports.up = (knex) => {
     .createTable("awards_award_categories", (t) => {
       t.integer("award_id").notNull().unsigned().references("awards.id");
       t.integer("award_category_id").notNull().unsigned().references("award_categories.id");
+      t.index(["award_id", "award_category_id"]);
     });
 };
 
