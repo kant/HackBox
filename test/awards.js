@@ -35,6 +35,44 @@ test("create a new award as admin of hackathon", (t) => {
   }, t);
 });
 
+test("create a new award w/ categories", (t) => {
+  ensure({
+    method: "POST",
+    url: "/hackathons/1/awards",
+    statusCode: 201,
+    payload: {
+      project_id: validProjectId,
+      name: "Best mobile app",
+      meta: { color: "blue" },
+      award_category_ids: [2]
+    },
+    schema: award,
+    test(result) {
+      t.equal(result.name, "Best mobile app", "name is persisted");
+      t.equal(result.project_id, validProjectId, "project_id is persisted");
+      t.ok(result.meta && result.meta.color === "blue", "make sure meta keys are persisted");
+      t.ok(result.award_categories && result.award_categories[0].id === 2,
+        "should have award categories");
+    },
+    user: "b"
+  }, t);
+});
+
+test("can't create a new award w/ invalid categories", (t) => {
+  ensure({
+    method: "POST",
+    url: "/hackathons/1/awards",
+    statusCode: 403,
+    payload: {
+      project_id: validProjectId,
+      name: "Best mobile app",
+      meta: { color: "blue" },
+      award_category_ids: [1] // root category
+    },
+    user: "b"
+  }, t);
+});
+
 test("can't create a new award if not an admin of hackathon", (t) => {
   ensure({
     method: "POST",

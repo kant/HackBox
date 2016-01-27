@@ -458,3 +458,16 @@ dynamicallyGeneratedUsers.forEach(({id}) => participants.push({
   hackathon_id: 2,
   json_participation_meta: JSON.stringify({})
 }));
+
+
+export const awardCategories = [
+  {
+    hackathon_id: 1,
+    name: "Challenge Winners"
+  },
+  {
+    hackathon_id: 1,
+    name: "Advertisers",
+    parent_id: 1
+  }
+];

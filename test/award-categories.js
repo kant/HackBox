@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import { awardCategory, newAwardCategory } from "../data/validation";
 import ensure from "./helpers";
 
@@ -99,12 +100,12 @@ test("fetch award_categories", (t) => {
     url: "/hackathons/1/award_categories",
     statusCode: 200,
     test(result) {
-      t.equal(result.length, 1, "should have 1 tree");
-      t.equal(result[0].name, "Grand Prize Winners", "root should be correct");
-      t.equal(result[0].id, createdAwardCategoryId, "root id be correct");
-      t.equal(result[0].children.length, 1, "tree should have 1 child");
-      t.equal(result[0].children[0].id, createdChildAwardCategoryId, "child id should be correct");
-      t.equal(result[0].children[0].name, "Blue Winners", "child should be correct");
+      const newTree = _.find(result, (tree) => tree.id === createdAwardCategoryId);
+      t.equal(newTree.name, "Grand Prize Winners", "root should be correct");
+      t.equal(newTree.id, createdAwardCategoryId, "root id be correct");
+      t.equal(newTree.children.length, 1, "tree should have 1 child");
+      t.equal(newTree.children[0].id, createdChildAwardCategoryId, "child id should be correct");
+      t.equal(newTree.children[0].name, "Blue Winners", "child should be correct");
     }
   }, t);
 });

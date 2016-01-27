@@ -514,14 +514,30 @@ export const hackathonSearch = (queryObj) => {
   return query;
 };
 
-export const ensureAward = (hackathonId, id) => {
-  const query = client("awards")
+export const ensureAward = (hackathonId, id, opts = {includeCategories: false}) => {
+  const awardQuery = client("awards")
     .select("*")
     .where({hackathon_id: hackathonId, id});
-  return query.then((awards) => {
+  const awardCategoriesQuery = client("award_categories")
+    .innerJoin(
+      "awards_award_categories",
+      "award_categories.id",
+      "=",
+      "awards_award_categories.award_category_id"
+    )
+    .where("awards_award_categories.award_id", id)
+    .select("award_categories.*");
+
+  return Promise.all([
+    awardQuery,
+    opts.includeCategories ? awardCategoriesQuery : null
+  ]).then(([awards, awardCategories]) => {
     const award = awards[0];
     if (!award) {
       throw Boom.notFound(`No award ${id} exists.`);
+    }
+    if (opts.includeCategories) {
+      award.award_categories = awardCategories || [];
     }
     return award;
   });

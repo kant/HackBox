@@ -1,8 +1,18 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
+import Boom from "boom";
 import _ from "lodash";
 import { id, newAward, awardUpdate, pagination } from "../data/validation";
 import db, { ensureHackathon, ensureAward, paginate,
   addAwardProjectsToPagination } from "../db-connection";
+
+const coundValidChildAwardQueries = (hackathonId, awardCategories) => {
+  return db("award_categories")
+    .whereIn("id", awardCategories)
+    .where({hackathon_id: hackathonId})
+    .whereNotNull("parent_id")
+    .count("id as count")
+    .then((result) => result[0].count);
+};
 
 const register = function (server, options, next) {
   server.route({
@@ -41,21 +51,33 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const payload = request.payload;
-        const awardCategories = payload.award_categories;
-        delete payload.award_categories;
+        const awardCategoryIds = payload.award_category_ids;
+        delete payload.award_category_ids;
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
         payload.hackathon_id = hackathonId;
 
         let awardId;
-        const response = ensureHackathon(hackathonId, {checkOwner})
-          .then(() => {
+        const response = Promise.all([
+          ensureHackathon(hackathonId, {checkOwner}),
+          awardCategoryIds ? coundValidChildAwardQueries(hackathonId, awardCategoryIds) : null
+        ])
+          .then((result) => {
+            // verify all specified award_category_ids are valid
+            if (awardCategoryIds) {
+              const awardCategoriesCount = result[1];
+              if (awardCategoriesCount !== awardCategoryIds.length) {
+                throw Boom.forbidden(`Invalid award categories specified.`);
+              }
+            }
+
             return db("awards").insert(payload);
           }).then((awards) => {
             awardId = awards[0];
-            if (awardCategories) {
-              const inserts = _.map(awardCategories, (awardCategoryId) => ({
+            // apply award categories
+            if (awardCategoryIds) {
+              const inserts = _.map(awardCategoryIds, (awardCategoryId) => ({
                 award_id: awardId,
                 award_category_id: awardCategoryId
               }));
@@ -63,7 +85,7 @@ const register = function (server, options, next) {
             }
           })
           .then(() => {
-            return ensureAward(hackathonId, awardId);
+            return ensureAward(hackathonId, awardId, {includeCategories: true});
           })
           .then((result) => {
             return request.generateResponse(result).code(201);
@@ -89,7 +111,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, awardId } = request.params;
 
-        const response = ensureAward(hackathonId, awardId);
+        const response = ensureAward(hackathonId, awardId, {includeCategories: true});
 
         reply(response);
       },
@@ -111,8 +133,6 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, awardId } = request.params;
         const payload = request.payload;
-        const awardCategories = payload.award_categories;
-        delete payload.award_categories;
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
 
@@ -123,22 +143,9 @@ const register = function (server, options, next) {
           return db("awards")
             .update(payload)
             .where({hackathon_id: hackathonId, id: awardId});
-        }).then(() => {
-          if (awardCategories) {
-            return db("awards_award_categories")
-              .where({award_id: awardId})
-              .del()
-              .then(() => {
-                const inserts = _.map(awardCategories, (awardCategoryId) => ({
-                  award_id: awardId,
-                  award_category_id: awardCategoryId
-                }));
-                return db("awards_award_categories").insert(inserts);
-              });
-          }
         })
         .then(() => {
-          return ensureAward(hackathonId, awardId);
+          return ensureAward(hackathonId, awardId, {includeCategories: true});
         });
 
         reply(response);

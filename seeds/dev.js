@@ -15,5 +15,7 @@ exports.seed = function (knex, Promise) {
       return knex("members").del().insert(data.members);
     }).then(() => {
       return knex("comments").del().insert(data.comments);
+    }).then(() => {
+      return knex("award_categories").del().insert(data.awardCategories);
     });
 };

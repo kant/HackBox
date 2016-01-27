@@ -222,18 +222,20 @@ export const comment = newComment.keys({
 */
 const awardBase = {
   name: Joi.string().min(1).max(140).trim(),
-  meta: metaWithDefault,
-  award_categories: Joi.array().items(id)
+  meta: metaWithDefault
 };
 export const awardUpdate = Joi.object(awardBase).keys({
   project_id: optionalId
 });
 export const newAward = Joi.object(awardBase).keys({
-  project_id: id
+  project_id: id,
+  award_category_ids: Joi.array().items(id)
 });
-export const award = newAward.keys({
+export const award = Joi.object(awardBase).keys({
   id,
-  hackathon_id: id
+  hackathon_id: id,
+  project_id: id,
+  award_categories: Joi.array()
 });
 
 /*
