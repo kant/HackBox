@@ -151,10 +151,10 @@ test("user b can create a hackathon with very long fields", (t) => {
   const properties = {
     name: "Big Hack",
     slug: "big-hack",
-    description: "descriptio".repeat(1000), // 10000 characters
-    judges: "judgesjudg".repeat(1000), // 10000 characters
-    rules: "rulesrules".repeat(1000), // 10000 characters
-    schedule: "schedulesc".repeat(1000), // 10000 characters
+    description: `${"descI♥NY".repeat(6553)}+five`, // 65535 characters
+    judges: `${"judgI♥NY".repeat(6553)}+five`, // 65535 characters
+    rules: `${"ruleI♥NY".repeat(6553)}+five`, // 65535 characters
+    schedule: `${"scheI♥NY".repeat(6553)}+five`, // 65535 characters
     tagline: "tagline",
     header_image_url: "http://example.com/header.gif",
     logo_url: "http://example.com/hack.gif",
