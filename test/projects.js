@@ -345,7 +345,7 @@ test("cannot like same project twice", (t) => {
   }, t);
 });
 
-test("see return that the current user liked a project", (t) => {
+test("check that the current user liked a project", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/1/liked",
@@ -356,7 +356,7 @@ test("see return that the current user liked a project", (t) => {
   }, t);
 });
 
-test("see return that the current user didn't like a project", (t) => {
+test("check that the current user didn't like a project", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons/1/projects/2/liked",
