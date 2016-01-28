@@ -101,8 +101,11 @@ test("fetch awards", (t) => {
     url: "/hackathons/1/awards",
     hasPagination: true,
     test(result) {
-      t.ok(_.isObject(result.data[0].project), "awards have projects");
-      t.ok(_.isArray(result.data[0].award_categories), "awards have award categories");
+      const firstAward = result.data[0];
+      t.ok(_.isObject(firstAward.project), "awards have projects");
+      t.ok(firstAward.project && !_.isEmpty(firstAward.project.owner_name),
+        "project should have owner_name");
+      t.ok(_.isArray(firstAward.award_categories), "awards have award categories");
     }
   }, t);
 });
