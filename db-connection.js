@@ -1,6 +1,7 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
   max-statements: [2, 30],
+  max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
 */
@@ -512,4 +513,85 @@ export const hackathonSearch = (queryObj) => {
   query.orderBy(orderByCol, orderByDirection);
 
   return query;
+};
+
+export const ensureAward = (hackathonId, id, opts = {includeCategories: false}) => {
+  const awardQuery = client("awards")
+    .select("*")
+    .where({hackathon_id: hackathonId, id});
+  const awardCategoriesQuery = client("awards_award_categories")
+    .innerJoin(
+      "award_categories",
+      "awards_award_categories.award_category_id",
+      "=",
+      "award_categories.id"
+    )
+    .where("awards_award_categories.award_id", id)
+    .select("award_categories.*");
+
+  return Promise.all([
+    awardQuery,
+    opts.includeCategories ? awardCategoriesQuery : null
+  ]).then(([awards, awardCategories]) => {
+    const award = awards[0];
+    if (!award) {
+      throw Boom.notFound(`No award ${id} exists.`);
+    }
+    if (opts.includeCategories) {
+      award.award_categories = awardCategories || [];
+    }
+    return award;
+  });
+};
+
+export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
+  return paginationQuery.then((pagination) => {
+    const projectIds = _.pluck(pagination.data, "project_id");
+    const projectsQuery = client("projects")
+      .select("*")
+      .whereIn("id", projectIds);
+
+    const awardIds = _.pluck(pagination.data, "id");
+    const awardCategoriesQuery = client("awards_award_categories")
+      .innerJoin(
+        "award_categories",
+        "awards_award_categories.award_category_id",
+        "=",
+        "award_categories.id"
+      )
+      .whereIn("awards_award_categories.award_id", awardIds)
+      .select("awards_award_categories.award_id", "award_categories.*");
+
+    return Promise.all([
+      projectsQuery,
+      awardCategoriesQuery
+    ]).then(([projects, awardCategories]) => {
+      const projectsById = _.groupBy(projects, "id");
+      const awardCategoriesByAwardId = _(awardCategories)
+        .groupBy("award_id")
+        .mapValues((categories) => {
+          return _.map(categories, (category) => _.omit(category, "award_id"));
+        })
+        .value();
+      pagination.data = _.map(pagination.data, (award) => {
+        award.project = projectsById[award.project_id];
+        award.award_categories = awardCategoriesByAwardId[award.id] || [];
+        return award;
+      });
+      return pagination;
+    });
+  });
+};
+
+export const ensureAwardCategory = (hackathonId, id) => {
+  const query = client("award_categories")
+    .select("*")
+    .where({hackathon_id: hackathonId, id});
+  return query.then((awardCategories) => {
+    const awardCategory = awardCategories[0];
+    if (!awardCategory) {
+      throw Boom.notFound(`No award category ${id} exists.`);
+    }
+    return awardCategory;
+  });
 };

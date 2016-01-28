@@ -9,6 +9,8 @@ require("./project-search");
 require("./users");
 require("./user-search");
 require("./hackathon-search");
+require("./awards");
+require("./award-categories");
 // require("./auth");
 
 // run this last to shut down the server
