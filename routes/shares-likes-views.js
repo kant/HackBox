@@ -98,6 +98,38 @@ const register = function (server, options, next) {
   });
 
   server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/liked",
+    config: {
+      description: "Return whether the current user has liked a project",
+      notes: "Returns \`true\` or \`false\`.",
+      tags: ["api", "action", "stats"],
+      handler(request, reply) {
+        const { hackathonId, projectId } = request.params;
+
+        const response = ensureProject(hackathonId, projectId)
+          .then(() => {
+            return db("likes")
+              .where({
+                user_id: request.userId(),
+                project_id: projectId
+              })
+              .count("* as count")
+              .then((rows) => rows[0].count > 0);
+          });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id
+        }
+      }
+    }
+  });
+
+  server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/projects/{projectId}/shares",
     config: {
