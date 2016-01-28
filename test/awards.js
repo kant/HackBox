@@ -178,6 +178,15 @@ test("hackathon admin can't double-add a category to an award", (t) => {
   }, t);
 });
 
+test("hackathon admin can't add a parent category to an award", (t) => {
+  ensure({
+    method: "PUT",
+    url: `/hackathons/1/awards/${createdAwardId}/award_categories/1`,
+    statusCode: 403,
+    user: "b"
+  }, t);
+});
+
 test("hackathon admin can remove a category from an award", (t) => {
   ensure({
     method: "DELETE",

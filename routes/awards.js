@@ -45,11 +45,10 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const payload = request.payload;
         const awardCategoryIds = payload.award_category_ids;
-        delete payload.award_category_ids;
+        const newAwardPayload = _.omit(_.cloneDeep(payload), "award_category_ids");
+        newAwardPayload.hackathon_id = hackathonId;
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
-
-        payload.hackathon_id = hackathonId;
 
         const countValidAwardCategoriesQuery = db("award_categories")
           .whereIn("id", awardCategoryIds)
@@ -69,7 +68,7 @@ const register = function (server, options, next) {
                 throw Boom.forbidden(`Invalid award categories specified.`);
               }
             }
-            return db("awards").insert(payload);
+            return db("awards").insert(newAwardPayload);
           }).then((awards) => {
             awardId = awards[0];
             // apply award categories
@@ -214,6 +213,11 @@ const register = function (server, options, next) {
           ensureAwardCategory(hackathonId, awardCategoryId),
           ensureCategoryNotYetAppliedQuery
         ]).then((result) => {
+          const awardCategory = result[2];
+          if (awardCategory.parent_id === null) {
+            throw Boom.forbidden(`Only child award categories can be applied.`);
+          }
+
           const existingCategoryAppliedCount = result[3][0].count;
           if (existingCategoryAppliedCount > 0) {
             throw Boom.forbidden(`Award category ${awardCategoryId} already applied.`);

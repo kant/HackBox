@@ -48,10 +48,10 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const payload = request.payload;
         const parentId = payload.parent_id;
+        const newAwardCategoryPayload = _.cloneDeep(payload);
+        newAwardCategoryPayload.hackathon_id = hackathonId;
 
         const checkOwner = request.isSuperUser() ? false : request.userId();
-
-        payload.hackathon_id = hackathonId;
 
         const response = Promise.all([
           ensureHackathon(hackathonId, {checkOwner}),
@@ -61,7 +61,7 @@ const register = function (server, options, next) {
             if (parentId && result[1].parent_id !== null) {
               throw Boom.forbidden(`Award Categories can only be two levels deep`);
             }
-            return db("award_categories").insert(payload);
+            return db("award_categories").insert(newAwardCategoryPayload);
           })
           .then((result) => {
             const awardCategoryId = result[0];
