@@ -345,6 +345,28 @@ test("cannot like same project twice", (t) => {
   }, t);
 });
 
+test("see return that the current user liked a project", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects/1/liked",
+    statusCode: 200,
+    test(result) {
+      t.equal(result, true, "should register having liked a project");
+    }
+  }, t);
+});
+
+test("see return that the current user didn't like a project", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/projects/2/liked",
+    statusCode: 200,
+    test(result) {
+      t.equal(result, false, "should register having not liked a project");
+    }
+  }, t);
+});
+
 test("track a share of a project", (t) => {
   ensure({
     method: "POST",
