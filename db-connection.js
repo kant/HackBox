@@ -548,8 +548,9 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "project_id");
     const projectsQuery = client("projects")
-      .select("*")
-      .whereIn("id", projectIds);
+      .innerJoin("users", "projects.owner_id", "=", "users.id")
+      .select("projects.*", "users.name as owner_name")
+      .whereIn("projects.id", projectIds);
 
     const awardIds = _.pluck(pagination.data, "id");
     const awardCategoriesQuery = client("awards_award_categories")
@@ -574,7 +575,7 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
         })
         .value();
       pagination.data = _.map(pagination.data, (award) => {
-        award.project = projectsById[award.project_id];
+        award.project = projectsById[award.project_id][0];
         award.award_categories = awardCategoriesByAwardId[award.id] || [];
         return award;
       });
