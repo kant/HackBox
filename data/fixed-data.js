@@ -91,6 +91,9 @@ const participantTypes = [
 ];
 
 const countryList = [
+  "United States",
+  "Worldwide",
+  "No country",
   "Algeria",
   "Argentina",
   "Australia",
@@ -166,7 +169,6 @@ const countryList = [
   "Ukraine",
   "United Arab Emirates",
   "United Kingdom",
-  "United States",
   "Uruguay",
   "Vietnam",
   "Zimbabwe"
