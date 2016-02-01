@@ -453,23 +453,23 @@ export const hackathonSearch = (queryObj) => {
   // we don't include all fields
   // because some of them could be quite large
   const columns = [
-    "id",
-    "name",
-    "slug",
-    "logo_url",
-    "start_at",
-    "end_at",
-    "org",
-    "city",
-    "country",
-    "tagline",
-    "color_scheme",
-    "created_at",
-    "updated_at",
-    "deleted",
-    "is_public",
-    "is_published",
-    "json_meta"
+    "hackathons.id",
+    "hackathons.name",
+    "hackathons.slug",
+    "hackathons.logo_url",
+    "hackathons.start_at",
+    "hackathons.end_at",
+    "hackathons.org",
+    "hackathons.city",
+    "hackathons.country",
+    "hackathons.tagline",
+    "hackathons.color_scheme",
+    "hackathons.created_at",
+    "hackathons.updated_at",
+    "hackathons.deleted",
+    "hackathons.is_public",
+    "hackathons.is_published",
+    "hackathons.json_meta"
   ];
 
   const query = client.select(columns).from("hackathons");
@@ -487,11 +487,11 @@ export const hackathonSearch = (queryObj) => {
   }
 
   if (!include_deleted) {
-    query.andWhere({deleted: false});
+    query.andWhere({"hackathons.deleted": false});
   }
 
   if (admins_contain) {
-    query.whereIn("id", function () {
+    query.whereIn("hackathons.id", function () {
       this.select("hackathon_id")
         .from("hackathon_admins")
         .where("user_id", admins_contain);
@@ -502,13 +502,36 @@ export const hackathonSearch = (queryObj) => {
     query.whereIn("country", country);
   }
 
+  // include participants
+  query.joinRaw([
+    "left outer join (",
+    "select hackathon_id, count(*) as count",
+    "from participants group by hackathon_id",
+    ") participants_c on hackathons.id = participants_c.hackathon_id"
+  ].join(" "))
+    .select(knex.raw("IFNULL(participants_c.count, 0) as participants"));
+
+  // include projects
+  query.joinRaw([
+    "left outer join (",
+    "select hackathon_id, count(*) as count",
+    "from projects group by hackathon_id",
+    ") projects_c on hackathons.id = projects_c.hackathon_id"
+  ].join(" "))
+    .select(knex.raw("IFNULL(projects_c.count, 0) as projects"));
+
   let orderByCol = sort_col;
   let orderByDirection = sort_direction;
   if (!orderByCol) {
     orderByCol = "created_at";
     orderByDirection = "desc";
-  } else if (!sort_direction) {
-    orderByDirection = "asc";
+  }
+  if (!orderByDirection) {
+    if (_.includes(["projects", "participants"], orderByCol)) {
+      orderByDirection = "desc";
+    } else {
+      orderByDirection = "asc";
+    }
   }
   query.orderBy(orderByCol, orderByDirection);
 

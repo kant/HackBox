@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
+import _ from "lodash";
 import ensure from "./helpers";
 import { hackathon } from "../data/validation";
 import {
@@ -20,9 +21,15 @@ test("fetch hackathon list sorted by created_at desc by default", (t) => {
     hasPagination: true,
     test(result) {
       t.ok(result.data.every((item) => item.is_published), "shouldn't include unpublished data");
+      t.ok(result.data.every((item) => _.isNumber(item.participants)), "should count participants");
+      t.ok(result.data.every((item) => _.isNumber(item.projects)), "should count projects");
       t.ok(result.data[0].created_at >= result.data[1].created_at,
         "should include ordered results");
-    }
+      const hackathon1 = _.find(result.data, (h) => h.id === 1);
+      t.equal(hackathon1.projects, 2, "hackathon 1 should have correct projects");
+      t.equal(hackathon1.participants, 2, "hackathon 1 should have correct participants");
+    },
+    schema: hackathon
   }, t);
 });
 
@@ -90,6 +97,53 @@ test("fetch hackathon list sorted by name desc", (t) => {
     test(result) {
       t.equal(result.data[0].name, mockHackathons[2].name, "should include ordered results");
       t.equal(result.data[1].name, mockHackathons[0].name, "should include ordered results");
+    }
+  }, t);
+});
+
+test("fetch hackathon list sorted by participants asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=participants&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].participants < result.data[1].participants,
+        "should include ordered results");
+    }
+  }, t);
+});
+
+test("fetch hackathon list sorted by participants desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=participants&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].participants > result.data[1].participants,
+        "should include ordered results");
+    }
+  }, t);
+});
+
+
+test("fetch hackathon list sorted by projects asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=projects&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].projects < result.data[1].projects, "should include ordered results");
+    }
+  }, t);
+});
+
+test("fetch hackathon list sorted by projects desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=projects&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data[0].projects > result.data[1].projects, "should include ordered results");
     }
   }, t);
 });

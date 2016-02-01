@@ -53,7 +53,7 @@ const register = function (server, options, next) {
           admins_contain: Joi.string(),
           country: countryArray,
           sort_col: Joi.any().valid("start_at", "end_at", "name", "tagline",
-            "city", "country"),
+            "city", "country", "projects", "participants"),
           sort_direction: sortDirection
         })
       }
