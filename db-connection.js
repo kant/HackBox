@@ -553,21 +553,16 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
       .whereIn("projects.id", projectIds);
 
     // all stats are grouped by project_id for augmenting project results
-    const likesQuery = client("likes")
-      .select("project_id")
-      .count("project_id as likes")
-      .groupBy("project_id")
-      .whereIn("project_id", projectIds);
-    const sharesQuery = client("shares")
-      .select("project_id")
-      .count("project_id as shares")
-      .groupBy("project_id")
-      .whereIn("project_id", projectIds);
-    const viewsQuery = client("views")
-      .select("project_id")
-      .count("project_id as views")
-      .groupBy("project_id")
-      .whereIn("project_id", projectIds);
+    const statQuery = (table) => {
+      return client(table)
+        .select("project_id")
+        .count(`project_id as ${table}`)
+        .groupBy("project_id")
+        .whereIn("project_id", projectIds);
+    };
+    const likesQuery = statQuery("likes");
+    const sharesQuery = statQuery("shares");
+    const viewsQuery = statQuery("views");
 
     // member query which we'll use to augment project results
     const membersQuery = client("members")
@@ -612,12 +607,13 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
         .value();
       pagination.data = _.map(pagination.data, (award) => {
         award.project = projectsById[award.project_id][0];
-        award.project.likes = likesByProjectId[award.project_id] &&
-          likesByProjectId[award.project_id][0].likes || 0;
-        award.project.shares = sharesByProjectId[award.project_id] &&
-          sharesByProjectId[award.project_id][0].shares || 0;
-        award.project.views = viewsByProjectId[award.project_id] &&
-          viewsByProjectId[award.project_id][0].views || 0;
+        const getStat = (byProjectId, stat) => {
+          return byProjectId[award.project_id] &&
+            byProjectId[award.project_id][0][stat] || 0;
+        };
+        award.project.likes = getStat(likesByProjectId, "likes");
+        award.project.shares = getStat(sharesByProjectId, "shares");
+        award.project.views = getStat(viewsByProjectId, "views");
         award.project.members = membersByProjectId[award.project_id] || [];
         award.award_categories = awardCategoriesByAwardId[award.id] || [];
         return award;
