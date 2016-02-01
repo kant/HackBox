@@ -552,6 +552,28 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
       .select("projects.*", "users.name as owner_name")
       .whereIn("projects.id", projectIds);
 
+    const likesQuery = client("likes")
+      .select("project_id")
+      .count("project_id as likes")
+      .groupBy("project_id")
+      .whereIn("project_id", projectIds);
+    const sharesQuery = client("shares")
+      .select("project_id")
+      .count("project_id as shares")
+      .groupBy("project_id")
+      .whereIn("project_id", projectIds);
+    const viewsQuery = client("views")
+      .select("project_id")
+      .count("project_id as views")
+      .groupBy("project_id")
+      .whereIn("project_id", projectIds);
+
+    // member query which we'll use to augment project results
+    const membersQuery = client("members")
+      .innerJoin("users", "members.user_id", "=", "users.id")
+      .whereIn("project_id", projectIds)
+      .select("project_id", "users.name", "users.id");
+
     const awardIds = _.pluck(pagination.data, "id");
     const awardCategoriesQuery = client("awards_award_categories")
       .innerJoin(
@@ -565,9 +587,22 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
 
     return Promise.all([
       projectsQuery,
+      likesQuery,
+      sharesQuery,
+      viewsQuery,
+      membersQuery,
       awardCategoriesQuery
-    ]).then(([projects, awardCategories]) => {
+    ]).then(([projects, likes, shares, views, members, awardCategories]) => {
       const projectsById = _.groupBy(projects, "id");
+      const likesByProjectId = _.groupBy(likes, "project_id");
+      const sharesByProjectId = _.groupBy(shares, "project_id");
+      const viewsByProjectId = _.groupBy(views, "project_id");
+      const membersByProjectId = _(members)
+        .groupBy("project_id")
+        .mapValues((values) => {
+          return _.map(values, (member) => _.omit(member, "project_id"));
+        })
+        .value();
       const awardCategoriesByAwardId = _(awardCategories)
         .groupBy("award_id")
         .mapValues((categories) => {
@@ -576,6 +611,13 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
         .value();
       pagination.data = _.map(pagination.data, (award) => {
         award.project = projectsById[award.project_id][0];
+        award.project.likes = likesByProjectId[award.project_id] &&
+          likesByProjectId[award.project_id][0].likes || 0;
+        award.project.shares = sharesByProjectId[award.project_id] &&
+          sharesByProjectId[award.project_id][0].shares || 0;
+        award.project.views = viewsByProjectId[award.project_id] &&
+          viewsByProjectId[award.project_id][0].views || 0;
+        award.project.members = membersByProjectId[award.project_id] || [];
         award.award_categories = awardCategoriesByAwardId[award.id] || [];
         return award;
       });

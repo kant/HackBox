@@ -102,9 +102,17 @@ test("fetch awards", (t) => {
     hasPagination: true,
     test(result) {
       const firstAward = result.data[0];
-      t.ok(_.isObject(firstAward.project), "awards have projects");
+      t.ok(firstAward.project, "awards have projects");
       t.ok(firstAward.project && !_.isEmpty(firstAward.project.owner_name),
-        "project should have owner_name");
+        "projects have owner_name");
+      t.ok(firstAward.project && _.isNumber(firstAward.project.likes),
+        "projects have likes");
+      t.ok(firstAward.project && _.isNumber(firstAward.project.shares),
+        "projects have shares");
+      t.ok(firstAward.project && _.isNumber(firstAward.project.views),
+        "projects have views");
+      t.ok(firstAward.project && _.isArray(firstAward.project.members),
+        "projects have members");
       t.ok(_.isArray(firstAward.award_categories), "awards have award categories");
     }
   }, t);
