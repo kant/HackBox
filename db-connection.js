@@ -552,6 +552,7 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
       .select("projects.*", "users.name as owner_name")
       .whereIn("projects.id", projectIds);
 
+    // all stats are grouped by project_id for augmenting project results
     const likesQuery = client("likes")
       .select("project_id")
       .count("project_id as likes")
