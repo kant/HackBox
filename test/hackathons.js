@@ -125,7 +125,6 @@ test("fetch hackathon list sorted by participants desc", (t) => {
   }, t);
 });
 
-
 test("fetch hackathon list sorted by projects asc", (t) => {
   ensure({
     method: "GET",
