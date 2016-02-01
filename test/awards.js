@@ -113,6 +113,9 @@ test("fetch awards", (t) => {
         "projects have views");
       t.ok(firstAward.project && _.isArray(firstAward.project.members),
         "projects have members");
+      t.deepEquals(firstAward.project && _.keys(firstAward.project.members[0]),
+        ["name", "id"],
+        "projects members have correct keys");
       t.ok(_.isArray(firstAward.award_categories), "awards have award categories");
     }
   }, t);
