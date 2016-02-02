@@ -1,9 +1,10 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
+import Joi from "joi";
 import _ from "lodash";
 import { id, newAward, awardUpdate, pagination } from "../data/validation";
 import db, { ensureHackathon, ensureAward, ensureAwardCategory, paginate,
-  addAwardProjectsAndCategoriesToPagination } from "../db-connection";
+  awardSearch, addAwardProjectsAndCategoriesToPagination } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -11,23 +12,59 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/awards",
     config: {
       description: "Fetch all awards for a hackathon",
+      notes: [
+        "If filtering by award category, an array of `award_category_ids` may",
+        "be passed as a query parameter. If parent categories are specified,",
+        "results will include awards with any child category. A mix of parent",
+        "and child categories may be specified."
+      ].join(" "),
       tags: ["api", "list"],
       handler(request, reply) {
-        const { limit, offset } = request.query;
+        const { query } = request;
+        const { limit, offset } = query;
+        const awardCategoryIds = query.award_category_ids;
         const { hackathonId } = request.params;
 
-        const getAwardsQuery = db("awards")
-          .select("*")
-          .where({hackathon_id: hackathonId})
-          .orderBy("awards.name", "asc");
-        const response = addAwardProjectsAndCategoriesToPagination(
-          paginate(getAwardsQuery, {limit, offset})
-        );
+        let awardPagination;
+
+        if (awardCategoryIds) {
+          // given a list of award_category_ids that may be parents or children,
+          // find all children categories that should be searched
+          const awardCategoryQuery = db("award_categories")
+            .select("id", "parent_id")
+            .where({hackathon_id: hackathonId})
+            .whereRaw("(parent_id is not null and id in (?)) or (parent_id in (?))",
+              [awardCategoryIds, awardCategoryIds]);
+
+          awardPagination = awardCategoryQuery
+            .then((awardCategories) => {
+              // check to make sure all award_category_ids we're filtering on were
+              // valid as parents or children for this hackathon
+              const awardCategoriesValid = _.every(awardCategoryIds, (categoryId) => {
+                return _.some(awardCategories, (category) => {
+                  return category.id === categoryId || category.parent_id === categoryId;
+                });
+              });
+              if (!awardCategoriesValid) {
+                throw Boom.forbidden("Invalid award_category_ids specified.");
+              }
+
+              return paginate(awardSearch(hackathonId, {
+                awardCategoryIds: _.pluck(awardCategories, "id")
+              }), {limit, offset});
+            });
+        } else {
+          awardPagination = paginate(awardSearch(hackathonId), {limit, offset});
+        }
+
+        const response = addAwardProjectsAndCategoriesToPagination(awardPagination);
 
         reply(response);
       },
       validate: {
-        query: pagination,
+        query: pagination.keys({
+          award_category_ids: Joi.array().items(Joi.number())
+        }),
         params: {
           hackathonId: id
         }

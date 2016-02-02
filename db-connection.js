@@ -544,6 +544,24 @@ export const ensureAward = (hackathonId, id, opts = {includeCategories: false}) 
   });
 };
 
+export const awardSearch = (hackathonId, filters = {}) => {
+  const { awardCategoryIds } = filters;
+
+  const awardQuery = client("awards")
+    .select("awards.*")
+    .where({hackathon_id: hackathonId})
+    .orderBy("awards.name", "asc");
+
+  if (awardCategoryIds) {
+    awardQuery
+      .innerJoin("awards_award_categories", "awards.id", "=",
+        "awards_award_categories.award_id")
+      .whereIn("awards_award_categories.award_category_id", awardCategoryIds);
+  }
+
+  return awardQuery;
+};
+
 export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "project_id");
