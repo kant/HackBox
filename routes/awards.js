@@ -27,7 +27,7 @@ const register = function (server, options, next) {
 
         let awardPagination;
 
-        if (awardCategoryIds) {
+        if (awardCategoryIds && awardCategoryIds.length) {
           // given a list of award_category_ids that may be parents or children,
           // find all children categories that should be searched
           const awardCategoryQuery = db("award_categories")
