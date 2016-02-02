@@ -64,7 +64,6 @@ test("can't create a child of an already child award category as admin of hackat
       name: "Teal Winners",
       parent_id: createdChildAwardCategoryId
     },
-    schema: newAwardCategory,
     user: "b"
   }, t);
 });

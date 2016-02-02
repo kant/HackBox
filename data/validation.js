@@ -232,13 +232,13 @@ export const awardUpdate = Joi.object(awardBase).keys({
 export const newAward = Joi.object(awardBase).keys({
   project_id: id,
   award_category_ids: Joi.array().items(id)
-});
+}).requiredKeys("name", "project_id");
 export const award = Joi.object(awardBase).keys({
   id,
   hackathon_id: id,
   project_id: id,
   award_categories: Joi.array()
-});
+}).requiredKeys("id", "hackathon_id", "project_id", "name");
 
 /*
   Award Category
@@ -249,11 +249,11 @@ const awardCategoryBase = {
 export const awardCategoryUpdate = Joi.object(awardCategoryBase);
 export const newAwardCategory = Joi.object(awardCategoryBase).keys({
   parent_id: optionalId.allow(null)
-});
+}).requiredKeys("name");
 export const awardCategory = newAwardCategory.keys({
   id,
   hackathon_id: id
-});
+}).requiredKeys("id", "hackathon_id", "name");
 
 /*
   Sorting
