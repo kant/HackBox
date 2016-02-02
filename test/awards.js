@@ -121,6 +121,52 @@ test("fetch awards", (t) => {
   }, t);
 });
 
+test("fetch awards filtered by parent category", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/awards?award_category_ids=[1]",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data.length > 0, "has results");
+      const hasChildCategory = (categoryId) => {
+        return (a) => {
+          return _.some(a.award_categories, (category) => {
+            return category.parent_id === categoryId;
+          });
+        };
+      };
+      t.ok(_.all(result.data, hasChildCategory(1)), "results have correct categories");
+    }
+  }, t);
+});
+
+test("fetch awards filtered by child category", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/awards?award_category_ids=[2]",
+    hasPagination: true,
+    test(result) {
+      t.ok(result.data.length > 0, "has results");
+      const hasCategory = (categoryId) => {
+        return (a) => {
+          return _.some(a.award_categories, (category) => {
+            return category.id === categoryId;
+          });
+        };
+      };
+      t.ok(_.all(result.data, hasCategory(2)), "results have correct categories");
+    }
+  }, t);
+});
+
+test("can't fetch with invalid category filter", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons/1/awards?award_category_ids=[3]",
+    statusCode: 403
+  }, t);
+});
+
 test("hackathon admin can edit created award", (t) => {
   ensure({
     method: "PUT",
