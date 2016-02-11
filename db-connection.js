@@ -425,7 +425,8 @@ export const userSearch = (queryObj) => {
         .orWhere("email", "like", `%${search}%`)
         .orWhere("bio", "like", `%${search}%`)
         .orWhere("json_working_on", "like", `%${search}%`)
-        .orWhere("json_expertise", "like", `%${search}%`);
+        .orWhere("json_expertise", "like", `%${search}%`)
+        .orWhere("json_interests", "like", `%${search}%`);
     });
   }
   if (role && role.length) {
