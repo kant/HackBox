@@ -32,6 +32,7 @@ export const users = [
       facebook: "HenrikJoreteg",
       linkedin: "HenrikJoreteg"
     }),
+    json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({})
   },
   {
@@ -58,6 +59,7 @@ export const users = [
       facebook: "GreenEggsAndHam",
       linkedin: "GreenEggsAndHam"
     }),
+    json_interests: JSON.stringify(["cycling"]),
     json_meta: JSON.stringify({})
   },
   {
@@ -84,6 +86,7 @@ export const users = [
       facebook: "SamIAm",
       linkedin: "SamIAm"
     }),
+    json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({})
   },
   {
@@ -110,6 +113,7 @@ export const users = [
       facebook: "fishy",
       linkedin: "fishy"
     }),
+    json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({})
   }
 ];

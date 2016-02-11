@@ -58,7 +58,7 @@ testCoverageOfSearchFields("email", "hjoreteg@gmail.com");
 testCoverageOfSearchFields("bio", "some js dev");
 testCoverageOfSearchFields("working_on", "progressive web app");
 testCoverageOfSearchFields("expertise", "jsstuf");
-
+testCoverageOfSearchFields("interests", "cycling");
 
 // user D is on 5 different projects in hackathon two
 // ensuring there are no duplicates is part of the
