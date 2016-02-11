@@ -133,6 +133,9 @@ const runBooleanFilterTests = (type, itemTest) => {
 };
 
 runBooleanFilterTests("needs_hackers", (item) => item.needs_hackers);
+runBooleanFilterTests("writing_code", (item) => item.writing_code);
+runBooleanFilterTests("existing", (item) => item.existing);
+runBooleanFilterTests("external_customers", (item) => item.external_customers);
 runBooleanFilterTests("has_video", (item) => typeof item.video_id === "number");
 
 // a bit of re-usable code to make sure tests cover everything
