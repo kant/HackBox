@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 30],
+  max-statements: [2, 32],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -256,7 +256,7 @@ export const paginate = (query, {limit, offset}) => {
 // we use this for two different routes so it lives here for re-use
 export const projectSearch = (queryObj) => {
   const {
-    hackathon_id, search, include_deleted, has_video, needs_hackers, country,
+    hackathon_id, search, include_deleted, has_video, country,
     needed_role, needed_expertise, product_focus, customer_type, has_member,
     sort_col, sort_direction
   } = queryObj;
@@ -293,9 +293,16 @@ export const projectSearch = (queryObj) => {
       query.whereNull("projects.video_id");
     }
   }
-  if (needs_hackers === false || needs_hackers === true) {
-    query.andWhere("projects.needs_hackers", needs_hackers);
-  }
+  const checkBoolean = (col) => {
+    const val = queryObj[col];
+    if (val === false || val === true) {
+      query.andWhere(`projects.${col}`, val);
+    }
+  };
+  checkBoolean("needs_hackers");
+  checkBoolean("writing_code");
+  checkBoolean("existing");
+  checkBoolean("external_customers");
   if (needed_role && needed_role.length) {
     query.whereIn("projects.needed_role", needed_role);
   }

@@ -23,6 +23,9 @@ const getProjectProps = (overrides) => {
     inspiration: "Because... yoyos!",
     how_it_will_work: "Play with yoyos.",
     needs_hackers: true,
+    writing_code: false,
+    existing: false,
+    external_customers: false,
     tags: ["Yoyo", "Social"],
     video_id: 49,
     meta: {
