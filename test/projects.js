@@ -30,7 +30,8 @@ const getProjectProps = (overrides) => {
     video_id: 49,
     meta: {
       is_awesome: true
-    }
+    },
+    windows_focus: ["XP"]
   };
   for (const key in overrides) {
     result[key] = overrides[key];
@@ -107,6 +108,7 @@ test("create a new project", (t) => {
       t.equal(value, true, "make sure meta keys are persisted");
       t.ok(Array.isArray(result.needed_expertise), "needed_expertise is an array");
       t.ok(Array.isArray(result.tags), "tags is an array");
+      t.ok(Array.isArray(result.windows_focus), "windows_focus is an array");
     },
     user: "b"
   }, t);

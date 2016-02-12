@@ -52,7 +52,11 @@ const expandResult = (obj) => {
 
 const JSON_KEYS = [
   "meta", "profile", "participation_meta",
-  "expertise", "working_on", "tags", "needed_expertise"
+  "expertise", "working_on", "tags", "needed_expertise",
+  "windows_focus", "devices_focus", "dynamics_focus",
+  "third_party_platforms_focus", "cloud_enterprise_focus",
+  "consumer_services_focus", "office_focus", "misc_focus",
+  "other_focus"
 ];
 
 const stringifyKeys = (obj) => {
