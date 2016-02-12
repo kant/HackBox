@@ -156,7 +156,8 @@ export const hackathon = newHackathon.keys({
   id,
   deleted: Joi.boolean(),
   projects: Joi.number().integer().min(0),
-  participants: Joi.number().integer().min(0)
+  participants: Joi.number().integer().min(0),
+  status: Joi.string()
 });
 
 

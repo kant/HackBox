@@ -1,12 +1,14 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import _ from "lodash";
+import moment from "moment";
 import ensure from "./helpers";
 import { hackathon } from "../data/validation";
 import {
   users as mockUsers,
   hackathons as mockHackathons
 } from "../data/mock-data";
+import { hackathonStatus } from "../db-connection";
 
 const aUserId = mockUsers[0].id;
 const bUserId = mockUsers[1].id;
@@ -563,4 +565,40 @@ test("stats for 'people' and 'projects' in hackathon fetch are correct for #2", 
       t.equal(result.participants, 52, "hacakthon 1 has 52 participants in the mock data");
     }
   }, t);
+});
+
+test("hackathon status should calculate active", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(1, "days").toDate(),
+    end_at: moment().add(1, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "active", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate completed", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(2, "days").toDate(),
+    end_at: moment().subtract(1, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "completed", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate not_started", (t) => {
+  const mockHackathon = {
+    start_at: moment().add(2, "days").toDate(),
+    end_at: moment().add(2, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "not_started", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate ongoing", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(1, "days").toDate(),
+    end_at: null
+  };
+  t.equal(hackathonStatus(mockHackathon), "ongoing", "should have correct status");
+  t.end();
 });

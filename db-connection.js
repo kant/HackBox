@@ -25,6 +25,37 @@ export const resolveOr404 = (promise, label = "resource") => {
   });
 };
 
+/*
+  Status sorts in the following order:
+  1. Active- Hackathons that are within the starting and end date. (Amount of
+     time left should show first)
+  2. Ongoing- These are hackathon that have a start date but not an end date.
+     (The hackathons with the most amount of time elapsed should show first)
+  3. Not started- These are hackathons where the beginning date hasn’t happened
+     yet. (The ones that are coming up the soonest should show first)
+  4. Completed- These are hackathons where the end date has already happened.
+     (The ones most recently completed should show first)
+*/
+export const hackathonStatus = (hackathon) => {
+  const { start_at: startAt, end_at: endAt } = hackathon;
+  const now = new Date();
+  let status;
+  if (startAt <= now) {
+    if (endAt) {
+      if (endAt > now) {
+        status = "active";
+      } else {
+        status = "completed";
+      }
+    } else {
+      status = "ongoing";
+    }
+  } else {
+    status = "not_started";
+  }
+  return status;
+};
+
 export const getHackathon = (id, opts = {allowDeleted: false}) => {
   const participantCount = client.select()
     .count("participants.hackathon_id")
@@ -60,6 +91,7 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
     const hackathon = hackathonRows[0];
     if (hackathon) {
       hackathon.admins = admins;
+      hackathon.status = hackathonStatus(hackathon);
     }
     return hackathon;
   });
