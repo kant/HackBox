@@ -227,7 +227,6 @@ export const credentials = {
   }
 };
 
-
 export const hackathons = [
   {
     name: "First Annual hack the planet",
@@ -282,9 +281,61 @@ export const hackathons = [
     json_meta: JSON.stringify({}),
     is_published: true,
     is_public: true
+  },
+  {
+    name: "Ongoing hack",
+    slug: "ongoing-hack",
+    tagline: "It keeps on going",
+    description: "Hacking is forever",
+    logo_url: "http://example.com/hack.gif",
+    start_at: daysAgo(1),
+    org: "Hackers LLC",
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    city: "Seattle",
+    country: "United States",
+    color_scheme: "Xbox green",
+    json_meta: JSON.stringify({}),
+    is_published: true,
+    is_public: true
+  },
+  {
+    name: "Not started hack",
+    slug: "not-started-hack",
+    tagline: "I'll start eventually",
+    description: "Now isn't the time",
+    logo_url: "http://example.com/hack.gif",
+    start_at: daysFromNow(10),
+    end_at: daysFromNow(20),
+    org: "Hackers LLC",
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    city: "Seattle",
+    country: "United States",
+    color_scheme: "Xbox green",
+    json_meta: JSON.stringify({}),
+    is_published: true,
+    is_public: true
+  },
+  {
+    name: "Completed hack",
+    slug: "completed-hack",
+    tagline: "It happened",
+    description: "It was great",
+    logo_url: "http://example.com/hack.gif",
+    start_at: daysAgo(10),
+    end_at: daysAgo(1),
+    org: "Hackers LLC",
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+    city: "Seattle",
+    country: "United States",
+    color_scheme: "Xbox green",
+    json_meta: JSON.stringify({}),
+    is_published: true,
+    is_public: true
   }
 ];
-
 
 export const projects = [
   {

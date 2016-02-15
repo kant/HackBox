@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 32],
+  max-statements: [2, 33],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -25,17 +25,6 @@ export const resolveOr404 = (promise, label = "resource") => {
   });
 };
 
-/*
-  Status sorts in the following order:
-  1. Active- Hackathons that are within the starting and end date. (Amount of
-     time left should show first)
-  2. Ongoing- These are hackathon that have a start date but not an end date.
-     (The hackathons with the most amount of time elapsed should show first)
-  3. Not started- These are hackathons where the beginning date hasn’t happened
-     yet. (The ones that are coming up the soonest should show first)
-  4. Completed- These are hackathons where the end date has already happened.
-     (The ones most recently completed should show first)
-*/
 export const hackathonStatus = (hackathon) => {
   const { start_at: startAt, end_at: endAt } = hackathon;
   const now = new Date();
@@ -560,20 +549,56 @@ export const hackathonSearch = (queryObj) => {
   ].join(" "))
     .select(knex.raw("IFNULL(projects_c.count, 0) as projects"));
 
+  // calculate status
+  query.select(knex.raw([
+    "IF(start_at <= NOW(),",
+    "IF(end_at,",
+    "IF(end_at > NOW(), \"active\", \"completed\"),",
+    "\"ongoing\"),",
+    "\"not_started\") as status"
+  ].join(" ")));
+
   let orderByCol = sort_col;
   let orderByDirection = sort_direction;
   if (!orderByCol) {
     orderByCol = "created_at";
     orderByDirection = "desc";
   }
-  if (!orderByDirection) {
+  if (!orderByDirection || !_.includes(["asc", "desc"], orderByDirection)) {
     if (_.includes(["projects", "participants"], orderByCol)) {
       orderByDirection = "desc";
     } else {
       orderByDirection = "asc";
     }
   }
-  query.orderBy(orderByCol, orderByDirection);
+  if (orderByCol === "status") {
+    /*
+      Status sorts in the following order:
+      1. Active- Hackathons that are within the starting and end date. (Amount of
+         time left should show first)
+      2. Ongoing- These are hackathon that have a start date but not an end date.
+         (The hackathons with the most amount of time elapsed should show first)
+      3. Not started- These are hackathons where the beginning date hasn’t happened
+         yet. (The ones that are coming up the soonest should show first)
+      4. Completed- These are hackathons where the end date has already happened.
+         (The ones most recently completed should show first)
+    */
+    let statusOrder = ["'active'", "'ongoing'", "'not_started'", "'completed'"];
+    if (orderByDirection === "desc") {
+      statusOrder = statusOrder.reverse();
+    }
+    query
+      .orderByRaw(`FIELD(status, ${statusOrder.join(", ")})`)
+      .orderBy("end_at", orderByDirection)
+      .orderBy("start_at", orderByDirection);
+  } else if (orderByCol === "end_at") {
+    // sort nulls last
+    query
+      .orderByRaw("CASE WHEN end_at IS NULL THEN 1 ELSE 0 END")
+      .orderBy(orderByCol, orderByDirection);
+  } else {
+    query.orderBy(orderByCol, orderByDirection);
+  }
 
   return query;
 };

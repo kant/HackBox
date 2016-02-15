@@ -152,13 +152,15 @@ export const newHackathon = Joi.object(hackathonBase)
     logo_url: urlWithDefault,
     header_image_url: urlWithDefault
   });
-export const hackathon = newHackathon.keys({
-  id,
-  deleted: Joi.boolean(),
-  projects: Joi.number().integer().min(0),
-  participants: Joi.number().integer().min(0),
-  status: Joi.string()
-});
+export const hackathon = newHackathon
+  .keys({
+    id,
+    deleted: Joi.boolean(),
+    projects: Joi.number().integer().min(0),
+    participants: Joi.number().integer().min(0),
+    status: Joi.string(),
+    end_at: Joi.date().allow(null)
+  });
 
 
 /*
