@@ -1,12 +1,11 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import _ from "lodash";
+import moment from "moment";
 import ensure from "./helpers";
 import { hackathon } from "../data/validation";
-import {
-  users as mockUsers,
-  hackathons as mockHackathons
-} from "../data/mock-data";
+import { users as mockUsers } from "../data/mock-data";
+import { hackathonStatus } from "../db-connection";
 
 const aUserId = mockUsers[0].id;
 const bUserId = mockUsers[1].id;
@@ -14,7 +13,7 @@ const cUserId = mockUsers[2].id;
 
 let hackathonId;
 
-test("fetch hackathon list sorted by created_at desc by default", (t) => {
+test("fetch hackathon list ordered by created_at desc by default", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons",
@@ -25,6 +24,9 @@ test("fetch hackathon list sorted by created_at desc by default", (t) => {
       t.ok(result.data.every((item) => _.isNumber(item.projects)), "should count projects");
       t.ok(result.data[0].created_at >= result.data[1].created_at,
         "should include ordered results");
+      const statuses = ["active", "not_started", "completed", "ongoing"];
+      t.ok(result.data.every((item) => _.includes(statuses, item.status)),
+        "should have statuses");
       const hackathon1 = _.find(result.data, (h) => h.id === 1);
       t.equal(hackathon1.projects, 2, "hackathon 1 should have correct projects");
       t.equal(hackathon1.participants, 2, "hackathon 1 should have correct participants");
@@ -33,7 +35,7 @@ test("fetch hackathon list sorted by created_at desc by default", (t) => {
   }, t);
 });
 
-test("fetch hackathon list sorted by start_at asc", (t) => {
+test("fetch hackathon list ordered by start_at asc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=start_at&sort_direction=asc",
@@ -44,7 +46,7 @@ test("fetch hackathon list sorted by start_at asc", (t) => {
   }, t);
 });
 
-test("fetch hackathon list sorted by start_at desc", (t) => {
+test("fetch hackathon list ordered by start_at desc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=start_at&sort_direction=desc",
@@ -55,94 +57,146 @@ test("fetch hackathon list sorted by start_at desc", (t) => {
   }, t);
 });
 
-test("fetch hackathon list sorted by end_at asc", (t) => {
+test("fetch hackathon list ordered by end_at asc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=end_at&sort_direction=asc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].end_at < result.data[1].end_at, "should include ordered results");
+      const endAts = _.pluck(result.data, "end_at");
+      const nullCount = _.filter(endAts, _.isNull).length;
+      const notNulls = _.slice(endAts, 0, endAts.length - nullCount);
+      const nulls = _.slice(endAts, endAts.length - nullCount);
+      t.ok(_.every(notNulls, (e) => !_.isNull(e)), "not-nulls should be sorted first");
+      t.ok(_.every(nulls, _.isNull), "nulls should be sorted last");
+      const sortedNotNulls = notNulls.sort();
+      t.deepEqual(notNulls, sortedNotNulls, "not-nulls should be sorted");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by end_at desc", (t) => {
+test("fetch hackathon list ordered by end_at desc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=end_at&sort_direction=desc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].end_at > result.data[1].end_at, "should include ordered results");
+      const endAts = _.pluck(result.data, "end_at");
+      const nullCount = _.filter(endAts, _.isNull).length;
+      const notNulls = _.slice(endAts, 0, endAts.length - nullCount);
+      const nulls = _.slice(endAts, endAts.length - nullCount);
+      t.ok(_.every(notNulls, (e) => !_.isNull(e)), "not-nulls should be sorted first");
+      t.ok(_.every(nulls, _.isNull), "nulls should be sorted last");
+      const sortedNotNulls = notNulls.sort().reverse();
+      t.deepEqual(notNulls, sortedNotNulls, "not-nulls should be sorted");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by name asc", (t) => {
+test("fetch hackathon list ordered by name asc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=name&sort_direction=asc",
     hasPagination: true,
     test(result) {
-      t.equal(result.data[0].name, mockHackathons[0].name, "should include ordered results");
-      t.equal(result.data[1].name, mockHackathons[2].name, "should include ordered results");
+      const names = _.pluck(result.data, "name");
+      const sortedNames = names.sort();
+      t.deepEqual(names, sortedNames, "should include ordered results");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by name desc", (t) => {
+test("fetch hackathon list ordered by name desc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=name&sort_direction=desc",
     hasPagination: true,
     test(result) {
-      t.equal(result.data[0].name, mockHackathons[2].name, "should include ordered results");
-      t.equal(result.data[1].name, mockHackathons[0].name, "should include ordered results");
+      const names = _.pluck(result.data, "name");
+      const sortedNames = names.sort().reverse();
+      t.deepEqual(names, sortedNames, "should include ordered results");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by participants asc", (t) => {
+test("fetch hackathon list ordered by participants asc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=participants&sort_direction=asc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].participants < result.data[1].participants,
-        "should include ordered results");
+      const participants = _.pluck(result.data, "participants");
+      const sortedParticipants = participants.sort();
+      t.deepEqual(participants, sortedParticipants, "should include ordered results");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by participants desc", (t) => {
+test("fetch hackathon list ordered by participants desc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=participants&sort_direction=desc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].participants > result.data[1].participants,
-        "should include ordered results");
+      const participants = _.pluck(result.data, "participants");
+      const sortedParticipants = participants.sort().reverse();
+      t.deepEqual(participants, sortedParticipants, "should include ordered results");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by projects asc", (t) => {
+test("fetch hackathon list ordered by projects asc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=projects&sort_direction=asc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].projects < result.data[1].projects, "should include ordered results");
+      const projects = _.pluck(result.data, "projects");
+      const sortedProjects = projects.sort();
+      t.deepEqual(projects, sortedProjects, "should include ordered results");
     }
   }, t);
 });
 
-test("fetch hackathon list sorted by projects desc", (t) => {
+test("fetch hackathon list ordered by projects desc", (t) => {
   ensure({
     method: "GET",
     url: "/hackathons?sort_col=projects&sort_direction=desc",
     hasPagination: true,
     test(result) {
-      t.ok(result.data[0].projects > result.data[1].projects, "should include ordered results");
+      const projects = _.pluck(result.data, "projects");
+      const sortedProjects = projects.sort().reverse();
+      t.deepEqual(projects, sortedProjects, "should include ordered results");
+    }
+  }, t);
+});
+
+test("fetch hackathon list ordered by status asc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=status&sort_direction=asc",
+    hasPagination: true,
+    test(result) {
+      const statuses = _.pluck(result.data, "status");
+      const sortedStatuses = ["active", "active", "ongoing", "not_started", "completed"];
+      t.deepEqual(statuses, sortedStatuses, "should include ordered results");
+      const actives = _.slice(result.data, 0, 2);
+      t.deepEqual(actives, _.sortBy(actives, "end_at"), "actives should be ordered");
+    }
+  }, t);
+});
+
+test("fetch hackathon list ordered by status desc", (t) => {
+  ensure({
+    method: "GET",
+    url: "/hackathons?sort_col=status&sort_direction=desc",
+    hasPagination: true,
+    test(result) {
+      const statuses = _.pluck(result.data, "status");
+      const sortedStatuses = ["completed", "not_started", "ongoing", "active", "active"];
+      t.deepEqual(statuses, sortedStatuses, "should include ordered results");
+      const actives = _.slice(result.data, 4);
+      t.deepEqual(actives, _.sortBy(actives, "end_at").reverse(), "actives should be ordered");
     }
   }, t);
 });
@@ -171,7 +225,7 @@ test("user b can create a hackathon", (t) => {
     tagline: "tagline",
     header_image_url: "http://example.com/header.gif",
     logo_url: "http://example.com/hack.gif",
-    start_at: new Date(),
+    start_at: new Date(Date.now() - 1000 * 60),
     end_at: new Date(Date.now() + 86400 * 5),
     city: "Redmond",
     country: "United States",
@@ -291,7 +345,7 @@ test("user b can update newly created hackathon", (t) => {
 
         // now the two should be identical, nothing else
         // should have changed.
-        t.deepEqual(createdHackathon, result, "should now be equivalent");
+        t.deepEqual(result, createdHackathon, "should now be equivalent");
 
       },
       user: "b"
@@ -563,4 +617,40 @@ test("stats for 'people' and 'projects' in hackathon fetch are correct for #2", 
       t.equal(result.participants, 52, "hacakthon 1 has 52 participants in the mock data");
     }
   }, t);
+});
+
+test("hackathon status should calculate active", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(1, "days").toDate(),
+    end_at: moment().add(1, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "active", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate completed", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(2, "days").toDate(),
+    end_at: moment().subtract(1, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "completed", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate not_started", (t) => {
+  const mockHackathon = {
+    start_at: moment().add(2, "days").toDate(),
+    end_at: moment().add(2, "days").toDate()
+  };
+  t.equal(hackathonStatus(mockHackathon), "not_started", "should have correct status");
+  t.end();
+});
+
+test("hackathon status should calculate ongoing", (t) => {
+  const mockHackathon = {
+    start_at: moment().subtract(1, "days").toDate(),
+    end_at: null
+  };
+  t.equal(hackathonStatus(mockHackathon), "ongoing", "should have correct status");
+  t.end();
 });
