@@ -198,6 +198,32 @@ test("super users can add others by using 'trust_payload' paramater", (t) => {
   }, t);
 });
 
+test("super users can add others by using 'trust_payload' paramater with json payloads", (t) => {
+  const userProps = {
+    id: "jason-smith",
+    name: "jason smith",
+    family_name: "smith",
+    given_name: "jason",
+    email: "jason@smith.com",
+    interests: ["football"]
+  };
+  ensure({
+    method: "POST",
+    url: `/users?trust_payload=true`,
+    payload: userProps,
+    statusCode: 201,
+    test(result) {
+      t.equal(result.id, userProps.id, "user should take id of user");
+      t.equal(result.name, userProps.name, "user should take name of user");
+      t.equal(result.family_name, userProps.family_name, "user should take family_name of user");
+      t.equal(result.given_name, userProps.given_name, "user should take given_name of user");
+      t.equal(result.email, userProps.email, "user should take email of user");
+      t.deepEqual(result.interests, userProps.interests, "user should store interests");
+    },
+    user: "a"
+  }, t);
+});
+
 test("regular users cannot pass 'trust_payload' paramater", (t) => {
   const userProps = {
     id: "some-id",
