@@ -323,24 +323,6 @@ test("like a project", (t) => {
   }, t);
 });
 
-test("as a super user, can like a project w/ user omitted", (t) => {
-  ensure({
-    method: "POST",
-    url: "/hackathons/1/projects/1/likes?omit_user=true",
-    hasPagination: false,
-    statusCode: 204
-  }, t);
-});
-
-test("as a super user, can like a project w/ user omitted twice", (t) => {
-  ensure({
-    method: "POST",
-    url: "/hackathons/1/projects/1/likes?omit_user=true",
-    hasPagination: false,
-    statusCode: 204
-  }, t);
-});
-
 test("cannot like same project twice", (t) => {
   ensure({
     method: "POST",
@@ -390,15 +372,6 @@ test("can share project repeatedly", (t) => {
   }, t);
 });
 
-test("as a super user, can share a project w/ user omitted", (t) => {
-  ensure({
-    method: "POST",
-    url: "/hackathons/1/projects/1/shares?omit_user=true",
-    hasPagination: false,
-    statusCode: 204
-  }, t);
-});
-
 test("track project view", (t) => {
   ensure({
     method: "POST",
@@ -412,15 +385,6 @@ test("track same project view again", (t) => {
   ensure({
     method: "POST",
     url: "/hackathons/1/projects/1/views",
-    hasPagination: false,
-    statusCode: 204
-  }, t);
-});
-
-test("as a super user, can track project view w/ user omitted", (t) => {
-  ensure({
-    method: "POST",
-    url: "/hackathons/1/projects/1/shares?omit_user=true",
     hasPagination: false,
     statusCode: 204
   }, t);
