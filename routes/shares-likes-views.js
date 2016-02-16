@@ -1,6 +1,5 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
-import Joi from "joi";
 import { id } from "../data/validation";
 import db, { ensureProject } from "../db-connection";
 
@@ -10,7 +9,7 @@ const trackEvent = function (type) {
 
     const response = ensureProject(hackathonId, projectId).then(() => {
       return db(type).insert({
-        user_id: request.query.omit_user ? null : request.userId(),
+        user_id: request.userId(),
         project_id: projectId
       });
     }).then(() => {
@@ -36,7 +35,7 @@ const register = function (server, options, next) {
         const userId = request.userId();
 
         const likeData = {
-          user_id: request.query.omit_user ? null : userId,
+          user_id: userId,
           project_id: projectId
         };
 
@@ -58,9 +57,6 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
-        },
-        query: {
-          omit_user: Joi.boolean()
         }
       }
     }
@@ -140,9 +136,6 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
-        },
-        query: {
-          omit_user: Joi.boolean()
         }
       }
     }
@@ -159,9 +152,6 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
-        },
-        query: {
-          omit_user: Joi.boolean()
         }
       }
     }
