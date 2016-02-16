@@ -113,7 +113,7 @@ Created with [Mondraw](http://monodraw.helftone.com/) original file in `/graphic
 ```
 ┌─────────────────────────────────┐   ┌───────────────────┐     ┌───────────────────┐
 │ projects                        │   │ hackathons        │     │ hackathon_admins  │
-├───────────────────────          │   ├───────────────────┤    ╱├───────────────────┤╲
+├─────────────────────────────────┤   ├───────────────────┤    ╱├───────────────────┤╲
 │ id                              │   │ id                │  ┌──│ user_id           │──┐
 │ owner_id                        │   │ name              │  │ ╲│ hackathon_id      │╱ │
 │ hackathon_id                    │   │ slug              │  │  └───────────────────┘  │
