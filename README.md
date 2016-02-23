@@ -1,6 +1,6 @@
 # HackBox API
 
-This is a node.js api server written using [hapi](http://hapijs.com) framework. 
+This is a node.js api server written using [hapi](http://hapijs.com) framework.
 
 It's written in ES6 transpiled with Babel to allow full ES6 support. In order to use all of the ES6 features we're using [babel.js](https://babeljs.io) transpiler via the [require hook](https://babeljs.io/docs/usage/require/) as can be seen in server.js.
 
@@ -38,7 +38,7 @@ Production logs available here: https://hackbox-api.scm.azurewebsites.net/api/vf
 
 ## API documentation
 
-The API is generates its own documentation based on metadata provided with each route. Since the documentation is generated from the actual route data itself, that helps mitigate out-of-date documentation. 
+The API is generates its own documentation based on metadata provided with each route. Since the documentation is generated from the actual route data itself, that helps mitigate out-of-date documentation.
 
 To see it, run the server as described above and visit: `http://localhost:3000/documentation` in a browser.
 
@@ -55,7 +55,7 @@ All routes should have validation rules for anything it expects to trust.
 
 There's a global server config **that will strip all unkown keys from the JSON payloads** of requests.
 
-This means that you'll can't just send more data and expect it to be available inside you're route handlers.
+This means that you'll can't just send more data and expect it to be available inside your route handlers.
 
 This protects against issues like [mass assignment](http://brakemanscanner.org/docs/warning_types/mass_assignment/).
 
@@ -86,7 +86,7 @@ To support this, the config reading module will replace any strings in the confi
 
 This allows us to check-in all the config files, allows configs to have arbitrary structure, and allows all non-sensitive configuration changes to be checked into the repo.
 
-To repeat: **please avoid putting any sensitive data** into this code repository. 
+To repeat: **please avoid putting any sensitive data** into this code repository.
 
 
 ## Running scripts
@@ -105,85 +105,84 @@ These are all located in `/data/fixed-data` and available through the API using 
 
 Clients using the api should retrieve the available options from the API when rendering UI to users. So that there's only one source of truth for what should be considered valid options for countries, participant roles, etc.
 
-## db diagram
+## DB diagram
 
 Created with [Mondraw](http://monodraw.helftone.com/) original file in `/graphics`
 
 
 ```
-                               ┌───────────────────┐      ┌───────────────────┐
-                               │ hackathons        │      │ hackathon_admins  │
-┌──────────────────────┐       ├───────────────────┤     ╱├───────────────────┤╲
-│ projects             │       │ id                │  ┌───│ user_id           │──┐
-├──────────────────────┤       │ name              │  │  ╲│ hackathon_id      │╱ │
-│ id                   │       │ slug              │  │   └───────────────────┘  │
-│ owner_id             │       │ tagline           │  │                          │
-│ hackathon_id         │       │ description       │  │   ┌───────────────────┐  │
-│ title                │       │ judges            │  │   │ participants      │  │
-│ tagline              │       │ rules             │  │  ╱├───────────────────┤╲ │
-│ status               │       │ schedule          │  ├───│ user_id           │──┤
-│ description          │       │ quick_links       │  │  ╲│ hackathon_id      │╱ │
-│ image_url            │       │ resources         │  │   └───────────────────┘  │
-│ code_repo_url        │       │ logo_url          │  │                          │
-│ prototype_url        │       │ header_image_url  │  │   ┌───────────────────┐  │
-│ supporting_files_url │╲      │ start_at          │  │   │ users             │  │
-│ inspiration          │──────┼│ end_at            │┼─┘   ├───────────────────┤  │
-│ how_it_will_work     │╱      │ org               │      │ id                │  │
-│ needs_hackers        │       │ city              │      │ name              │  │
-│ needed_role          │       │ country           │      │ family_name       │  │
-│ json_needed_expertise│       │ color_scheme      │      │ given_name        │  │
-│ product_focus        │       │ created_at        │      │ email             │  │
-│ customer_type        │       │ updated_at        │      │ bio               │  │
-│ json_tags            │       │ show_name         │      │ country           │  │
-│ video_id             │       │ show_judges       │      │ created_at        │┼─┘
-│ created_at           │       │ show_rules        │      │ updated_at        │
-│ updated_at           │       │ show_schedule     │      │ deleted           │
-│ deleted              │       │ deleted           │      │ json_working_on   │
-│ json_meta            │       │ is_public         │      │ json_expertise    │
-└──────────────────────┘       │ is_published      │      │ primary_role      │
-            ┼                  │ json_meta         │      │ product_focus     │
-            │                  └───────────────────┘      │ json_profile      │
-            │                            │                │ json_meta         │
-            │                            │                └───────────────────┘
-            │                            │                          ┼
-            │                            │                          │
-            │                           ╱│╲                         │
-            │                  ┌───────────────────┐                │
-            │                  │ members           │                │
-            │                  ├───────────────────┤                │
-            │                 ╱│ user_id           │╲               │
-            ├──────────────────│ project_id        │────────────────┤
-            │                 ╲│ hackathon_id      │╱               │
-            │                  │ joined_at         │                │
-            │                  └───────────────────┘                │
-            │                  ┌───────────────────┐                │
-            │                  │ comments          │                │
-            │                  ├───────────────────┤                │
-            │                 ╱│  id               │╲               │
-            ├──────────────────│  user_id          │────────────────┤
-            │                 ╲│  project_id       │╱               │
-            │                  │  body             │                │
-            │                  │  created_at       │                │
-            │                  └───────────────────┘                │
-            │                  ┌───────────────────┐                │
-            │                  │ likes             │                │
-            │                 ╱├───────────────────┤╲               │
-            ├──────────────────│ user_id           │────────────────┤
-            │                 ╲│ project_id        │╱               │
-            │                  │ created_at        │                │
-            │                  └───────────────────┘                │
-            │                  ┌───────────────────┐                │
-            │                  │ shares            │                │
-            │                 ╱├───────────────────┤╲               │
-            ├──────────────────│ user_id           │────────────────┤
-            │                 ╲│ project_id        │╱               │
-            │                  │ created_at        │                │
-            │                  └───────────────────┘                │
-            │                  ┌───────────────────┐                │
-            │                  │ views             │                │
-            │                 ╱├───────────────────┤╲               │
-            └──────────────────│ user_id           │────────────────┘
-                              ╲│ project_id        │╱
-                               │ created_at        │
-                               └───────────────────┘
+┌─────────────────────────────────┐   ┌───────────────────┐     ┌───────────────────┐
+│ projects                        │   │ hackathons        │     │ hackathon_admins  │
+├─────────────────────────────────┤   ├───────────────────┤    ╱├───────────────────┤╲
+│ id                              │   │ id                │  ┌──│ user_id           │──┐
+│ owner_id                        │   │ name              │  │ ╲│ hackathon_id      │╱ │
+│ hackathon_id                    │   │ slug              │  │  └───────────────────┘  │
+│ title                           │   │ tagline           │  │                         │
+│ tagline                         │   │ description       │  │  ┌───────────────────┐  │
+│ status                          │   │ judges            │  │  │ participants      │  │
+│ description                     │   │ rules             │  │ ╱├───────────────────┤╲ │
+│ image_url                       │   │ schedule          │  ├──│ user_id           │──┤
+│ code_repo_url                   │   │ quick_links       │  │ ╲│ hackathon_id      │╱ │
+│ prototype_url                   │   │ resources         │  │  └───────────────────┘  │
+│ supporting_files_url            │   │ logo_url          │  │                         │
+│ inspiration                     │   │ header_image_url  │  │  ┌───────────────────┐  │
+│ how_it_will_work                │   │ start_at          │  │  │ users             │  │
+│ needs_hackers                   │ ┌┼│ end_at            │┼─┘  ├───────────────────┤  │
+│ writing_code                    │ │ │ org               │     │ id                │  │
+│ existing                        │╲│ │ city              │     │ name              │  │
+│ external_customers              │─┘ │ country           │     │ family_name       │  │
+│ needed_role                     │╱  │ color_scheme      │     │ given_name        │  │
+│ json_needed_expertise           │   │ created_at        │     │ email             │  │
+│ product_focus                   │   │ updated_at        │     │ bio               │  │
+│ json_windows_focus              │   │ show_name         │     │ country           │  │
+│ json_devices_focus              │   │ show_judges       │     │ created_at        │┼─┘
+│ json_dynamics_focus             │   │ show_rules        │     │ updated_at        │
+│ json_third_party_platforms_focus│   │ show_schedule     │     │ deleted           │
+│ json_cloud_enterprise_focus     │   │ deleted           │     │ json_working_on   │
+│ json_consumer_services_focus    │   │ is_public         │     │ json_expertise    │
+│ json_office_focus               │   │ is_published      │     │ primary_role      │
+│ json_misc_focus                 │   │ json_meta         │     │ product_focus     │
+│ json_other_focus                │   └───────────────────┘     │ json_profile      │
+│ customer_type                   │             ┼               │ json_meta         │
+│ json_tags                       │    ┌────────┴────────┐      │ json_interests    │
+│ video_id                        │    │                 │      └───────────────────┘
+│ created_at                      │    │                ╱│╲               ┼
+│ updated_at                      │    │       ┌───────────────────┐      │
+│ deleted                         │    │       │ members           │      │
+└─────────────────────────────────┘    │       ├───────────────────┤      │
+                 ┼                     │      ╱│ user_id           │╲     │
+             ┌───┴─────────────────────┼──┬────│ project_id        │──────┤
+            ╱│╲                        │  │   ╲│ hackathon_id      │╱     │
+┌─────────────────────────┐            │  │    │ joined_at         │      │
+│ awards                  │            │  │    └───────────────────┘      │
+├─────────────────────────┤            │  │    ┌───────────────────┐      │
+│ id                      │            │  │    │ comments          │      │
+│ hackathon_id            │            │  │    ├───────────────────┤      │
+│ project_id              │            │  │   ╱│ id                │╲     │
+│ name                    │            │  ├────│ user_id           │──────┤
+│ json_meta               │            │  │   ╲│ project_id        │╱     │
+└─────────────────────────┘            │  │    │ body              │      │
+             ┼                         │  │    │ created_at        │      │
+             │                         │  │    └───────────────────┘      │
+            ╱│╲                        │  │    ┌───────────────────┐      │
+┌─────────────────────────┐            │  │    │ likes             │      │
+│ awards_award_categories │            │  │   ╱├───────────────────┤╲     │
+├─────────────────────────┤            │  ├────│ user_id           │──────┤
+│ award_id                │            │  │   ╲│ project_id        │╱     │
+│ award_category_id       │            │  │    │ created_at        │      │
+└─────────────────────────┘            │  │    └───────────────────┘      │
+            ╲│╱                        │  │    ┌───────────────────┐      │
+             │                         │  │    │ shares            │      │
+             ┼                         │  │   ╱├───────────────────┤╲     │
+┌─────────────────────────┐            │  ├────│ user_id           │──────┤
+│ award_categories        │            │  │   ╲│ project_id        │╱     │
+├─────────────────────────┤            │  │    │ created_at        │      │
+│ id                      │╲           │  │    └───────────────────┘      │
+│ hackathon_id            │────────────┘  │    ┌───────────────────┐      │
+│ parent_id               │╱              │    │ views             │      │
+│ name                    │               │   ╱├───────────────────┤╲     │
+│                         │               └────│ user_id           │──────┘
+└─────────────────────────┘                   ╲│ project_id        │╱
+                                               │ created_at        │
+                                               └───────────────────┘
 ```
