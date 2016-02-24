@@ -33,7 +33,9 @@ export const users = [
       linkedin: "HenrikJoreteg"
     }),
     json_interests: JSON.stringify([]),
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    profession: "Developer",
+    discipline: "Software"
   },
   {
     id: "4828fcc9-3272-45e4-96a9-0c79d152fd82",
@@ -60,7 +62,9 @@ export const users = [
       linkedin: "GreenEggsAndHam"
     }),
     json_interests: JSON.stringify(["cycling"]),
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    profession: "Developer",
+    discipline: "Software"
   },
   {
     id: "8e7f4eca-921c-47f8-905e-d417c0eb78a8",
@@ -87,7 +91,9 @@ export const users = [
       linkedin: "SamIAm"
     }),
     json_interests: JSON.stringify([]),
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    profession: "Developer",
+    discipline: "Software"
   },
   {
     id: "76se6caa-921c-47f8-905e-d417c0eb78a8",
@@ -114,7 +120,9 @@ export const users = [
       linkedin: "fishy"
     }),
     json_interests: JSON.stringify([]),
-    json_meta: JSON.stringify({})
+    json_meta: JSON.stringify({}),
+    profession: "Developer",
+    discipline: "Software"
   }
 ];
 
