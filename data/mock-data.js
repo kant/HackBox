@@ -35,7 +35,9 @@ export const users = [
     json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({}),
     profession: "Developer",
-    discipline: "Software"
+    discipline: "Software",
+    city: "Seattle",
+    alias: "HJ"
   },
   {
     id: "4828fcc9-3272-45e4-96a9-0c79d152fd82",
@@ -64,7 +66,9 @@ export const users = [
     json_interests: JSON.stringify(["cycling"]),
     json_meta: JSON.stringify({}),
     profession: "Developer",
-    discipline: "Software"
+    discipline: "Software",
+    city: "Seattle",
+    alias: "DS"
   },
   {
     id: "8e7f4eca-921c-47f8-905e-d417c0eb78a8",
@@ -93,7 +97,9 @@ export const users = [
     json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({}),
     profession: "Developer",
-    discipline: "Software"
+    discipline: "Software",
+    city: "Seattle",
+    alias: "SIA"
   },
   {
     id: "76se6caa-921c-47f8-905e-d417c0eb78a8",
@@ -122,7 +128,9 @@ export const users = [
     json_interests: JSON.stringify([]),
     json_meta: JSON.stringify({}),
     profession: "Developer",
-    discipline: "Software"
+    discipline: "Software",
+    city: "Seattle",
+    alias: "F"
   }
 ];
 
