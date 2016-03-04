@@ -33,10 +33,11 @@ Clients using the api should retrieve the available options from the API when re
 
 Migrations are generated and managed with [knex][].
 
-To use the knex CLI, you must first install knex globally.
+knex can be run either with
 ```sh
-$ npm install knex -g
+./node_modules/.bin/knex
 ```
+or by aliasing your PATH to include `node_modules/.bin`.
 
 Create a new migration with:
 
