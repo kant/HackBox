@@ -31,7 +31,8 @@ const getProjectProps = (overrides) => {
     meta: {
       is_awesome: true
     },
-    windows_focus: ["XP"]
+    windows_focus: ["XP"],
+    venue: "Microsoft Garage"
   };
   for (const key in overrides) {
     result[key] = overrides[key];

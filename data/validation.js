@@ -81,7 +81,9 @@ const userBase = {
   profession: Joi.string().max(255).trim(),
   discipline: Joi.string().max(255).trim(),
   city: Joi.string().max(255).trim(),
-  alias: Joi.string().max(255).trim()
+  alias: Joi.string().max(255).trim(),
+  job_title: Joi.string().max(255).trim(),
+  department: Joi.string().max(255).trim()
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
@@ -202,6 +204,7 @@ const projectBase = {
   customer_type: customerType,
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
+  venue: Joi.string().max(255).trim(),
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
