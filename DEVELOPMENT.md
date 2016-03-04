@@ -17,7 +17,7 @@ $ npm run test
 
 ### MySQL Database
 
-This app uses MySQL for its database. In development, you will need to create a database with the same credentials listed in `config/development.json`.
+This app uses MySQL for it's database. In development, you will need to create a database with the same credentials listed in `config/development.json`.
 
 Running tests deletes and re-creates your local DB every time the tests are run so be aware data set up in development is ephemeral.
 
@@ -32,11 +32,6 @@ Clients using the api should retrieve the available options from the API when re
 ### Migrations
 
 Migrations are generated and managed with [knex][].
-
-To use the knex CLI, you must first install knex globally.
-```sh
-$ npm install knex -g
-```
 
 Create a new migration with:
 

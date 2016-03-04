@@ -37,9 +37,7 @@ export const users = [
     profession: "Developer",
     discipline: "Software",
     city: "Seattle",
-    alias: "HJ",
-    job_title: "JS Developer",
-    department: "Internet"
+    alias: "HJ"
   },
   {
     id: "4828fcc9-3272-45e4-96a9-0c79d152fd82",
@@ -70,9 +68,7 @@ export const users = [
     profession: "Developer",
     discipline: "Software",
     city: "Seattle",
-    alias: "DS",
-    job_title: "Author",
-    department: "Poems, Gnomes & Homes"
+    alias: "DS"
   },
   {
     id: "8e7f4eca-921c-47f8-905e-d417c0eb78a8",
@@ -103,9 +99,7 @@ export const users = [
     profession: "Developer",
     discipline: "Software",
     city: "Seattle",
-    alias: "SIA",
-    job_title: "Nagging friend",
-    department: "Cuisine"
+    alias: "SIA"
   },
   {
     id: "76se6caa-921c-47f8-905e-d417c0eb78a8",
@@ -136,9 +130,7 @@ export const users = [
     profession: "Developer",
     discipline: "Software",
     city: "Seattle",
-    alias: "F",
-    job_title: "Official Fish",
-    department: "Long John Silvers"
+    alias: "F"
   }
 ];
 
@@ -389,8 +381,7 @@ export const projects = [
     updated_at: faker.date.recent(),
     json_meta: JSON.stringify({
       is_awesome: true
-    }),
-    venue: "Planet Earth"
+    })
   },
   {
     owner_id: users[1].id,
@@ -417,8 +408,7 @@ export const projects = [
     video_id: null,
     created_at: daysAgo(1),
     updated_at: faker.date.recent(),
-    json_meta: JSON.stringify({}),
-    venue: "CNN Headquarters"
+    json_meta: JSON.stringify({})
   }
 ];
 
