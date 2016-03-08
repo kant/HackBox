@@ -279,7 +279,7 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_role, needed_expertise, product_focus, customer_type, has_member,
-    sort_col, sort_direction
+    sort_col, sort_direction, has_focus
   } = queryObj;
 
   const query = client("projects")
@@ -346,13 +346,22 @@ export const projectSearch = (queryObj) => {
   if (country && country.length) {
     query.whereIn("hackathons.country", country);
   }
+  if (has_focus && has_focus.length) {
+    query.where(function () {
+      has_focus.forEach((focus, index) => {
+        const fnName = index === 0 ? "whereNotNull" : "orWhereNotNull";
+        const colName = "projects.json_" + focus + "_focus";
+        this[fnName](colName);
+      });
+    });
+  }
 
   const orderByCol = sort_col || "created_at";
   const orderByDirection = sort_direction || "desc";
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
   query.select("projects.*", "users.name as owner_name");
-
+  console.log(query.toString());
   return query;
 };
 

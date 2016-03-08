@@ -32,6 +32,8 @@ export const product = Joi.string().valid(productTypes).empty("");
 export const productArray = Joi.array().items(product)
   .description("Array of one or more valid product types");
 export const arrayOfStrings = Joi.array().items(Joi.string());
+export const focusArray = Joi.array().items(Joi.string())
+.description("Array of one or more focus types");
 
 /*
   Pagination

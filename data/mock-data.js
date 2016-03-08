@@ -390,7 +390,8 @@ export const projects = [
     json_meta: JSON.stringify({
       is_awesome: true
     }),
-    venue: "Planet Earth"
+    venue: "Planet Earth",
+    json_windows_focus: "Yeppers"
   },
   {
     owner_id: users[1].id,
