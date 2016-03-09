@@ -460,7 +460,114 @@ export const userSearch = (queryObj) => {
     });
   }
   if (role && role.length) {
-    query.whereIn("primary_role", role);
+    console.log("role " + JSON.stringify(role));
+    var first = true;
+    query.where(function() {
+      if (_.indexOf(role, "Developer") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere(function() {
+            this.where("discipline", "Software Development")
+            .orWhere("discipline", "Software Engineering");
+          });
+        first = false;
+      }
+      if (_.indexOf(role, "PM") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Program Management");
+        first = false;
+      }
+      if (_.indexOf(role, "Service Engineering") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Service Engineering");
+        first = false;
+      }
+      if (_.indexOf(role, "Design") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Design");
+        first = false;
+      }
+      if (_.indexOf(role, "Services") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Services");
+        first = false;
+      }
+      if (_.indexOf(role, "IT Operations") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "IT Operations");
+        first = false;
+      }
+      if (_.indexOf(role, "Sales") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Sales");
+        first = false;
+      }
+      if (_.indexOf(role, "Marketing") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Marketing");
+        first = false;
+      }
+      if (_.indexOf(role, "Content Marketing") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Content Publishing");
+        first = false;
+      }
+      if (_.indexOf(role, "Design") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Data & Applied Sciences");
+        first = false;
+      }
+      if (_.indexOf(role, "Design") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Engineering")
+          .andWhere("discipline", "Design Research");
+        first = false;
+      }
+      if (_.indexOf(role, "Business & Program Operations") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Business & Program Operations");
+        first = false;
+      }
+      if (_.indexOf(role, "Supply Chain & Operations Management") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Supply Chain & Operations Management");
+        first = false;
+      }
+      if (_.indexOf(role, "Evangelism") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Evangelism");
+        first = false;
+      }
+      if (_.indexOf(role, "HW Engineering") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Hardware Engineering");
+        first = false;
+      }
+      if (_.indexOf(role, "HR") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Human Resources");
+        first = false;
+      }
+      if (_.indexOf(role, "Legal & Corporate Affairs") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Legal & Corporate Affairs");
+        first = false;
+      }
+      if (_.indexOf(role, "Finance") !== -1) {
+        const fnName = first ? "where" : "orWhere";
+        this[fnName]("profession", "Finance");
+        first = false;
+      }
+
+      else {
+        query.whereIn("primary_role", role);
+      }
+    });
   }
   if (product_focus && product_focus.length) {
     query.whereIn("product_focus", product_focus);
@@ -479,6 +586,7 @@ export const userSearch = (queryObj) => {
     query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
   }
 
+  console.log(query.toString());
   return query;
 };
 
