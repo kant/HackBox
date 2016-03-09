@@ -393,7 +393,7 @@ export const userSearch = (queryObj) => {
     search, hackathon_id, has_project, include_deleted,
     role, product_focus, country, sort_col, sort_direction
   } = queryObj;
-
+  console.log("query obj " + JSON.stringify(queryObj));
   const orderByCol = sort_col || "given_name";
   const orderByDirection = sort_direction || "asc";
   let query;
@@ -478,7 +478,7 @@ export const userSearch = (queryObj) => {
           .andWhere("discipline", "Program Management");
         first = false;
       }
-      if (_.indexOf(role, "Service Engineering") !== -1) {
+      if (_.indexOf(role, "Service Eng") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Engineering")
           .andWhere("discipline", "Service Engineering");
@@ -516,7 +516,7 @@ export const userSearch = (queryObj) => {
           .andWhere("discipline", "Content Publishing");
         first = false;
       }
-      if (_.indexOf(role, "Design") !== -1) {
+      if (_.indexOf(role, "Data Science") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Engineering")
           .andWhere("discipline", "Data & Applied Sciences");
@@ -528,7 +528,7 @@ export const userSearch = (queryObj) => {
           .andWhere("discipline", "Design Research");
         first = false;
       }
-      if (_.indexOf(role, "Business & Program Operations") !== -1) {
+      if (_.indexOf(role, "Business Programs & Operations") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Business & Program Operations");
         first = false;
@@ -564,7 +564,8 @@ export const userSearch = (queryObj) => {
         first = false;
       }
 
-      else {
+      if (first == true) { // Default towards searching only primary role
+        console.log("else primary role");
         query.whereIn("primary_role", role);
       }
     });
