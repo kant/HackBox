@@ -63,6 +63,7 @@ const projectTypes = [
 const participantTypes = [
   "Business Development & Strategy",
   "Business Programs & Operations",
+  "Content Marketing",
   "Content Publishing",
   "Data Science",
   "Design",
@@ -74,6 +75,7 @@ const participantTypes = [
   "Finance",
   "Hardware Engineering",
   "Hardware Manufacturing Engineering",
+  "HW Engineering",
   "HR",
   "Human Resources",
   "IT Operations",
@@ -84,6 +86,7 @@ const participantTypes = [
   "Research",
   "Retail",
   "Sales",
+  "Service Eng",
   "Service Eng.",
   "Services",
   "Supply Chain & Operations Management",
