@@ -204,7 +204,7 @@ const projectBase = {
   customer_type: customerType,
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
-  venue: Joi.string().max(255).trim(),
+  venue: Joi.string().max(255).trim().default(""),
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
