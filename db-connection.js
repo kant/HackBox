@@ -10,6 +10,7 @@ import Boom from "boom";
 import assert from "assert";
 import _ from "lodash";
 import { db } from "./config";
+import { projectTypes } from "./data/fixed-data";
 
 const client = knex(db);
 
@@ -460,7 +461,6 @@ export const userSearch = (queryObj) => {
     });
   }
   if (role && role.length) {
-    console.log("role " + JSON.stringify(role));
     var first = true;
     query.where(function() {
       if (_.indexOf(role, "Developer") !== -1) {
@@ -571,7 +571,25 @@ export const userSearch = (queryObj) => {
     });
   }
   if (product_focus && product_focus.length) {
-    query.whereIn("product_focus", product_focus);
+    let first = true;
+    query.where(function() {
+      product_focus.forEach((focus, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = first ? "where" : "orWhere";
+        this[fnName](function() {
+          if (_.indexOf(projectTypes, focus) !== -1) {
+            query.where("json_working_on", "like",`%${focus}%`)
+            .orWhere("json_expertise", "like", `%${focus}%`);
+            first = false;
+          }
+        });
+      });
+    });
+
+    if (first === true) {
+      query.whereIn("product_focus", product_focus);
+    }
   }
   if (country && country.length) {
     query.whereIn("country", country);
@@ -587,7 +605,6 @@ export const userSearch = (queryObj) => {
     query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
   }
 
-  console.log(query.toString());
   return query;
 };
 
