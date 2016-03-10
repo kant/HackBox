@@ -48,15 +48,17 @@ const projectTypes = [
   "SQL",
   "Visual Studio",
   "HoloLens",
+  "Sharepoint",
   "Windows Phone",
   "Cortana",
+  "IoT",
   "SQL",
   "MSIT",
   "Exchange",
   "Power BI",
   "Machine Learning",
   "Mobile",
-  "Intune",
+  "InTune",
   "Yammer"
 ];
 

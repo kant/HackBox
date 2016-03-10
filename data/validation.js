@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { countryList, colorSchemes,
-  customerTypes, productTypes,
+  customerTypes, productTypes, projectTypes,
   participantTypes } from "./fixed-data";
 
 /*
@@ -31,6 +31,9 @@ export const countryArray = Joi.array().items(country)
 export const product = Joi.string().valid(productTypes).empty("");
 export const productArray = Joi.array().items(product)
   .description("Array of one or more valid product types");
+export const projectType = Joi.string().valid(projectTypes).empty("");
+export const projectArray = Joi.array().items(projectType)
+  .description("Array of one or more valid project types");
 export const arrayOfStrings = Joi.array().items(Joi.string());
 export const focusArray = Joi.array().items(Joi.string())
 .description("Array of one or more focus types");
