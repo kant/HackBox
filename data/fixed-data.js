@@ -64,6 +64,7 @@ const projectTypes = [
 
 const participantTypes = [
   "Business Development & Strategy",
+  "Business Programs & Ops",
   "Business Programs & Operations",
   "Content Marketing",
   "Content Publishing",
@@ -91,6 +92,7 @@ const participantTypes = [
   "Service Eng",
   "Service Eng.",
   "Services",
+  "Supply Chain & Ops Management",
   "Supply Chain & Operations Management",
   "Technical Sales"
 ];

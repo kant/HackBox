@@ -17,7 +17,7 @@ const register = function (server, options, next) {
         const { query } = request;
         const { limit, offset } = query;
 
-        if (query.has_project === true && !query.hackathon_id) {
+        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
           return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
         }
         const response = userSearch(request.query);
@@ -29,7 +29,7 @@ const register = function (server, options, next) {
           search: Joi.string(),
           hackathon_id: optionalId,
           has_project: Joi.boolean(),
-          product_focus: projectArray,
+          product_focus: projectArray, // TODO join this with productArray
           role: roleArray,
           country: countryArray,
           sort_col: Joi.any().valid("given_name", "family_name"),
