@@ -45,7 +45,7 @@ const projectTypes = [
   "Skype",
   "Dynamics",
   "Xbox",
-  "SQL",
+  "Sql",
   "Visual Studio",
   "HoloLens",
   "Sharepoint",
