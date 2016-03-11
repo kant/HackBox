@@ -92,6 +92,7 @@ const participantTypes = [
   "Service Eng",
   "Service Eng.",
   "Services",
+  "Supply Chain & Ops",
   "Supply Chain & Ops Management",
   "Supply Chain & Operations Management",
   "Technical Sales"

@@ -510,7 +510,7 @@ export const userSearch = (queryObj) => {
         this[fnName]("profession", "Marketing");
         first = false;
       }
-      if (_.indexOf(role, "Content Marketing") !== -1) {
+      if (_.indexOf(role, "Content Publishing") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Engineering")
           .andWhere("discipline", "Content Publishing");
@@ -528,12 +528,12 @@ export const userSearch = (queryObj) => {
           .andWhere("discipline", "Design Research");
         first = false;
       }
-      if (_.indexOf(role, "Business Programs & Operations") !== -1) {
+      if (_.indexOf(role, "Business Programs & Ops") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Business & Program Operations");
         first = false;
       }
-      if (_.indexOf(role, "Supply Chain & Operations Management") !== -1) {
+      if (_.indexOf(role, "Supply Chain & Ops") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Supply Chain & Operations Management");
         first = false;
