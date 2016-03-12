@@ -362,7 +362,7 @@ export const projectSearch = (queryObj) => {
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
   query.select("projects.*", "users.name as owner_name");
-  console.log(query.toString());
+
   return query;
 };
 
@@ -394,7 +394,7 @@ export const userSearch = (queryObj) => {
     search, hackathon_id, has_project, include_deleted,
     role, product_focus, country, sort_col, sort_direction
   } = queryObj;
-  console.log("query obj " + JSON.stringify(queryObj));
+
   const orderByCol = sort_col || "given_name";
   const orderByDirection = sort_direction || "asc";
   let query;
@@ -565,31 +565,19 @@ export const userSearch = (queryObj) => {
       }
 
       if (first == true) { // Default towards searching only primary role
-        console.log("else primary role");
         query.whereIn("primary_role", role);
       }
     });
   }
   if (product_focus && product_focus.length) {
-    let first = true;
     query.where(function() {
       product_focus.forEach((focus, index) => {
-        // first time through we want to call `where`
-        // then subsequesntly use `orWhere`
-        const fnName = first ? "where" : "orWhere";
-        this[fnName](function() {
-          if (_.indexOf(projectTypes, focus) !== -1) {
-            query.where("json_working_on", "like",`%${focus}%`)
-            .orWhere("json_expertise", "like", `%${focus}%`);
-            first = false;
-          }
-        });
+        if (_.indexOf(projectTypes, focus) !== -1) {
+          this.orWhere("json_working_on", "like",`%${focus}%`)
+          .orWhere("json_expertise", "like", `%${focus}%`);
+        }
       });
     });
-
-    if (first === true) {
-      query.whereIn("product_focus", product_focus);
-    }
   }
   if (country && country.length) {
     query.whereIn("country", country);
