@@ -6,7 +6,7 @@ const customerTypes = [
   "Tech for Good",
   "Business",
   "Other",
-  "Microsoft Employees/Culture",
+  "MS Employees/Culture",
   "Millennials",
   "Advertisers",
   "Industries",
@@ -61,33 +61,24 @@ const projectTypes = [
 ];
 
 const participantTypes = [
-  "Business Development & Strategy",
-  "Business Programs & Operations",
+  "Business Programs & Ops",
   "Content Publishing",
   "Data Science",
   "Design",
   "Design Research",
   "Developer",
-  "Engineering",
   "Evangelism",
-  "Field Business Leadership",
   "Finance",
-  "Hardware Engineering",
-  "Hardware Manufacturing Engineering",
   "HR",
-  "Human Resources",
+  "HW Engineering",
   "IT Operations",
   "Legal & Corporate Affairs",
   "Marketing",
   "PM",
-  "Product Manufacturing Operations",
-  "Research",
-  "Retail",
   "Sales",
-  "Service Eng.",
+  "Service Eng",
   "Services",
-  "Supply Chain & Operations Management",
-  "Technical Sales"
+  "Supply Chain & Ops"
 ];
 
 const countryList = [
