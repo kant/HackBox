@@ -591,6 +591,8 @@ export const userSearch = (queryObj) => {
     query.orderByRaw(`given_name ${orderByDirection}, family_name ${orderByDirection}`);
   } else if (orderByCol === "family_name") {
     query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
+  } else if (orderByCol) {
+    query.orderByRaw(`${orderByCol} ${orderByDirection}`);
   }
 
   return query;

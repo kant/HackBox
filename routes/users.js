@@ -32,7 +32,8 @@ const register = function (server, options, next) {
           product_focus: projectArray, // TODO join this with productArray
           role: roleArray,
           country: countryArray,
-          sort_col: Joi.any().valid("given_name", "family_name"),
+          sort_col: Joi.any().valid("given_name", "family_name", "alias", "job_title", "department",
+            "city", "country"),
           sort_direction: sortDirection
         })
       }
