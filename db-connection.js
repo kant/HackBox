@@ -338,12 +338,24 @@ export const projectSearch = (queryObj) => {
       });
     });
   }
+
+  const focii = { //TODO can probably convert with a regex
+    Windows: "windows",
+    Devices: "devices",
+    "Consumer Services": "consumer_services",
+    "Cloud + Enterprise": "cloud enterprise",
+    Office: "office",
+    Dynamics: "dynamics",
+    "3rd Party Platforms": "third_party_platforms",
+    Misc: "misc",
+    Other: "other"
+  }
   if (product_focus && product_focus.length) {
     query.where(function () {
       product_focus.forEach((focus, index) => {
-        focus = focus.toLowerCase();
         const fnName = index === 0 ? "where" : "orWhere";
-        this[fnName](`projects.json_${focus}_focus`, "like", "%true%");
+        const col = focii[focus];
+        this[fnName](`projects.json_${col}_focus`, "like", "%true%");
       });
     });
   }
