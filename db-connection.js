@@ -343,7 +343,7 @@ export const projectSearch = (queryObj) => {
     Windows: "windows",
     Devices: "devices",
     "Consumer Services": "consumer_services",
-    "Cloud + Enterprise": "cloud enterprise",
+    "Cloud + Enterprise": "cloud_enterprise",
     Office: "office",
     Dynamics: "dynamics",
     "3rd Party Platforms": "third_party_platforms",
