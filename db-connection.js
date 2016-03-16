@@ -339,10 +339,21 @@ export const projectSearch = (queryObj) => {
     });
   }
   if (product_focus && product_focus.length) {
-    query.whereIn("projects.product_focus", product_focus);
+    query.where(function () {
+      product_focus.forEach((focus, index) => {
+        focus = focus.toLowerCase();
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName](`projects.json_${focus}_focus`, "like", "%true%");
+      });
+    });
   }
   if (customer_type && customer_type.length) {
-    query.whereIn("projects.customer_type", customer_type);
+    query.where(function () {
+      customer_type.forEach((customer, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.customer_type", "=", customer);
+      });
+    });
   }
   if (country && country.length) {
     query.whereIn("hackathons.country", country);
