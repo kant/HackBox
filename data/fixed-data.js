@@ -173,7 +173,8 @@ const colorSchemes = [
   "Office red",
   "Visual Studio purple",
   "Windows blue",
-  "Xbox green"
+  "Xbox green",
+  "Skype blue"
 ];
 
 export default {
