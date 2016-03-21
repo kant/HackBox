@@ -13,10 +13,10 @@ const register = function (server, options, next) {
           db("users").count().whereNot({deleted: true}),
           db("hackathons").count().whereNot({deleted: true}),
           db("projects").count().as("value").whereNot({deleted: true}),
-          db("hackathons")
+          db("users")
             .select(db.raw("count(distinct \"country\") as countries"))
             .whereNot({deleted: true}),
-          db("hackathons")
+          db("users")
             .select(db.raw("count(distinct \"cities\") as cities"))
             .whereNot({deleted: true})
         ]).then(([users, hackathons, projects, countries, cities]) => {
