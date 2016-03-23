@@ -93,6 +93,10 @@ const register = function (server, options, next) {
             })
             .del();
         }).then((res) => {
+          if (res !== 0) {
+            return db("projects").where('id', '=', projectId).decrement('comment_count', 1);
+          }
+        }).then((res) => {
           if (res === 0) {
             return Boom.notFound(`Comment id ${commentId} not found in project ${projectId}`);
           } else {
