@@ -57,8 +57,6 @@ const register = function (server, options, next) {
           });
         }).then((res) => {
           return db("comments").where({id: res[0]});
-        }).then(() => {
-          return db("projects").where('id', '=', projectId).increment('comment_count', 1);
         }).then((result) => {
           return request.generateResponse(result[0]).code(201);
         });
