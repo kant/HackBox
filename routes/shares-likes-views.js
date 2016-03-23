@@ -77,12 +77,15 @@ const register = function (server, options, next) {
         const { hackathonId, projectId } = request.params;
 
         const response = ensureProject(hackathonId, projectId).then(() => {
-          // we don't really care if the "like" already exists or not
-          // we'll just try to delete it and move on
-          return db("likes").del({
+          return db("likes").where({
             user_id: request.userId(),
             project_id: projectId
-          });
+          })
+          .del();
+        }).then((res) => {
+          if (res !== 0) {
+            return db("projects").where({id: projectId}).decrement('like_count', 1);
+          }
         }).then(() => {
           return request.generateResponse().code(204);
         });
