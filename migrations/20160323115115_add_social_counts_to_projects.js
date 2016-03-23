@@ -1,5 +1,5 @@
 
-exports.up = function(knex) => {
+exports.up = (knex) => {
     return knex.schema
     .table("projects", (t) => {
       t.integer("like_count").unsigned().defaultTo(0);
@@ -9,7 +9,7 @@ exports.up = function(knex) => {
     });
 };
 
-exports.down = function(knex, Promise) {
+exports.down = (knex) => {
   return knex.schema
   .table("projects", (t) => {
     t.dropColumn("like_count");
