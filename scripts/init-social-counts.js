@@ -32,7 +32,6 @@ const initSocialCounts = () => {
   .select("id")
   .from("projects")
   .then((projects) => {
-    console.log("got " + projects.length + " projects");
     for (project in projects) {
       updates.push(initCountsForProject(project));
     }

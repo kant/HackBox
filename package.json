@@ -42,6 +42,7 @@
     "node": "4.2.1"
   },
   "scripts": {
+    "init-social-counts": "node scripts/init-social-counts.js",
     "init-db": "npm run migrate && npm run seed-db",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",

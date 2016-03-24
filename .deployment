@@ -1,2 +1,2 @@
 [config]
-command = bash deploy.sh; node scripts/init_social_counts.js
+command = bash deploy.sh
