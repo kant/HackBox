@@ -8,6 +8,7 @@
     "babel": "^5.8.23",
     "babel-core": "^5.8.29",
     "bell": "^5.4.0",
+    "bluebird": "^3.3.4",
     "bookshelf": "^0.8.2",
     "boom": "^2.9.0",
     "change-case": "^2.3.0",
