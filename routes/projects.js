@@ -52,7 +52,8 @@ const register = function (server, options, next) {
           product_focus: productArray,
           customer_type: customerTypeArray,
           has_member: stringId,
-          sort_col: Joi.any().valid("created_at", "title"),
+          sort_col: Joi.any()
+          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
           sort_direction: sortDirection
         })
       }
