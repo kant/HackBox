@@ -384,8 +384,9 @@ export const projectSearch = (queryObj) => {
   const orderByDirection = sort_direction || "desc";
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
-  query.select("projects.*", "users.name as owner_name");
-
+  query.select("projects.*", "users.name as owner_name",
+    "hackathons.name as hackathon_name");
+  console.log(query.toString());
   return query;
 };
 
