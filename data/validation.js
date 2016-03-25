@@ -207,7 +207,7 @@ const projectBase = {
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: Joi.string().max(255).trim().default(""),
-  executive_challenges: challengeArray,
+  executive_challenges: arrayOfStrings,
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
