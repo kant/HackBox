@@ -207,7 +207,7 @@ const projectBase = {
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: Joi.string().max(255).trim().default(""),
-  executive_challenges: arrayOfStrings,
+  executive_challenges: challengeArray,
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
@@ -242,7 +242,7 @@ export const newProject = Joi.object(projectBase)
     prototype_url: urlWithDefault,
     supporting_files_url: urlWithDefault,
     venue: projectBase.venue.default(""),
-    executive_challenges: arrayOfStrings.default([])
+    executive_challenges: challengeArray.default([])
   });
 export const project = newProject.keys({id});
 
