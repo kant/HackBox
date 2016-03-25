@@ -391,7 +391,7 @@ export const projects = [
       is_awesome: true
     }),
     venue: "Microsoft Garage",
-    executive_challenges: ["Artificial Intelligence (Harry Shum)"]
+    json_executive_challenges: ["Artificial Intelligence (Harry Shum)"]
   },
   {
     owner_id: users[1].id,

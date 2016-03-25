@@ -3,14 +3,14 @@
 exports.up = (knex) => {
   return knex.schema
     .table("projects", (t) => {
-      t.text("executive_challenges");
+      t.text("json_executive_challenges");
     });
 };
 
 exports.down = (knex) => {
   return knex.schema
     .table("projects", (t) => {
-      t.dropColumn("executive_challenges");
+      t.dropColumn("json_executive_challenges");
     });
 };
 
