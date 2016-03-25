@@ -2,7 +2,7 @@
 import Boom from "boom";
 import Joi from "joi";
 import { updateUser, stringId, optionalId, countryArray,
-  productArray, projectArray, roleArray, newUser, paginationWithDeleted,
+  projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
 

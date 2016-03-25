@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 33],
+  max-statements: [2, 36],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -349,7 +349,7 @@ export const projectSearch = (queryObj) => {
     "3rd Party Platforms": "third_party_platforms",
     Misc: "misc",
     Other: "other"
-  }
+  };
   if (product_focus && product_focus.length) {
     query.where(function () {
       product_focus.forEach((focus, index) => {
@@ -374,7 +374,7 @@ export const projectSearch = (queryObj) => {
     query.where(function () {
       has_focus.forEach((focus, index) => {
         const fnName = index === 0 ? "whereNotNull" : "orWhereNotNull";
-        const colName = "projects.json_" + focus + "_focus";
+        const colName = `projects.json_${focus}_focus`;
         this[fnName](colName);
       });
     });
@@ -386,7 +386,7 @@ export const projectSearch = (queryObj) => {
 
   query.select("projects.*", "users.name as owner_name",
     "hackathons.name as hackathon_name");
-  console.log(query.toString());
+
   return query;
 };
 
@@ -485,12 +485,12 @@ export const userSearch = (queryObj) => {
     });
   }
   if (role && role.length) {
-    var first = true;
-    query.where(function() {
+    let first = true;
+    query.where(function () {
       if (_.indexOf(role, "Developer") !== -1) {
         const fnName = first ? "where" : "orWhere";
         this[fnName]("profession", "Engineering")
-          .andWhere(function() {
+          .andWhere(function () {
             this.where("discipline", "Software Development")
             .orWhere("discipline", "Software Engineering");
           });
@@ -588,16 +588,16 @@ export const userSearch = (queryObj) => {
         first = false;
       }
 
-      if (first == true) { // Default towards searching only primary role
+      if (first === true) { // Default towards searching only primary role
         query.whereIn("primary_role", role);
       }
     });
   }
   if (product_focus && product_focus.length) {
-    query.where(function() {
-      product_focus.forEach((focus, index) => {
+    query.where(function () {
+      product_focus.forEach((focus) => {
         if (_.indexOf(projectTypes, focus) !== -1) {
-          this.orWhere("json_working_on", "like",`%${focus}%`)
+          this.orWhere("json_working_on", "like", `%${focus}%`)
           .orWhere("json_expertise", "like", `%${focus}%`);
         }
       });

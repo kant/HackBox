@@ -13,8 +13,8 @@ const trackEvent = function (type) {
         project_id: projectId
       });
     }).then(() => {
-      const column = (type === "shares") ? "share_count" : "view_count";
-      return db("projects").where('id', '=', projectId).increment(column, 1);
+      const column = type === "shares" ? "share_count" : "view_count";
+      return db("projects").where("id", "=", projectId).increment(column, 1);
     }).then(() => {
       return request.generateResponse().code(204);
     });
@@ -51,7 +51,7 @@ const register = function (server, options, next) {
         }).then(() => {
           return db("likes").insert(likeData);
         }).then(() => {
-          return db("projects").where('id', '=', projectId).increment('like_count', 1);
+          return db("projects").where("id", "=", projectId).increment("like_count", 1);
         }). then(() => {
           return request.generateResponse().code(204);
         });
@@ -84,7 +84,7 @@ const register = function (server, options, next) {
           .del();
         }).then((res) => {
           if (res !== 0) {
-            return db("projects").where({id: projectId}).decrement('like_count', 1);
+            return db("projects").where({id: projectId}).decrement("like_count", 1);
           }
         }).then(() => {
           return request.generateResponse().code(204);

@@ -1,12 +1,13 @@
+/*eslint max-statements: [0,0], filenames/filenames: [2, "^.*$"]*/
 
 exports.up = (knex) => {
-    return knex.schema
-    .table("projects", (t) => {
-      t.integer("like_count").unsigned().defaultTo(0);
-      t.integer("view_count").unsigned().defaultTo(0);
-      t.integer("comment_count").unsigned().defaultTo(0);
-      t.integer("share_count").unsigned().defaultTo(0);
-    });
+  return knex.schema
+  .table("projects", (t) => {
+    t.integer("like_count").unsigned().defaultTo(0);
+    t.integer("view_count").unsigned().defaultTo(0);
+    t.integer("comment_count").unsigned().defaultTo(0);
+    t.integer("share_count").unsigned().defaultTo(0);
+  });
 };
 
 exports.down = (knex) => {

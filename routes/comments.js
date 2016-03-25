@@ -58,7 +58,7 @@ const register = function (server, options, next) {
         }).then((res) => {
           return db("comments").where({id: res[0]});
         }).then(() => {
-          return db("projects").where('id', '=', projectId).increment('comment_count', 1);
+          return db("projects").where("id", "=", projectId).increment("comment_count", 1);
         }).then((result) => {
           return request.generateResponse(result[0]).code(201);
         });
@@ -94,7 +94,7 @@ const register = function (server, options, next) {
             .del();
         }).then((res) => {
           if (res !== 0) {
-            return db("projects").where('id', '=', projectId).decrement('comment_count', 1);
+            return db("projects").where("id", "=", projectId).decrement("comment_count", 1);
           }
         }).then((res) => {
           if (res === 0) {
