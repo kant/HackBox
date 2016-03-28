@@ -32,7 +32,8 @@ const getProjectProps = (overrides) => {
       is_awesome: true
     },
     windows_focus: ["XP"],
-    venue: "Microsoft Garage"
+    venue: "Microsoft Garage",
+    executive_challenges: ["Artificial Intelligence (Harry Shum)"]
   };
   for (const key in overrides) {
     result[key] = overrides[key];
@@ -110,6 +111,7 @@ test("create a new project", (t) => {
       t.ok(Array.isArray(result.needed_expertise), "needed_expertise is an array");
       t.ok(Array.isArray(result.tags), "tags is an array");
       t.ok(Array.isArray(result.windows_focus), "windows_focus is an array");
+      t.ok(Array.isArray(result.executive_challenges), "executive_challenges is an array");
     },
     user: "b"
   }, t);

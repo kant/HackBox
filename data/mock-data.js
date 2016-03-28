@@ -390,8 +390,9 @@ export const projects = [
     json_meta: JSON.stringify({
       is_awesome: true
     }),
-    venue: "Planet Earth",
-    json_windows_focus: "Yeppers"
+    json_windows_focus: JSON.stringify(["Windows 10"]),
+    venue: "Microsoft Garage",
+    json_executive_challenges: JSON.stringify(["Artificial Intelligence (Harry Shum)"])
   },
   {
     owner_id: users[1].id,

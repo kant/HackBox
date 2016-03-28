@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { countryList, colorSchemes,
   customerTypes, productTypes, projectTypes,
-  participantTypes } from "./fixed-data";
+  participantTypes, executiveChallenges } from "./fixed-data";
 
 /*
   re-usable types
@@ -37,6 +37,9 @@ export const projectArray = Joi.array().items(projectType)
 export const arrayOfStrings = Joi.array().items(Joi.string());
 export const focusArray = Joi.array().items(Joi.string())
 .description("Array of one or more focus types");
+export const challenge = Joi.string().valid(executiveChallenges).empty("");
+export const challengeArray = Joi.array().items(challenge)
+.description("Array of one or more Executive Challenges");
 
 /*
   Pagination
@@ -210,6 +213,7 @@ const projectBase = {
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: Joi.string().max(255).trim().default(""),
+  executive_challenges: challengeArray,
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
@@ -242,7 +246,9 @@ export const newProject = Joi.object(projectBase)
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,
     prototype_url: urlWithDefault,
-    supporting_files_url: urlWithDefault
+    supporting_files_url: urlWithDefault,
+    venue: projectBase.venue.default(""),
+    executive_challenges: challengeArray.default([])
   });
 export const project = newProject.keys({id});
 

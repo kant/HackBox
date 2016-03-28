@@ -177,6 +177,19 @@ const colorSchemes = [
   "Skype blue"
 ];
 
+const executiveChallenges = [
+  "Artificial Intelligence (Harry Shum)",
+  "Business Process (Amy Hood)",
+  "Creating and Retaining Fans (Chris Capossela)",
+  "Employee Culture (Kathleen Hogan)",
+  "Hack for Good (Brad Smith)",
+  "Hack for Her (Peggy Johnson)",
+  "Mobile Productivity (Qi Lu)",
+  "Modern Cloud (Scott Guthrie)",
+  "Sales and Marketing (Kevin Turner)",
+  "Universal Apps (Terry Myerson)"
+];
+
 export default {
   customerTypes,
   productTypes,
@@ -184,5 +197,6 @@ export default {
   projectTypes,
   participantTypes,
   countryList,
-  colorSchemes
+  colorSchemes,
+  executiveChallenges
 };

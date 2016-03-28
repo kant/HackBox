@@ -2,7 +2,7 @@
 import Boom from "boom";
 import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
-  sortDirection } from "../data/validation";
+  sortDirection, challengeArray } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
   addProjectMembersToPagination
@@ -52,6 +52,7 @@ const register = function (server, options, next) {
           product_focus: productArray,
           customer_type: customerTypeArray,
           has_member: stringId,
+          has_challenges: challengeArray,
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
           sort_direction: sortDirection
