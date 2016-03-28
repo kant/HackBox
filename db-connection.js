@@ -279,7 +279,7 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_role, needed_expertise, product_focus, customer_type, has_member,
-    sort_col, sort_direction
+    has_challenges, sort_col, sort_direction
   } = queryObj;
 
   const query = client("projects")
@@ -334,6 +334,16 @@ export const projectSearch = (queryObj) => {
         // then subsequesntly use `orWhere`
         const fnName = index === 0 ? "where" : "orWhere";
         this[fnName]("projects.json_needed_expertise", "like", `%${expertise}%`);
+      });
+    });
+  }
+  if (has_challenges && has_challenges.length) {
+      query.where(function () {
+      has_challenges.forEach((expertise, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.json_executive_challenges", "like", `%${expertise}%`);
       });
     });
   }

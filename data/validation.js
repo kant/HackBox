@@ -33,7 +33,8 @@ export const productArray = Joi.array().items(product)
   .description("Array of one or more valid product types");
 export const arrayOfStrings = Joi.array().items(Joi.string());
 export const challenge = Joi.string().valid(executiveChallenges).empty("");
-export const challengeArray = Joi.array().items(challenge);
+export const challengeArray = Joi.array().items(challenge)
+.description("Array of one or more Executive Challenges");
 
 /*
   Pagination
