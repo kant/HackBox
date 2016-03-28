@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 33],
+  max-statements: [2, 36],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -338,7 +338,7 @@ export const projectSearch = (queryObj) => {
     });
   }
   if (has_challenges && has_challenges.length) {
-      query.where(function () {
+    query.where(function () {
       has_challenges.forEach((expertise, index) => {
         // first time through we want to call `where`
         // then subsequesntly use `orWhere`
