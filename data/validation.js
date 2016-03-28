@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { countryList, colorSchemes,
   customerTypes, productTypes,
-  participantTypes } from "./fixed-data";
+  participantTypes, executiveChallenges } from "./fixed-data";
 
 /*
   re-usable types
@@ -32,6 +32,9 @@ export const product = Joi.string().valid(productTypes).empty("");
 export const productArray = Joi.array().items(product)
   .description("Array of one or more valid product types");
 export const arrayOfStrings = Joi.array().items(Joi.string());
+export const challenge = Joi.string().valid(executiveChallenges).empty("");
+export const challengeArray = Joi.array().items(challenge)
+.description("Array of one or more Executive Challenges");
 
 /*
   Pagination
@@ -205,6 +208,7 @@ const projectBase = {
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: Joi.string().max(255).trim().default(""),
+  executive_challenges: challengeArray,
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
@@ -237,7 +241,9 @@ export const newProject = Joi.object(projectBase)
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,
     prototype_url: urlWithDefault,
-    supporting_files_url: urlWithDefault
+    supporting_files_url: urlWithDefault,
+    venue: projectBase.venue.default(""),
+    executive_challenges: challengeArray.default([])
   });
 export const project = newProject.keys({id});
 

@@ -1,7 +1,8 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Joi from "joi";
 import { paginationWithDeleted, roleArray, productArray, stringId,
-  optionalId, customerTypeArray, countryArray, neededExpertiseArray } from "../data/validation";
+  optionalId, customerTypeArray, countryArray, neededExpertiseArray,
+  challengeArray } from "../data/validation";
 import { paginate, projectSearch, addProjectMembersToPagination } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -42,7 +43,8 @@ const register = function (server, options, next) {
           hackathon_id: optionalId,
           customer_type: customerTypeArray,
           has_member: stringId,
-          country: countryArray
+          country: countryArray,
+          has_challenges: challengeArray
         })
       }
     }
