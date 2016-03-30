@@ -8,8 +8,7 @@
       "password": "$DB_CONNECTION_PASSWORD"
     },
     "pool": {
-      "min": 0,
-      "max": 10
+      "min": 0 // Disable pooling, per https://github.com/tgriesser/knex/issues/975
     },
     "migrations": {
       "tableName": "knex_migrations"
