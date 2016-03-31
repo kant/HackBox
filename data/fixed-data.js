@@ -1,16 +1,18 @@
 const customerTypes = [
-  "Developers",
+  "Advertisers ",
+  "Businesses ",
   "Consumers",
-  "IT Pros",
-  "Microsoft Groups",
-  "Tech for Good",
-  "Business",
-  "Other",
-  "MS Employees/Culture",
-  "Millennials",
-  "Advertisers",
+  "Developers",
   "Industries",
-  "Students/Teachers/Schools"
+  "IT Pros",
+  "Millennials",
+  "Microsoft Employees",
+  "Nonprofits",
+  "People with Disability",
+  "Public Sector",
+  "Students and Educators",
+  "Women and Girls",
+  "Other"
 ];
 
 const productTypes = [
