@@ -1,6 +1,6 @@
 const customerTypes = [
-  "Advertisers ",
-  "Businesses ",
+  "Advertisers",
+  "Businesses",
   "Consumers",
   "Developers",
   "Industries",
