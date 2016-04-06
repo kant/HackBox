@@ -178,16 +178,16 @@ const colorSchemes = [
 ];
 
 const executiveChallenges = [
-"Earn Fans (Chris Capossela)",
-"Power of the Cloud (Scott Guthrie)",
-"Culture (Kathleen Hogan)",
-"Simplify Business (Amy Hood)",
-"Hack for Her (Peggy Johnson)", 
-"Mobile Endpoints (Qi Lu)",
-"Windows 10 (Terry Myerson)",
-"Artificial Intelligence (Harry Shum)",
-"Hack for Good (Brad Smith)",
-"Cloud Adoption and Consumption (Kevin Turner)"
+  "Artificial Intelligence (Harry Shum)",
+  "Cloud Adoption and Consumption (Kevin Turner)",
+  "Culture (Kathleen Hogan)",
+  "Earn Fans (Chris Capossela)",
+  "Hack for Good (Brad Smith)",
+  "Hack for Her (Peggy Johnson)",
+  "Mobile Endpoints (Qi Lu)",
+  "Power of the Cloud (Scott Guthrie)",
+  "Simplify Business (Amy Hood)",
+  "Windows 10 (Terry Myerson)"
 ];
 
 export default {
