@@ -179,15 +179,15 @@ const colorSchemes = [
 
 const executiveChallenges = [
   "Artificial Intelligence (Harry Shum)",
-  "Business Process (Amy Hood)",
-  "Creating and Retaining Fans (Chris Capossela)",
-  "Employee Culture (Kathleen Hogan)",
+  "Cloud Adoption and Consumption (Kevin Turner)",
+  "Culture (Kathleen Hogan)",
+  "Earn Fans (Chris Capossela)",
   "Hack for Good (Brad Smith)",
   "Hack for Her (Peggy Johnson)",
-  "Mobile Productivity (Qi Lu)",
-  "Modern Cloud (Scott Guthrie)",
-  "Sales and Marketing (Kevin Turner)",
-  "Universal Apps (Terry Myerson)"
+  "Mobile Endpoints (Qi Lu)",
+  "Power of the Cloud (Scott Guthrie)",
+  "Simplify Business (Amy Hood)",
+  "Windows 10 (Terry Myerson)"
 ];
 
 export default {
