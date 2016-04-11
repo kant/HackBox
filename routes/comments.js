@@ -47,6 +47,7 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        let webResponse;
 
         const response = ensureProject(hackathonId, projectId).then(() => {
           return db("comments").insert({
@@ -57,10 +58,13 @@ const register = function (server, options, next) {
           });
         }).then((res) => {
           return db("comments").where({id: res[0]});
-        }).then(() => {
-          return db("projects").where("id", "=", projectId).increment("comment_count", 1);
         }).then((result) => {
           return request.generateResponse(result[0]).code(201);
+        }).then((wr) => {
+          webResponse = wr;
+          return db("projects").where("id", "=", projectId).increment("comment_count", 1);
+        }).then(() => {
+          return webResponse;
         });
 
         reply(response);
