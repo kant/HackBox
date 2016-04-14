@@ -766,7 +766,7 @@ export const incrementCityCount = (hackathonId, userId) => {
       const rawQuery = [
         "insert into city_counts (city_id, hackathon_id, count)",
         `values ((select id from cities where id=${cityId}),`,
-         `(select id from hackathons where id=${hackathonId}), 1)`,
+        `(select id from hackathons where id=${hackathonId}), 1)`,
         " on duplicate key update count=count+1"].join(" ");
       return client.raw(rawQuery);
     }

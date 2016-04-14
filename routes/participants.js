@@ -109,7 +109,7 @@ const register = function (server, options, next) {
           }
         }).then(() => {
           return db("participants").insert(payload);
-        }).then(() =>{
+        }).then(() => {
           return incrementCityCount(hackathonId, userId);
         }).then(() => {
           return ensureParticipant(hackathonId, userId, {includeUser: true});
