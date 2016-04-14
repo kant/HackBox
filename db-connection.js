@@ -751,3 +751,24 @@ export const ensureAwardCategory = (hackathonId, id) => {
     return awardCategory;
   });
 };
+
+export const incrementCityCount = (hackathonId, userId) => {
+  const query = client("cities")
+    .select("cities.id")
+    .innerJoin("users", function () {
+      this.on("users.city", "=", "cities.city")
+        .andOn("users.country", "=", "cities.country");
+    })
+    .where("users.id", "=", userId);
+  return query.then((response) => {
+    if (response && response.length === 1) {
+      const cityId = response[0].id;
+      const rawQuery = [
+        "insert into city_counts (city_id, hackathon_id, count)",
+        `values ((select id from cities where id=${cityId}),`,
+         `(select id from hackathons where id=${hackathonId}), 1)`,
+        " on duplicate key update count=count+1"].join(" ");
+      return client.raw(rawQuery);
+    }
+  });
+};

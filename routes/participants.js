@@ -5,7 +5,7 @@ import { paginationWithDeleted, id, roleArray,
   countryArray, productArray, stringId, newParticipant,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser,
-  ensureParticipant, userSearch } from "../db-connection";
+  ensureParticipant, userSearch, incrementCityCount } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -109,6 +109,8 @@ const register = function (server, options, next) {
           }
         }).then(() => {
           return db("participants").insert(payload);
+        }).then(() =>{
+          return incrementCityCount(hackathonId, userId);
         }).then(() => {
           return ensureParticipant(hackathonId, userId, {includeUser: true});
         });
