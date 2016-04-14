@@ -1,8 +1,6 @@
 /*eslint no-process-exit: 0*/
 require("babel/register");
 const client = require("../db-connection").default;
-const Promise = require("bluebird");
-
 const cities = require("../data/cities").cities;
 
 const initCities = () => {
