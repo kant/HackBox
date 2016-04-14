@@ -5,7 +5,8 @@ import { paginationWithDeleted, id, roleArray,
   countryArray, productArray, stringId, newParticipant,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, ensureUser,
-  ensureParticipant, userSearch, incrementCityCount } from "../db-connection";
+  ensureParticipant, userSearch, incrementCityCount,
+  decrementCityCount } from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -203,6 +204,8 @@ const register = function (server, options, next) {
           ensureParticipant(hackathonId, userId)
         ]).then(() => {
           return db("participants").where(participant).del();
+        }).then(() => {
+          return decrementCityCount(hackathonId, userId);
         }).then(() => {
           return request.generateResponse().code(204);
         });
