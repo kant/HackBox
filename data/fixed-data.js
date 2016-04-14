@@ -16,15 +16,15 @@ const customerTypes = [
 ];
 
 const productTypes = [
-  "Windows",
-  "Devices",
-  "Consumer Services",
-  "Cloud + Enterprise",
-  "Office",
-  "Dynamics",
   "3rd Party Platforms",
+  "Cloud + Enterprise",
+  "Consumer Services",
+  "Devices",
+  "Dynamics",
   "Misc",
-  "Other"
+  "Office",
+  "Other",
+  "Windows"
 ];
 
 const expertiseTypes = [

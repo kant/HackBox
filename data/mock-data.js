@@ -18,7 +18,7 @@ export const users = [
     updated_at: faker.date.recent(),
     bio: "Some JS dev",
     json_expertise: JSON.stringify(["JSstuff, Azure"]),
-    primary_role: "Alumnus",
+    primary_role: "Services",
     product_focus: "Office",
     country: "United States",
     json_working_on: JSON.stringify(["progressive web apps"]),
