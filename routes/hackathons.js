@@ -5,7 +5,8 @@ import Joi from "joi";
 import { newHackathon, hackathonUpdate, id,
   stringId, paginationWithDeleted, countryArray,
   sortDirection } from "../data/validation";
-import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities } from "../db-connection";
+import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
+  from "../db-connection";
 
 const register = function (server, options, next) {
   server.route({
@@ -198,7 +199,7 @@ const register = function (server, options, next) {
     }
   });
 
-    server.route({
+  server.route({
     method: "GET",
     path: "/hackathons/{hackathonId}/cities",
     config: {
@@ -208,7 +209,7 @@ const register = function (server, options, next) {
         const { hackathonId } = request.params;
         const ownerId = request.isSuperUser() ? false : request.userId();
 
-        const response = ensureHackathon(hackathonId, {
+        ensureHackathon(hackathonId, {
           allowDeleted: request.isSuperUser(),
           checkPublished: ownerId
         });
