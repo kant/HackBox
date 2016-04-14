@@ -927,7 +927,7 @@ export const cities = [
     city: "San Pedro Garza Garcia",
     lat: 25.62397003,
     long: -100.382637,
-    country: ""
+    country: "Mexico"
   },
   {
     city: "San Salvador",
@@ -1227,7 +1227,7 @@ export const cities = [
     city: "Yekaterinburg",
     lat: 56.83768845,
     long: 60.59780884,
-    country: ""
+    country: "Russia"
   },
   {
     city: "Yerevan",
@@ -1563,7 +1563,7 @@ export const cities = [
     city: "Freehold",
     lat: 40.25852966,
     long: -74.27651215,
-    country: ""
+    country: "United States"
   },
   {
     city: "Friendswood",
