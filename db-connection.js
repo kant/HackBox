@@ -900,3 +900,60 @@ export const ensureAwardCategory = (hackathonId, id) => {
     return awardCategory;
   });
 };
+
+const lookupUserCityId = (userId) => {
+  const query = client("cities")
+  .select("cities.id")
+  .innerJoin("users", function () {
+    this.on("users.city", "=", "cities.city")
+      .andOn("users.country", "=", "cities.country");
+  })
+  .where("users.id", "=", userId);
+  return query.then((response) => {
+    if (response && response.length === 1) {
+      return response[0].id;
+    } else {
+      return null;
+    }
+  });
+};
+
+export const incrementCityCount = (hackathonId, userId) => {
+  return lookupUserCityId(userId).then((cityId) => {
+    if (cityId) {
+      const rawQuery = [
+        "insert into city_counts (city_id, hackathon_id, count)",
+        `values ((select id from cities where id=${cityId}),`,
+        `(select id from hackathons where id=${hackathonId}), 1)`,
+        " on duplicate key update count=count+1"].join(" ");
+      return client.raw(rawQuery);
+    }
+  });
+};
+
+export const decrementCityCount = (hackathonId, userId) => {
+  return lookupUserCityId(userId).then((cityId) => {
+    if (cityId) {
+      const rawQuery = ["update city_counts set count=count-1",
+        `where city_id=${cityId} and hackathon_id=${hackathonId}`
+      ].join(" ");
+      return client.raw(rawQuery).then(() => {
+        return client("city_counts")
+        .where("count", "=", 0)
+        .del();
+      });
+    }
+  });
+};
+
+export const getHackathonCities = (hackathonId) => {
+  return client("city_counts")
+    .select("cities.city")
+    .select("cities.country")
+    .select("cities.lat")
+    .select("cities.long")
+    .select("city_counts.count")
+    .join("cities", "city_counts.city_id", "cities.id")
+    .where("city_counts.hackathon_id", "=", hackathonId);
+  //select  cities.city, cities.country, cities.lat, cities.long from city_counts join cities where city_counts.city_id=cities.id and city_counts.hackathon_id=1
+};
