@@ -13,7 +13,7 @@ exports.up = (knex) => {
       t.integer("city_id").notNull().unsigned().references("cities.id");
       t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.integer("count").notNull().unsigned().defaultTo(0);
-      t.unique("hackathon_id", "city_id");
+      t.unique(["city_id", "hackathon_id"]);
     });
 };
 
