@@ -955,5 +955,4 @@ export const getHackathonCities = (hackathonId) => {
     .select("city_counts.count")
     .join("cities", "city_counts.city_id", "cities.id")
     .where("city_counts.hackathon_id", "=", hackathonId);
-  //select  cities.city, cities.country, cities.lat, cities.long from city_counts join cities where city_counts.city_id=cities.id and city_counts.hackathon_id=1
 };
