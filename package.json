@@ -43,6 +43,7 @@
   },
   "scripts": {
     "init-cities": "node scripts/init-cities.js",
+    "init-reports": "node scripts/init-reports-table",
     "init-db": "npm run migrate && npm run seed-db",
     "lint": "eslint .",
     "migrate": "knex migrate:latest",
