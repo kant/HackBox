@@ -317,7 +317,6 @@ const register = function (server, options, next) {
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
         const { hackathonId } = request.params;
-        const ownerId = request.isSuperUser() ? false : request.userId();
 
         const response = ensureHackathon(hackathonId).then(() => {
           const { query } = request;
