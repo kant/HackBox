@@ -2,10 +2,8 @@
 /*eslint no-invalid-this: 0*/
 import Boom from "boom";
 import Joi from "joi";
-import { newHackathon, hackathonUpdate, id,
-  stringId, pagination, paginationWithDeleted, countryArray,
-  sortDirection } from "../data/validation";
-import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities, getHackathonReport }
+import id from "../data/validation";
+import db, { ensureHackathon, getHackathonReport }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -28,13 +26,12 @@ const register = function (server, options, next) {
           });
         })
         .then((adminResults) => {
-          if (!adminResults.some((admin) => admin.user_id === requestorId)) {
-            throw Boom.forbidden(`User ${userId} is not an admin of this hackathon`);
+          if (!isSuperUser && !adminResults.some((admin) => admin.user_id === requestorId)) {
+            throw Boom.forbidden(`User ${requestorId} is not an admin of this hackathon`);
           }
         })
         .then(() => {
           const { query } = request;
-          const { limit, offset } = query;
 
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
@@ -47,7 +44,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id
-        },
+        }
       }
     }
   });
@@ -74,7 +71,7 @@ const register = function (server, options, next) {
       validate: {
         params: {
           email: Joi.string().email()
-        },
+        }
       }
     }
   });

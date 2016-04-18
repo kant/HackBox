@@ -3,9 +3,9 @@
 import Boom from "boom";
 import Joi from "joi";
 import { newHackathon, hackathonUpdate, id,
-  stringId, pagination, paginationWithDeleted, countryArray,
+  stringId, paginationWithDeleted, countryArray,
   sortDirection } from "../data/validation";
-import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities, getHackathonReport }
+import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
   from "../db-connection";
 
 const register = function (server, options, next) {
