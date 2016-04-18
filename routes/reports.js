@@ -18,15 +18,28 @@ const register = function (server, options, next) {
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+        const isSuperUser = request.isSuperUser();
+        const requestorId = request.userId();
 
-        const response = ensureHackathon(hackathonId).then(() => {
+        const response = ensureHackathon(hackathonId)
+        .then(() => {
+          return db("hackathon_admins").where({
+            hackathon_id: hackathonId
+          });
+        })
+        .then((adminResults) => {
+          if (!adminResults.some((admin) => admin.user_id === requestorId)) {
+            throw Boom.forbidden(`User ${userId} is not an admin of this hackathon`);
+          }
+        })
+        .then(() => {
           const { query } = request;
           const { limit, offset } = query;
 
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          return paginate(getHackathonReport(query), {limit, offset});
+          return getHackathonReport(query);
         });
 
         reply(response);
@@ -35,7 +48,6 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id
         },
-        query: pagination
       }
     }
   });
