@@ -264,6 +264,7 @@ export const paginate = (query, {limit, offset}) => {
       .offset(offset)
   ]).then((res) => {
     const data = res[1];
+    console.log("pagination finished");
     return {
       offset,
       limit,
@@ -806,4 +807,23 @@ export const getHackathonCities = (hackathonId) => {
     .select("city_counts.count")
     .join("cities", "city_counts.city_id", "cities.id")
     .where("city_counts.hackathon_id", "=", hackathonId);
+};
+
+export const getHackathonReport = (queryObj) => {
+  const query = client("users")
+    .select(
+      [
+        "users.email as email",
+        "users.json_working_on as json_working_on",
+        "users.json_expertise as json_expertise",
+        "participants.joined_at as joined_at",
+        "reports.json_reporting_data as json_reporting_data"
+      ])
+    .from("users")
+    .join("participants", "users.id", "participants.user_id")
+    .leftJoin("reports", "users.email", "reports.email")
+    .where({"participants.hackathon_id": queryObj.hackathon_id});
+    console.log("build initial query");
+    console.log(query.toString());
+  return query;
 };

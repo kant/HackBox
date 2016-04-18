@@ -3,9 +3,9 @@
 import Boom from "boom";
 import Joi from "joi";
 import { newHackathon, hackathonUpdate, id,
-  stringId, paginationWithDeleted, countryArray,
+  stringId, pagination, paginationWithDeleted, countryArray,
   sortDirection } from "../data/validation";
-import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
+import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities, getHackathonReport }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -305,6 +305,37 @@ const register = function (server, options, next) {
           userId: stringId
         },
         payload: false
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/reports",
+    config: {
+      description: "Fetch detailed participant report for hackathon",
+      tags: ["api", "detail", "paginated", "list"],
+      handler(request, reply) {
+        const { hackathonId } = request.params;
+        const ownerId = request.isSuperUser() ? false : request.userId();
+
+        const response = ensureHackathon(hackathonId).then(() => {
+          const { query } = request;
+          const { limit, offset } = query;
+
+          // make sure we limit search to within this hackathon
+          query.hackathon_id = hackathonId;
+
+          return paginate(getHackathonReport(query), {limit, offset});
+        });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: pagination
       }
     }
   });
