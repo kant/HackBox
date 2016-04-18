@@ -2,8 +2,8 @@
 /*eslint no-invalid-this: 0*/
 import Boom from "boom";
 import Joi from "joi";
-import { id } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport }
+import { id, pagination } from "../data/validation";
+import db, { ensureHackathon, getHackathonReport, paginate }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -32,11 +32,12 @@ const register = function (server, options, next) {
         })
         .then(() => {
           const { query } = request;
+          const { limit, offset } = query;
 
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          return getHackathonReport(query);
+          return paginate(getHackathonReport(query), {limit, offset});
         });
 
         reply(response);
@@ -44,7 +45,8 @@ const register = function (server, options, next) {
       validate: {
         params: {
           hackathonId: id
-        }
+        },
+        query: pagination
       }
     }
   });
