@@ -2,7 +2,7 @@
 /*eslint no-invalid-this: 0*/
 import Boom from "boom";
 import Joi from "joi";
-import { hackathonId, id } from "../data/validation";
+import { id } from "../data/validation";
 import db, { ensureHackathon, getHackathonReport }
   from "../db-connection";
 
