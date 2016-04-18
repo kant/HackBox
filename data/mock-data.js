@@ -69,7 +69,7 @@ export const users = [
     json_meta: JSON.stringify({}),
     profession: "Developer",
     discipline: "Software",
-    city: "Seattle",
+    city: "Bangalore",
     alias: "DS",
     job_title: "Author",
     department: "Poems, Gnomes & Homes"
