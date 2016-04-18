@@ -309,36 +309,6 @@ const register = function (server, options, next) {
     }
   });
 
-  server.route({
-    method: "GET",
-    path: "/hackathons/{hackathonId}/reports",
-    config: {
-      description: "Fetch detailed participant report for hackathon",
-      tags: ["api", "detail", "paginated", "list"],
-      handler(request, reply) {
-        const { hackathonId } = request.params;
-
-        const response = ensureHackathon(hackathonId).then(() => {
-          const { query } = request;
-          const { limit, offset } = query;
-
-          // make sure we limit search to within this hackathon
-          query.hackathon_id = hackathonId;
-
-          return paginate(getHackathonReport(query), {limit, offset});
-        });
-
-        reply(response);
-      },
-      validate: {
-        params: {
-          hackathonId: id
-        },
-        query: pagination
-      }
-    }
-  });
-
   next();
 };
 
