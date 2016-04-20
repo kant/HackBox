@@ -71,7 +71,7 @@ const userBase = {
   interests: arrayOfStrings,
   primary_role: role,
   product_focus: product,
-  country,
+  country: Joi.string().max(255).empty(""),
   meta,
   deleted: Joi.boolean(),
   shares: Joi.number().integer().min(0),
