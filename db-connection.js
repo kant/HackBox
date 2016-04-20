@@ -361,14 +361,15 @@ export const projectSearch = (queryObj) => {
   const orderByDirection = sort_direction || "desc";
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
-  query.select("projects.*", "users.name as owner_name");
+  query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias");
 
   return query;
 };
 
 const addMembersToProjects = (projects, usersByProject) => {
   return _.map(projects, (project) => {
-    project.members = _.map(usersByProject[project.id], (user) => _.pick(user, ["id", "name"]));
+    project.members = _.map(usersByProject[project.id], (user) =>
+      _.pick(user, ["id", "name", "alias"]));
     return project;
   });
 };
@@ -377,7 +378,7 @@ export const addProjectMembersToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "id");
     const membersQuery = client("members")
-      .select("members.project_id", "users.id", "users.name")
+      .select("members.project_id", "users.id", "users.name", "users.alias")
       .innerJoin("users", "members.user_id", "users.id")
       .whereIn("members.project_id", projectIds);
 
