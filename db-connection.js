@@ -374,6 +374,34 @@ const addMembersToProjects = (projects, usersByProject) => {
   });
 };
 
+export const addMemberReportsToProjects = (projects, usersByProject) => {
+  return _.map(projects, (project) => {
+    project.team_size = usersByProject[project.id].length;
+    project.members = _.map(usersByProject[project.id], (user) =>
+      _.pick(user, ["id", "name", "alias", "json_reporting_data"]));
+    return project;
+  });
+};
+
+
+export const addProjectMemberReportsToPagination = (paginationQuery) => {
+  return paginationQuery.then((pagination) => {
+    const projectIds = _.pluck(pagination.data, "id");
+    const membersQuery = client("members")
+      .select("members.project_id", "users.id", "users.name", "users.alias",
+        "reports.json_reporting_data")
+      .innerJoin("users", "members.user_id", "users.id")
+      .leftJoin("reports", "users.email", "reports.email")
+      .whereIn("members.project_id", projectIds);
+
+    return membersQuery.then((users) => {
+      const usersByProject = _.groupBy(users, "project_id");
+      pagination.data = addMemberReportsToProjects(pagination.data, usersByProject);
+      return pagination;
+    });
+  });
+};
+
 export const addProjectMembersToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "id");
