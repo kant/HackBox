@@ -3,7 +3,8 @@
 import Boom from "boom";
 import Joi from "joi";
 import { id, pagination } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport, paginate }
+import db, { ensureHackathon, getHackathonReport, paginate, projectSearch,
+  addProjectMemberReportsToPagination }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -41,6 +42,50 @@ const register = function (server, options, next) {
         });
 
         reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: pagination
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/project-reports",
+    config: {
+      description: "Fetch detailed participant report for all projects in a hackathon",
+      tags: ["api", "detail", "paginated", "list"],
+      handler(request, reply) {
+        const { hackathonId } = request.params;
+        const isSuperUser = request.isSuperUser();
+        const requestorId = request.userId();
+
+        ensureHackathon(hackathonId)
+        .then(() => {
+          return db("hackathon_admins").where({
+            hackathon_id: hackathonId
+          });
+        })
+        .then((adminResults) => {
+          if (!isSuperUser && !adminResults.some((admin) => admin.user_id === requestorId)) {
+            throw Boom.forbidden(`User ${requestorId} is not an admin of this hackathon`);
+          }
+        })
+        .then(() => {
+          const { query } = request;
+          const { limit, offset } = query;
+
+          // make sure we limit search to within this hackathon
+          query.hackathon_id = hackathonId;
+
+          const response = projectSearch(query);
+
+          reply(addProjectMemberReportsToPagination(paginate(response, {limit, offset})));
+        });
+
       },
       validate: {
         params: {
