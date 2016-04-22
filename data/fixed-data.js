@@ -184,7 +184,7 @@ const executiveChallenges = [
   "Earn Fans for Microsoft (Chris Capossela)",
   "Quality for Cloud Customers (Scott Guthrie)",
   "Aspire-to Culture (Kathleen Hogan)",
-  "Business Process (Amy Hood)",
+  "Simplify Business (Amy Hood)",
   "Creative Partnerships (Peggy Johnson)",
   "Mobile End Points (Qi Lu)",
   "Universal Windows App (Terry Myerson)",
