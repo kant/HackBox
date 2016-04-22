@@ -180,16 +180,16 @@ const colorSchemes = [
 ];
 
 const executiveChallenges = [
-  "Artificial Intelligence (Harry Shum)",
-  "Business Process (Amy Hood)",
-  "Cloud Adoption and Consumption (Kevin Turner)",
-  "Creating and Retaining Fans (Chris Capossela)",
-  "Employee Culture (Kathleen Hogan)",
   "Hack for Good (Brad Smith)",
-  "Hack for Her (Peggy Johnson)",
-  "Mobile Productivity (Qi Lu)",
-  "Modern Cloud (Scott Guthrie)",
-  "Universal Apps (Terry Myerson)"
+  "Earn Fans for Microsoft (Chris Capossela)",
+  "Quality for Cloud Customers (Scott Guthrie)",
+  "Aspire-to Culture (Kathleen Hogan)",
+  "Business Process (Amy Hood)",
+  "Creative Partnerships (Peggy Johnson)",
+  "Mobile End Points (Qi Lu)",
+  "Universal Windows App (Terry Myerson)",
+  "Artificial Intelligence (Harry Shum)",
+  "Cloud Adoption and Consumption (Kevin Turner)"
 ];
 
 export default {
