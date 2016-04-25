@@ -182,12 +182,12 @@ const executiveChallenges = [
   "Earn Fans for Microsoft (Chris Capossela)",
   "Quality for Cloud Customers (Scott Guthrie)",
   "Aspire-to Culture (Kathleen Hogan)",
-  "Simplify Business (Amy Hood)",
+  "Simplify How We Work (Amy Hood)",
   "Creative Partnerships (Peggy Johnson)",
   "Mobile End Points (Qi Lu)",
   "Universal Windows App (Terry Myerson)",
   "Artificial Intelligence (Harry Shum)",
-  "Cloud Adoption and Consumption (Kevin Turner)"
+  "Cloud Penetration and Consumption (Kevin Turner)"
 ];
 
 export default {
