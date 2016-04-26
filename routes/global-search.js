@@ -20,7 +20,6 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { query } = request;
         const { limit, offset } = query;
-
         // allow alias "me" for searching for own
         if (query.has_member === "me") {
           query.has_member = request.userId();
@@ -38,7 +37,7 @@ const register = function (server, options, next) {
           writing_code: Joi.boolean(),
           existing: Joi.boolean(),
           external_customers: Joi.boolean(),
-          needed_role: roleArray,
+          needed_roles: roleArray,
           needed_expertise: neededExpertiseArray,
           product_focus: productArray,
           hackathon_id: optionalId,

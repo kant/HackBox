@@ -47,7 +47,7 @@ const register = function (server, options, next) {
           writing_code: Joi.boolean(),
           existing: Joi.boolean(),
           external_customers: Joi.boolean(),
-          needed_role: roleArray,
+          needed_roles: roleArray,
           needed_expertise: neededExpertiseArray,
           product_focus: productArray,
           customer_type: customerTypeArray,
