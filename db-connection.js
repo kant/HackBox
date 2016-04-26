@@ -278,7 +278,7 @@ export const paginate = (query, {limit, offset}) => {
 export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
-    needed_role, needed_expertise, product_focus, customer_type, has_member,
+    needed_roles, needed_expertise, product_focus, customer_type, has_member,
     has_challenges, sort_col, sort_direction
   } = queryObj;
 
@@ -324,8 +324,15 @@ export const projectSearch = (queryObj) => {
   checkBoolean("writing_code");
   checkBoolean("existing");
   checkBoolean("external_customers");
-  if (needed_role && needed_role.length) {
-    query.whereIn("projects.needed_role", needed_role);
+  if (needed_roles && needed_roles.length) {
+    query.where(function () {
+      needed_roles.forEach((role, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.json_needed_roles", "like", `%${role}%`);
+      });
+    });
   }
   if (needed_expertise && needed_expertise.length) {
     query.where(function () {
@@ -362,7 +369,6 @@ export const projectSearch = (queryObj) => {
   query.orderBy(`projects.${orderByCol}`, orderByDirection);
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias");
-
   return query;
 };
 

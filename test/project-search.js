@@ -183,11 +183,12 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
   });
 };
 
-runFixedTypeFilterTests("needed_role", ["Developer"], (item) => {
-  return item.needed_role === "Developer";
+runFixedTypeFilterTests("needed_roles", ["Developer"], (item) => {
+  return item.needed_roles.indexOf("Developer") !== -1;
 });
-runFixedTypeFilterTests("needed_role", ["Developer", "Services"], (item) => {
-  return item.needed_role === "Developer" || item.needed_role === "Services";
+runFixedTypeFilterTests("needed_roles", ["Developer", "Services"], (item) => {
+  return item.needed_roles.indexOf("Developer") !== -1 ||
+  item.needed_roles.indexOf("Services") !== -1;
 });
 runFixedTypeFilterTests("product_focus", ["Windows"], (item) => {
   return item.product_focus === "Windows";
