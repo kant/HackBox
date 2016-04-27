@@ -244,7 +244,7 @@ export const newProject = Joi.object(projectBase)
     tags: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
-    code_repo_url: urlWithDefault,
+    code_repo_url: projectBase.code_repo_url.default(""),
     prototype_url: urlWithDefault,
     supporting_files_url: urlWithDefault,
     venue: projectBase.venue.default(""),
