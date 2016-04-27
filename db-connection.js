@@ -366,7 +366,11 @@ export const projectSearch = (queryObj) => {
 
   const orderByCol = sort_col || "created_at";
   const orderByDirection = sort_direction || "desc";
-  query.orderBy(`projects.${orderByCol}`, orderByDirection);
+  if (sort_col === "owner_alias") {
+    query.orderBy(`users.alias`, orderByDirection);
+  } else {
+    query.orderBy(`projects.${orderByCol}`, orderByDirection);
+  }
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias");
   return query;
