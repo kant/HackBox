@@ -219,7 +219,20 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
 
-    return user;
+    const participationQuery = client("hackathons")
+      .join("participants")
+      .select("hackathons.id")
+      .whereRaw("hackathons.id = participants.hackathon_id")
+      .where({"hackathons.is_published": true})
+      .where("participants.user_id", user.id);
+
+    return participationQuery.then((hackathons) => {
+      user.hackathons_part_of = [];
+      for (const hackathon of hackathons) {
+        user.hackathons_part_of.push(hackathon.id);
+      }
+      return user;
+    });
   });
 };
 
@@ -399,7 +412,11 @@ export const projectSearch = (queryObj) => {
 
   const orderByCol = sort_col || "created_at";
   const orderByDirection = sort_direction || "desc";
-  query.orderBy(`projects.${orderByCol}`, orderByDirection);
+  if (sort_col === "owner_alias") {
+    query.orderBy(`users.alias`, orderByDirection);
+  } else {
+    query.orderBy(`projects.${orderByCol}`, orderByDirection);
+  }
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
     "hackathons.name as hackathon_name");
@@ -670,7 +687,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, search, sort_col, sort_direction
+    admins_contain, participants_contain, search, sort_col, sort_direction
   } = queryObj;
 
   // we don't include all fields
@@ -719,6 +736,17 @@ export const hackathonSearch = (queryObj) => {
         .from("hackathon_admins")
         .where("user_id", admins_contain);
     });
+  }
+
+  if (participants_contain) {
+    query.joinRaw([
+      "left outer join (",
+      "select hackathon_id, user_id",
+      "from participants group by hackathon_id",
+      ") current_participants on current_participants.user_id =",
+      `\"${participants_contain}\"`
+    ].join(" "))
+    .whereRaw("current_participants.hackathon_id = hackathons.id");
   }
 
   if (country && country.length) {

@@ -54,7 +54,8 @@ const register = function (server, options, next) {
           has_member: stringId,
           has_challenges: challengeArray,
           sort_col: Joi.any()
-          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
+          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
+            "tagline", "owner_alias"),
           sort_direction: sortDirection
         })
       }
