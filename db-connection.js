@@ -218,7 +218,18 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
 
-    return user;
+    const participationQuery = client("participants")
+      .select("hackathon_id")
+      .where("user_id", user.id)
+      .as("hackathons");
+
+    return participationQuery.then((hackathons) => {
+      user.hackathons_part_of = [];
+      for (const hackathon of hackathons) {
+        user.hackathons_part_of.push(hackathon.hackathon_id);
+      }
+      return user;
+    });
   });
 };
 
