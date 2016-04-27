@@ -52,6 +52,7 @@ const register = function (server, options, next) {
         query: paginationWithDeleted.keys({
           search: Joi.string(),
           admins_contain: Joi.string(),
+          participants_contain: Joi.string(),
           country: countryArray,
           sort_col: Joi.any().valid("start_at", "end_at", "name", "tagline",
             "city", "country", "projects", "participants", "status"),

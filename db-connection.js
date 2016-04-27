@@ -525,7 +525,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, search, sort_col, sort_direction
+    admins_contain, participants_contain, search, sort_col, sort_direction
   } = queryObj;
 
   // we don't include all fields
@@ -574,6 +574,17 @@ export const hackathonSearch = (queryObj) => {
         .from("hackathon_admins")
         .where("user_id", admins_contain);
     });
+  }
+
+  if (participants_contain) {
+    query.joinRaw([
+      "left outer join (",
+      "select hackathon_id, user_id",
+      "from participants group by hackathon_id",
+      ") current_participants on current_participants.user_id =",
+      `\"${participants_contain}\"`
+    ].join(" "))
+    .whereRaw("current_participants.hackathon_id = hackathons.id");
   }
 
   if (country && country.length) {
