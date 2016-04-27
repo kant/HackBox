@@ -218,15 +218,17 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
       throw Boom.notFound(`User id ${userId} was not found.`);
     }
 
-    const participationQuery = client("participants")
-      .select("hackathon_id")
-      .where("user_id", user.id)
-      .as("hackathons");
+    const participationQuery = client("hackathons")
+      .join("participants")
+      .select("hackathons.id")
+      .whereRaw("hackathons.id = participants.hackathon_id")
+      .where({"hackathons.is_published": true})
+      .where("participants.user_id", user.id);
 
     return participationQuery.then((hackathons) => {
       user.hackathons_part_of = [];
       for (const hackathon of hackathons) {
-        user.hackathons_part_of.push(hackathon.hackathon_id);
+        user.hackathons_part_of.push(hackathon.id);
       }
       return user;
     });
