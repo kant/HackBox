@@ -183,7 +183,7 @@ const projectBase = {
   status: emptyString,
   description: emptyTextLarge,
   image_url: url,
-  code_repo_url: url,
+  code_repo_url: Joi.string().default(""),
   prototype_url: url,
   supporting_files_url: url,
   inspiration: emptyTextLarge,
