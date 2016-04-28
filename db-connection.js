@@ -470,7 +470,7 @@ export const userSearch = (queryObj) => {
       to scope it. This is enforced at the route level.
     */
     let rawQuery = [
-      "select users.*, participants.json_participation_meta, participants.joined_at,",
+      "select distinct users.*, participants.json_participation_meta, participants.joined_at,",
       "(select case when exists",
       "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
       "then true else false end)",
