@@ -878,7 +878,8 @@ export const getHackathonReport = (queryObj) => {
       "users.email as email",
       "users.json_working_on as json_working_on",
       "users.json_expertise as json_expertise",
-      "participants.joined_at as joined_at",
+      "users.json_interests as json_interests",
+      "participants.joined_at as registration_date",
       "reports.json_reporting_data as json_reporting_data"
     ])
     .from("users")
