@@ -391,17 +391,22 @@ export const projectSearch = (queryObj) => {
 
 const addMembersToProjects = (projects, usersByProject) => {
   return _.map(projects, (project) => {
-    project.members = _.map(usersByProject[project.id], (user) =>
-      _.pick(user, ["id", "name", "alias"]));
+    if (usersByProject[project.id]) {
+      project.team_size = usersByProject[project.id].length;
+      project.members = _.map(usersByProject[project.id], (user) =>
+        _.pick(user, ["id", "name", "alias"]));
+    }
     return project;
   });
 };
 
 export const addMemberReportsToProjects = (projects, usersByProject) => {
   return _.map(projects, (project) => {
-    project.team_size = usersByProject[project.id].length;
-    project.members = _.map(usersByProject[project.id], (user) =>
-      _.pick(user, ["id", "name", "alias", "json_reporting_data"]));
+    if (usersByProject[project.id]) {
+      project.team_size = usersByProject[project.id].length;
+      project.members = _.map(usersByProject[project.id], (user) =>
+        _.pick(user, ["id", "name", "alias", "json_reporting_data"]));
+    }
     return project;
   });
 };
@@ -438,6 +443,17 @@ export const addProjectMembersToPagination = (paginationQuery) => {
       pagination.data = addMembersToProjects(pagination.data, usersByProject);
       return pagination;
     });
+  });
+};
+
+export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
+  return paginationQuery.then((pagination) => {
+    pagination.data = _.map(pagination.data, (project) => {
+      project.project_url =
+        `https://garagehackbox.azurewebsites.net/hackathons/${hackathonId}/projects/${project.id}`;
+      return project;
+    });
+    return pagination;
   });
 };
 

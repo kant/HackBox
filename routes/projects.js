@@ -5,7 +5,7 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   sortDirection, challengeArray } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
-  addProjectMembersToPagination
+  addProjectMembersToPagination, addProjectUrlsToPagination
 } from "../db-connection";
 import Joi from "joi";
 
@@ -34,7 +34,11 @@ const register = function (server, options, next) {
 
         const response = projectSearch(query);
 
-        reply(addProjectMembersToPagination(paginate(response, {limit, offset})));
+        reply(addProjectMembersToPagination(
+          addProjectUrlsToPagination(
+            paginate(response, {limit, offset}),
+            request.params.hackathonId)
+          ));
       },
       validate: {
         params: {
