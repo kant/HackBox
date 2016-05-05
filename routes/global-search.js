@@ -2,7 +2,7 @@
 import Joi from "joi";
 import { paginationWithDeleted, roleArray, productArray, stringId,
   optionalId, customerTypeArray, countryArray, neededExpertiseArray,
-  challengeArray } from "../data/validation";
+  arrayOfStrings } from "../data/validation";
 import { paginate, projectSearch, addProjectMembersToPagination } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -43,7 +43,7 @@ const register = function (server, options, next) {
           customer_type: customerTypeArray,
           has_member: stringId,
           country: countryArray,
-          has_challenges: challengeArray,
+          has_challenges: arrayOfStrings,
           venue: Joi.string()
         })
       }
