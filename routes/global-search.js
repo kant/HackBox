@@ -43,7 +43,8 @@ const register = function (server, options, next) {
           customer_type: customerTypeArray,
           has_member: stringId,
           country: countryArray,
-          has_challenges: challengeArray
+          has_challenges: challengeArray,
+          venue: Joi.string()
         })
       }
     }
