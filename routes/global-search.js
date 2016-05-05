@@ -2,7 +2,7 @@
 import Joi from "joi";
 import { paginationWithDeleted, roleArray, productArray, stringId,
   optionalId, customerTypeArray, countryArray, neededExpertiseArray,
-  focusArray, challengeArray, sortDirection }
+  focusArray, challengeArray, sortDirection, arrayOfStrings }
   from "../data/validation";
 import { paginate, projectSearch, addProjectMembersToPagination } from "../db-connection";
 
@@ -45,7 +45,7 @@ const register = function (server, options, next) {
           has_member: stringId,
           country: countryArray,
           has_focus: focusArray,
-          has_challenges: challengeArray,
+          has_challenges: arrayOfStrings,
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
           sort_direction: sortDirection
