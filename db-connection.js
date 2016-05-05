@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 36],
+  max-statements: [2, 40],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -292,7 +292,7 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
-    has_challenges, sort_col, sort_direction
+    has_challenges, sort_col, sort_direction, venue
   } = queryObj;
 
   const query = client("projects")
@@ -366,6 +366,9 @@ export const projectSearch = (queryObj) => {
         this[fnName]("projects.json_executive_challenges", "like", `%${expertise}%`);
       });
     });
+  }
+  if (venue && venue.length) {
+    query.where("projects.venue", "like", `%${venue}%`);
   }
   if (product_focus && product_focus.length) {
     query.whereIn("projects.product_focus", product_focus);
