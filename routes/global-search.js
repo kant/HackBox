@@ -46,7 +46,7 @@ const register = function (server, options, next) {
           country: countryArray,
           has_focus: focusArray,
           has_challenges: arrayOfStrings,
-          venue: Joi.string(),
+          venue: arrayOfStrings,
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
           sort_direction: sortDirection
