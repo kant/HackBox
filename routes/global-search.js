@@ -44,7 +44,7 @@ const register = function (server, options, next) {
           has_member: stringId,
           country: countryArray,
           has_challenges: arrayOfStrings,
-          venue: Joi.string()
+          venue: arrayOfStrings
         })
       }
     }

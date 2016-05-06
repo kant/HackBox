@@ -359,16 +359,23 @@ export const projectSearch = (queryObj) => {
   }
   if (has_challenges && has_challenges.length) {
     query.where(function () {
-      has_challenges.forEach((expertise, index) => {
+      has_challenges.forEach((item, index) => {
         // first time through we want to call `where`
         // then subsequesntly use `orWhere`
         const fnName = index === 0 ? "where" : "orWhere";
-        this[fnName]("projects.json_executive_challenges", "like", `%${expertise}%`);
+        this[fnName]("projects.json_executive_challenges", "like", `%${item}%`);
       });
     });
   }
   if (venue && venue.length) {
-    query.where("projects.venue", "like", `%${venue}%`);
+    query.where(function () {
+      venue.forEach((item, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.venue", "like", `%${item}%`);
+      });
+    });
   }
   if (product_focus && product_focus.length) {
     query.whereIn("projects.product_focus", product_focus);
