@@ -53,7 +53,7 @@ const register = function (server, options, next) {
           customer_type: customerTypeArray,
           has_member: stringId,
           has_challenges: arrayOfStrings,
-          venue: arrayOfStrings,,
+          venue: arrayOfStrings,
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
             "tagline", "owner_alias"),
