@@ -1,10 +1,10 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 /*eslint no-invalid-this: 0*/
+import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
 import { id, pagination } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport, paginate, projectSearch,
-  addProjectMemberReportsToPagination }
+import db, { ensureHackathon, getHackathonReport, paginate }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -52,6 +52,86 @@ const register = function (server, options, next) {
     }
   });
 
+  const addTeamDataToPagination = (paginationQuery) => {
+    return paginationQuery.then((paginated) => {
+      const projectIds = _.pluck(paginated.data, "project_id");
+      const teamQuery = db("members")
+        .select("members.project_id", "users.email")
+        .distinct()
+        .join("users", "users.id", "members.project_id")
+        .whereIn("project_id", projectIds);
+
+      return teamQuery.then((teams) => {
+        teams = _.groupBy(teams, "project_id");
+        paginated.data = _.map(paginated.data, (entry) => {
+          const team = teams[entry.project_id];
+          entry.team_size = team ? team.length : 0;
+          entry.team_emails = team ? _.pluck(team, "email") : {};
+          return entry;
+        });
+        return paginated;
+      });
+    });
+  };
+
+  const addViewsToPagination = (paginationQuery) => {
+    return paginationQuery.then((paginated) => {
+      const projectIds = _.pluck(paginated.data, "project_id");
+      const viewsQuery = db("views")
+        .count("*")
+        .select("project_id")
+        .whereIn("project_id", projectIds)
+        .groupBy("project_id");
+
+      return viewsQuery.then((views) => {
+        views = _.groupBy(views, "project_id");
+        paginated.data = _.map(paginated.data, (entry) => {
+          entry.page_view_count = views[entry.project_id] ?
+          views[entry.project_id][0]["count(*)"] : 0;
+          return entry;
+        });
+        return paginated;
+      });
+    });
+  };
+
+  const addReportsToPagination = (paginationQuery) => {
+    return paginationQuery.then((paginated) => {
+      const emails = _.pluck(paginated.data, "email");
+      const reportsQuery = db("reports")
+        .select("email", "json_reporting_data")
+        .whereIn("email", emails)
+        .groupBy("email");
+
+      return reportsQuery.then((reports) => {
+        reports = _.groupBy(reports, "email");
+        paginated.data = _.map(paginated.data, (entry) => {
+          entry.json_reporting_data = reports[entry.email] ?
+          reports[entry.email][0].json_reporting_data : "{}";
+          return entry;
+        });
+        return paginated;
+      });
+    });
+  };
+
+  const cleanUpUser = (user) => {
+    user.role = user.owner_id === user.user_id ? "Project Owner" : "Team Member";
+    user.project_url = [
+      "https://garagehackbox.azurewebsites.net/hackathons/",
+      `${user.hackathon_id}/projects/${user.project_id}`
+    ].join("");
+    delete user.deleted;
+    delete user.product_focus;
+    delete user.json_meta;
+    delete user.owner_id;
+    delete user.user_id;
+    delete user.project_id;
+    delete user.id;
+    delete user.hackathon_id;
+    return user;
+  };
+
   server.route({
     method: "GET",
     path: "/hackathons/{hackathonId}/project-reports",
@@ -63,7 +143,7 @@ const register = function (server, options, next) {
         const isSuperUser = request.isSuperUser();
         const requestorId = request.userId();
 
-        ensureHackathon(hackathonId)
+        const response = ensureHackathon(hackathonId)
         .then(() => {
           return db("hackathon_admins").where({
             hackathon_id: hackathonId
@@ -77,15 +157,34 @@ const register = function (server, options, next) {
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
+          const members = db("members")
+            .select(["users.alias as alias",
+              "users.email as email",
+              "users.json_expertise as json_expertise",
+              "users.json_interests as json_interests",
+              "users.json_working_on as json_working_on",
+              "user_id",
+              "project_id",
+              "joined_at as registration_date",
+              "projects.*"
+            ])
+            .innerJoin("users", "users.id", "members.user_id")
+            .innerJoin("projects", "projects.id", "members.project_id")
+            .where({"members.hackathon_id": hackathonId})
+            .orderBy("users.alias")
+            .orderBy("projects.title");
 
-          // make sure we limit search to within this hackathon
-          query.hackathon_id = hackathonId;
-
-          const response = projectSearch(query);
-
-          reply(addProjectMemberReportsToPagination(paginate(response, {limit, offset})));
+          return addTeamDataToPagination(
+            addReportsToPagination(
+              addViewsToPagination(
+                paginate(members, {limit, offset}))))
+            .then((paginated) => {
+              paginated.data = _.map(paginated.data, cleanUpUser);
+              return paginated;
+            });
         });
 
+        return reply(response);
       },
       validate: {
         params: {
