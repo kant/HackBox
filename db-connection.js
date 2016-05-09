@@ -269,7 +269,6 @@ export const paginate = (query, {limit, offset}) => {
       return true;
     }
   });
-
   return Promise.all([
     countQuery.count(),
     query
@@ -401,37 +400,12 @@ export const projectSearch = (queryObj) => {
 
 const addMembersToProjects = (projects, usersByProject) => {
   return _.map(projects, (project) => {
-    project.members = _.map(usersByProject[project.id], (user) =>
-      _.pick(user, ["id", "name", "alias"]));
+    if (usersByProject[project.id]) {
+      project.team_size = usersByProject[project.id].length;
+      project.members = _.map(usersByProject[project.id], (user) =>
+        _.pick(user, ["id", "name", "alias"]));
+    }
     return project;
-  });
-};
-
-export const addMemberReportsToProjects = (projects, usersByProject) => {
-  return _.map(projects, (project) => {
-    project.team_size = usersByProject[project.id].length;
-    project.members = _.map(usersByProject[project.id], (user) =>
-      _.pick(user, ["id", "name", "alias", "json_reporting_data"]));
-    return project;
-  });
-};
-
-
-export const addProjectMemberReportsToPagination = (paginationQuery) => {
-  return paginationQuery.then((pagination) => {
-    const projectIds = _.pluck(pagination.data, "id");
-    const membersQuery = client("members")
-      .select("members.project_id", "users.id", "users.name", "users.alias",
-        "reports.json_reporting_data")
-      .innerJoin("users", "members.user_id", "users.id")
-      .leftJoin("reports", "users.email", "reports.email")
-      .whereIn("members.project_id", projectIds);
-
-    return membersQuery.then((users) => {
-      const usersByProject = _.groupBy(users, "project_id");
-      pagination.data = addMemberReportsToProjects(pagination.data, usersByProject);
-      return pagination;
-    });
   });
 };
 
@@ -448,6 +422,17 @@ export const addProjectMembersToPagination = (paginationQuery) => {
       pagination.data = addMembersToProjects(pagination.data, usersByProject);
       return pagination;
     });
+  });
+};
+
+export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
+  return paginationQuery.then((pagination) => {
+    pagination.data = _.map(pagination.data, (project) => {
+      project.project_url =
+        `https://garagehackbox.azurewebsites.net/hackathons/${hackathonId}/projects/${project.id}`;
+      return project;
+    });
+    return pagination;
   });
 };
 
@@ -888,7 +873,8 @@ export const getHackathonReport = (queryObj) => {
       "users.email as email",
       "users.json_working_on as json_working_on",
       "users.json_expertise as json_expertise",
-      "participants.joined_at as joined_at",
+      "users.json_interests as json_interests",
+      "participants.joined_at as registration_date",
       "reports.json_reporting_data as json_reporting_data"
     ])
     .from("users")
