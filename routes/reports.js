@@ -154,7 +154,9 @@ const register = function (server, options, next) {
             ])
             .innerJoin("users", "users.id", "members.user_id")
             .innerJoin("projects", "projects.id", "members.project_id")
-            .where({"members.hackathon_id": hackathonId})
+            .where({
+              "members.hackathon_id": hackathonId,
+              "projects.deleted": false})
             .orderBy("users.alias")
             .orderBy("projects.title");
 
