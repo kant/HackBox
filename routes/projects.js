@@ -46,6 +46,7 @@ const register = function (server, options, next) {
         },
         query: paginationWithDeleted.keys({
           search: Joi.string(),
+          search_array: arrayOfStrings,
           has_video: Joi.boolean(),
           needs_hackers: Joi.boolean(),
           writing_code: Joi.boolean(),

@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 40],
+  max-statements: [2, 42],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -291,7 +291,7 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
-    has_challenges, sort_col, sort_direction, venue
+    has_challenges, sort_col, sort_direction, venue, search_array
   } = queryObj;
 
   const query = client("projects")
@@ -303,11 +303,24 @@ export const projectSearch = (queryObj) => {
     query.where("projects.hackathon_id", hackathon_id);
   }
 
+  let searched = false;
+  const addSearch = (searchFor) => {
+    const fnName = searched ? "orWhere" : "where";
+    searched = true;
+    query[fnName](function () {
+      this.where("projects.title", "like", `%${searchFor}%`)
+        .orWhere("projects.json_tags", "like", `%${searchFor}%`)
+        .orWhere("projects.tagline", "like", `%${searchFor}%`);
+    });
+  };
+
   if (search) {
-    query.where(function () {
-      this.where("projects.title", "like", `%${search}%`)
-        .orWhere("projects.json_tags", "like", `%${search}%`)
-        .orWhere("projects.tagline", "like", `%${search}%`);
+    addSearch(search);
+  }
+
+  if (search_array && search_array.length) {
+    search_array.forEach((item) => {
+      addSearch(item);
     });
   }
 
