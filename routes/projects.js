@@ -203,6 +203,56 @@ const register = function (server, options, next) {
   });
 
   server.route({
+    method: "POST",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/tag/{tag}",
+    config: {
+      description: "Tag a project with an arbitrary string. Idempotent.",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, projectId, tag } = request.params;
+        const params = {
+          project_id: projectId,
+          user_id: request.userId(),
+          tag
+        };
+
+        const response = ensureProject(hackathonId, projectId)
+          .then(() => {
+            return db("tags")
+              .select()
+              .where(params);
+          })
+          .then((res) => {
+            if (!res.length) {
+              params.created_at = new Date();
+              return db("tags")
+                .insert(params);
+            } else {
+              return [res[0].id];
+            }
+          })
+          .then((res) => {
+            return db("tags")
+              .select()
+              .where({"id": res[0]});
+          })
+          .then((res) => {
+            return request.generateResponse(res[0]).code(201);
+          });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id,
+          tag: Joi.string().trim().required().description("String to tag this project with")
+        }
+      }
+    }
+  });
+
+  server.route({
     method: "GET",
     path: "/hackathons/{hackathonId}/projects/{projectId}",
     config: {
