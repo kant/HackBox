@@ -59,6 +59,7 @@ const register = function (server, options, next) {
           has_member: stringId,
           has_challenges: arrayOfStrings,
           venue: arrayOfStrings,
+          participant_name: Joi.string(),
           sort_col: Joi.any().valid("created_at", "title", "tagline", "owner_alias"),
           sort_direction: sortDirection
         })

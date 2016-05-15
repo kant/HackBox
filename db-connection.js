@@ -1,6 +1,6 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 42],
+  max-statements: [2, 50],
   max-nested-callbacks: [2, 4],
   complexity: [2, 20],
   no-invalid-this: 0
@@ -291,7 +291,7 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
-    has_challenges, sort_col, sort_direction, venue, search_array
+    has_challenges, sort_col, sort_direction, venue, search_array, participant_name
   } = queryObj;
 
   const query = client("projects")
@@ -397,6 +397,14 @@ export const projectSearch = (queryObj) => {
   }
   if (country && country.length) {
     query.whereIn("hackathons.country", country);
+  }
+  if (participant_name && participant_name.length) {
+    query.whereIn("projects.id", function () {
+      this.select("project_id")
+        .from("members")
+        .join("users", "users.id", "members.user_id")
+        .where("users.name", "like", `%${participant_name}% `);
+    });
   }
 
   const orderByCol = sort_col || "created_at";
