@@ -1,5 +1,8 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
-/*eslint no-invalid-this: 0*/
+/*eslint
+  camelcase: [2, {"properties": "never"}],
+  no-invalid-this: 0,
+  max-statements: [2, 16]
+*/
 import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
@@ -94,6 +97,26 @@ const register = function (server, options, next) {
     });
   };
 
+  const addTagsToPagination = (paginationQuery) => {
+    return paginationQuery.then((paginated) => {
+      const projects = _.pluck(paginated.data, "project_id");
+      const tagsQuery = db("tags")
+        .select("project_id", "tag")
+        .distinct()
+        .whereIn("project_id", projects);
+
+      return tagsQuery.then((tags) => {
+        tags = _.groupBy(tags, "project_id");
+        paginated.data = _.map(paginated.data, (entry) => {
+          entry.special_tags = tags[entry.project_id] ?
+          _.pluck(tags[entry.project_id], "tag") : "{}";
+          return entry;
+        });
+        return paginated;
+      });
+    });
+  };
+
   const cleanUpUser = (user) => {
     user.role = user.owner_id === user.user_id ? "Project Owner" : "Team Member";
     user.project_url = [
@@ -147,9 +170,9 @@ const register = function (server, options, next) {
               "users.json_expertise as json_expertise",
               "users.json_interests as json_interests",
               "users.json_working_on as json_working_on",
-              "user_id",
-              "project_id",
-              "joined_at as registration_date",
+              "members.user_id as user_id",
+              "members.project_id as project_id",
+              "members.joined_at as registration_date",
               "projects.*"
             ])
             .innerJoin("users", "users.id", "members.user_id")
@@ -159,10 +182,10 @@ const register = function (server, options, next) {
               "projects.deleted": false})
             .orderBy("users.alias")
             .orderBy("projects.title");
-
           return addTeamDataToPagination(
             addReportsToPagination(
-              paginate(members, {limit, offset})))
+              addTagsToPagination(
+                paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;

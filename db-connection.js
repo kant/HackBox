@@ -1,8 +1,8 @@
 /*eslint
   camelcase: [0, {"properties": "never"}],
-  max-statements: [2, 42],
+  max-statements: [2, 75],
   max-nested-callbacks: [2, 4],
-  complexity: [2, 20],
+  complexity: [2, 40],
   no-invalid-this: 0
 */
 import knex from "knex";
@@ -292,7 +292,8 @@ export const projectSearch = (queryObj) => {
   const {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
-    has_focus, has_challenges, sort_col, sort_direction, venue, search_array
+    has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
+    participant_name
   } = queryObj;
 
   const query = client("projects")
@@ -422,6 +423,7 @@ export const projectSearch = (queryObj) => {
   if (country && country.length) {
     query.whereIn("hackathons.country", country);
   }
+
   if (has_focus && has_focus.length) {
     query.where(function () {
       has_focus.forEach((focus, index) => {
@@ -429,6 +431,15 @@ export const projectSearch = (queryObj) => {
         const colName = `projects.json_${focus}_focus`;
         this[fnName](colName);
       });
+    });
+  }
+
+  if (participant_name && participant_name.length) {
+    query.whereIn("projects.id", function () {
+      this.select("project_id")
+        .from("members")
+        .join("users", "users.id", "members.user_id")
+        .where("users.name", "like", `%${participant_name}%`);
     });
   }
 
@@ -551,7 +562,9 @@ export const userSearch = (queryObj) => {
         .orWhere("bio", "like", `%${search}%`)
         .orWhere("json_working_on", "like", `%${search}%`)
         .orWhere("json_expertise", "like", `%${search}%`)
-        .orWhere("json_interests", "like", `%${search}%`);
+        .orWhere("json_interests", "like", `%${search}%`)
+        .orWhere("city", "like", `%${search}%`)
+        .orWhere("country", "like", `%${search}%`);
     });
   }
   if (role && role.length) {
