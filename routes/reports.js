@@ -1,10 +1,13 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
-/*eslint no-invalid-this: 0*/
+/*eslint
+  camelcase: [2, {"properties": "never"}],
+  no-invalid-this: 0,
+  max-statements: [2, 16]
+*/
 import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
 import { id, pagination } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport, paginate }
+import db, { ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -58,7 +61,7 @@ const register = function (server, options, next) {
       const teamQuery = db("members")
         .select("members.project_id", "users.email")
         .distinct()
-        .join("users", "users.id", "members.project_id")
+        .join("users", "users.id", "members.user_id")
         .whereIn("project_id", projectIds);
 
       return teamQuery.then((teams) => {
@@ -67,27 +70,6 @@ const register = function (server, options, next) {
           const team = teams[entry.project_id];
           entry.team_size = team ? team.length : 0;
           entry.team_emails = team ? _.pluck(team, "email") : {};
-          return entry;
-        });
-        return paginated;
-      });
-    });
-  };
-
-  const addViewsToPagination = (paginationQuery) => {
-    return paginationQuery.then((paginated) => {
-      const projectIds = _.pluck(paginated.data, "project_id");
-      const viewsQuery = db("views")
-        .count("*")
-        .select("project_id")
-        .whereIn("project_id", projectIds)
-        .groupBy("project_id");
-
-      return viewsQuery.then((views) => {
-        views = _.groupBy(views, "project_id");
-        paginated.data = _.map(paginated.data, (entry) => {
-          entry.page_view_count = views[entry.project_id] ?
-          views[entry.project_id][0]["count(*)"] : 0;
           return entry;
         });
         return paginated;
@@ -115,32 +97,17 @@ const register = function (server, options, next) {
     });
   };
 
-  const addTagsToPagination = (paginationQuery) => {
-    return paginationQuery.then((paginated) => {
-      const projects = _.pluck(paginated.data, "project_id");
-      const tagsQuery = db("tags")
-        .select("project_id", "tag")
-        .distinct()
-        .whereIn("project_id", projects);
-
-      return tagsQuery.then((tags) => {
-        tags = _.groupBy(tags, "project_id");
-        paginated.data = _.map(paginated.data, (entry) => {
-          entry.special_tags = tags[entry.project_id] ?
-          _.pluck(tags[entry.project_id], "tag") : "{}";
-          return entry;
-        });
-        return paginated;
-      });
-    });
-  };
-
   const cleanUpUser = (user) => {
     user.role = user.owner_id === user.user_id ? "Project Owner" : "Team Member";
     user.project_url = [
       "https://garagehackbox.azurewebsites.net/hackathons/",
       `${user.hackathon_id}/projects/${user.project_id}`
     ].join("");
+    user.page_view_count = user.view_count;
+    delete user.view_count;
+    delete user.like_count;
+    delete user.comment_count;
+    delete user.share_count;
     delete user.deleted;
     delete user.product_focus;
     delete user.json_meta;
@@ -190,14 +157,15 @@ const register = function (server, options, next) {
             ])
             .innerJoin("users", "users.id", "members.user_id")
             .innerJoin("projects", "projects.id", "members.project_id")
-            .where({"members.hackathon_id": hackathonId})
+            .where({
+              "members.hackathon_id": hackathonId,
+              "projects.deleted": false})
             .orderBy("users.alias")
             .orderBy("projects.title");
           return addTeamDataToPagination(
             addReportsToPagination(
-              addViewsToPagination(
-                addTagsToPagination(
-                  paginate(members, {limit, offset})))))
+              addTagsToPagination(
+                paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;

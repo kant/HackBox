@@ -430,6 +430,37 @@ const addMembersToProjects = (projects, usersByProject) => {
   });
 };
 
+export const addTagsToPagination = (paginationQuery, key = "project_id") => {
+  return paginationQuery.then((paginated) => {
+    const projects = _.pluck(paginated.data, key);
+    const tagsQuery = client("tags")
+      .select("project_id", "tag")
+      .distinct()
+      .whereIn("project_id", projects);
+    return tagsQuery.then((tags) => {
+      tags = _.groupBy(tags, "project_id");
+      paginated.data = _.map(paginated.data, (entry) => {
+        entry.special_tags = tags[entry[key]] ?
+        _.pluck(tags[entry[key]], "tag") : "{}";
+        return entry;
+      });
+      return paginated;
+    });
+  });
+};
+
+export const addProjectTags = (project) => {
+  const tagsQuery = client.select("project_id", "tag")
+    .from("tags")
+    .distinct()
+    .where("project_id", project.id);
+
+  return tagsQuery.then((tags) => {
+    project.special_tags = _.pluck(tags, "tag");
+    return project;
+  });
+};
+
 export const addProjectMembersToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "id");

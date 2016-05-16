@@ -5,7 +5,8 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   sortDirection, arrayOfStrings } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
-  addProjectMembersToPagination, addProjectUrlsToPagination
+  addProjectMembersToPagination, addProjectUrlsToPagination,
+  addProjectTags, addTagsToPagination
 } from "../db-connection";
 import Joi from "joi";
 
@@ -34,11 +35,15 @@ const register = function (server, options, next) {
 
         const response = projectSearch(query);
 
-        reply(addProjectMembersToPagination(
-          addProjectUrlsToPagination(
-            paginate(response, {limit, offset}),
-            request.params.hackathonId)
-          ));
+        reply(
+          addProjectMembersToPagination(
+            addTagsToPagination(
+              addProjectUrlsToPagination(
+                paginate(response, {limit, offset}),
+                request.params.hackathonId),
+              "id")
+            )
+          );
       },
       validate: {
         params: {
@@ -265,6 +270,8 @@ const register = function (server, options, next) {
         const response = ensureProject(hackathonId, projectId, {
           allowDeleted: request.isSuperUser(),
           includeOwner: true
+        }).then((project) => {
+          return addProjectTags(project);
         });
 
         reply(response);
