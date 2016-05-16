@@ -7,7 +7,7 @@ import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
 import { id, pagination } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport, paginate }
+import db, { ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
   from "../db-connection";
 
 const register = function (server, options, next) {
@@ -90,26 +90,6 @@ const register = function (server, options, next) {
         paginated.data = _.map(paginated.data, (entry) => {
           entry.json_reporting_data = reports[entry.email] ?
           reports[entry.email][0].json_reporting_data : "{}";
-          return entry;
-        });
-        return paginated;
-      });
-    });
-  };
-
-  const addTagsToPagination = (paginationQuery) => {
-    return paginationQuery.then((paginated) => {
-      const projects = _.pluck(paginated.data, "project_id");
-      const tagsQuery = db("tags")
-        .select("project_id", "tag")
-        .distinct()
-        .whereIn("project_id", projects);
-
-      return tagsQuery.then((tags) => {
-        tags = _.groupBy(tags, "project_id");
-        paginated.data = _.map(paginated.data, (entry) => {
-          entry.special_tags = tags[entry.project_id] ?
-          _.pluck(tags[entry.project_id], "tag") : "{}";
           return entry;
         });
         return paginated;
