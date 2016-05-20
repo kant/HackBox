@@ -1,0 +1,6 @@
+id,email,country,profession,discipline,city,job_title,department
+000afe32-c074-4c40-9f1f-56fc918647e6,pkaranth@microsoft.com,NULL,NULL,NULL,NULL,NULL,NULL
+000afe48-d04d-489a-848a-9c5526f53f73,jeffchen@microsoft.com,NULL,NULL,NULL,NULL,NULL,NULL
+000cf982-bb94-4067-b1f2-c1dbbe68746a,lidavis@microsoft.com,NULL,NULL,NULL,NULL,NULL,NULL
+0012e23a-bf9e-4984-ac18-796fe033595d,haitril@microsoft.com,NULL,NULL,NULL,NULL,NULL,NULL
+001786bb-1a4c-4417-8991-45072db696d3,jorgepa@microsoft.com,NULL,NULL,Support Delivery,Madrid,PFE,EQ-ES - PFE CPM
