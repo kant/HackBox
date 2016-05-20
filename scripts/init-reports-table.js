@@ -20,9 +20,9 @@ const insertRow = (email, row) => {
     rowsInserted += 1;
     return returned;
   })
-  .catch(e => {
-    console.log("Rejected: " + email + ". Reason: " + JSON.stringify(e));
-    return
+  .catch((e) => {
+    console.log(`Rejected: ${email}. Reason: ${e}`);
+    return;
   });
 };
 
