@@ -1080,9 +1080,14 @@ export const getHackathonReport = (queryObj) => {
       "users.json_working_on as json_working_on",
       "users.json_expertise as json_expertise",
       "users.json_interests as json_interests",
+      "participants.json_participation_meta as json_participation_meta",
       "participants.joined_at as registration_date",
       "reports.json_reporting_data as json_reporting_data"
     ])
+    .select(
+      knex.raw(
+        `exists (select 1 from members where
+        user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
     .from("users")
     .join("participants", "users.id", "participants.user_id")
     .leftJoin("reports", "users.email", "reports.email")

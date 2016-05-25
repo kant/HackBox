@@ -153,13 +153,16 @@ const register = function (server, options, next) {
               "members.user_id as user_id",
               "members.project_id as project_id",
               "members.joined_at as registration_date",
+              "participants.json_participation_meta as json_participation_meta",
               "projects.*"
             ])
             .innerJoin("users", "users.id", "members.user_id")
             .innerJoin("projects", "projects.id", "members.project_id")
+            .leftJoin("participants", "users.id", "participants.user_id")
             .where({
               "members.hackathon_id": hackathonId,
-              "projects.deleted": false})
+              "projects.deleted": false,
+              "participants.hackathon_id": hackathonId})
             .orderBy("users.alias")
             .orderBy("projects.title");
           return addTeamDataToPagination(
