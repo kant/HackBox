@@ -470,15 +470,14 @@ const addMembersToProjects = (projects, usersByProject) => {
 export const addTagsToPagination = (paginationQuery, key = "project_id") => {
   return paginationQuery.then((paginated) => {
     const projects = _.pluck(paginated.data, key);
-    const tagsQuery = client("tags")
-      .select("project_id", "tag")
-      .distinct()
+    const tagsQuery = client("project_tags")
+      .select("project_id", "json_tags")
       .whereIn("project_id", projects);
     return tagsQuery.then((tags) => {
       tags = _.groupBy(tags, "project_id");
       paginated.data = _.map(paginated.data, (entry) => {
-        entry.special_tags = tags[entry[key]] ?
-        _.pluck(tags[entry[key]], "tag") : "{}";
+        entry.json_special_tags = tags[entry[key]] ?
+        _.pluck(tags[entry[key]], "json_tags") : "[]";
         return entry;
       });
       return paginated;
@@ -487,15 +486,19 @@ export const addTagsToPagination = (paginationQuery, key = "project_id") => {
 };
 
 export const addProjectTags = (project) => {
-  const tagsQuery = client.select("project_id", "tag")
-    .from("tags")
-    .distinct()
+  const tagsQuery = client.select("json_tags")
+    .from("project_tags")
     .where("project_id", project.id);
 
-  return tagsQuery.then((tags) => {
-    project.special_tags = _.pluck(tags, "tag");
+  return tagsQuery.then((res) => {
+    project.json_special_tags = res[0] ? res[0].json_tags : "[]";
     return project;
   });
+};
+
+export const addOrUpdateProjectTags = (projectId, tags) => {
+  tags = JSON.stringify(tags);
+  return client.raw(`REPLACE INTO project_tags VALUES (${projectId}, '${tags}');`);
 };
 
 export const addProjectMembersToPagination = (paginationQuery) => {
