@@ -6,7 +6,7 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
   addProjectMembersToPagination, addProjectUrlsToPagination,
-  addProjectTags, addTagsToPagination
+  addProjectTags, addTagsToPagination, addOrUpdateProjectTags
 } from "../db-connection";
 import Joi from "joi";
 
@@ -209,41 +209,25 @@ const register = function (server, options, next) {
   });
 
   server.route({
-    method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/tag/{tag}",
+    method: "PUT",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/tags/{tags}",
     config: {
-      description: "Tag a project with an arbitrary string. Idempotent.",
+      description: "Tag a project with arbitrary strings. Replaces project's current tags.",
       tags: ["api"],
       handler(request, reply) {
-        const { hackathonId, projectId, tag } = request.params;
-        const params = {
-          project_id: projectId,
-          user_id: request.userId(),
-          tag
-        };
+        const { hackathonId, projectId, tags } = request.params;
 
         const response = ensureProject(hackathonId, projectId)
           .then(() => {
-            return db("tags")
-              .select()
-              .where(params);
+            return addOrUpdateProjectTags(projectId, tags);
+          })
+          .then(() => {
+            return db("project_tags")
+            .select("json_tags")
+            .where({project_id: projectId});
           })
           .then((res) => {
-            if (!res.length) {
-              params.created_at = new Date();
-              return db("tags")
-                .insert(params);
-            } else {
-              return [res[0].id];
-            }
-          })
-          .then((res) => {
-            return db("tags")
-              .select()
-              .where({"id": res[0]});
-          })
-          .then((res) => {
-            return request.generateResponse(res[0]).code(201);
+            return request.generateResponse(res[0]).code(200);
           });
 
         reply(response);
@@ -252,7 +236,38 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id,
-          tag: Joi.string().trim().required().description("String to tag this project with")
+          tags: arrayOfStrings.description("Array of strings to tag this project with")
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/tags",
+    config: {
+      description: "Get a project's special tags",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, projectId} = request.params;
+
+        const response = ensureProject(hackathonId, projectId)
+          .then(() => {
+            return db("project_tags")
+            .select("json_tags")
+            .where({project_id: projectId});
+          })
+          .then((res) => {
+            const result = res[0] ? res[0] : {json_tags: "[]"};
+            return request.generateResponse(result).code(200);
+          });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id
         }
       }
     }
