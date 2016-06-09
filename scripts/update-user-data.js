@@ -5,6 +5,7 @@ const _ = require("lodash");
 const baby = require("babyparse");
 const client = require("../db-connection").default;
 const fs = require("fs");
+const knex = require("knex");
 
 /*
 * USAGE:
@@ -14,7 +15,7 @@ const fs = require("fs");
 * 3. Update sourceFile and, if needed, nullValue
 * 4. Test locally, then NODE_ENV=production npm run update-users
 */
-const sourceFile = "data/update-users-19-may.csv";
+const sourceFile = "data/hackboxusers_participants_update-6-8.csv";
 const nullValue = "NULL";
 
 let rowsUpdated = 0;
@@ -23,7 +24,8 @@ const usersSkipped = [];
 const updateRow = (user) => {
   const userId = user.id;
   delete user.id;
-  delete user.email; // email should be immutable, as it is a key in other tables
+  const email = user.email;
+  user.email = knex.raw(`coalesce (email, "${email}")`); // Update email only if null
 
   user = _.pick(user, (value) => {
     return value !== nullValue;
@@ -38,7 +40,7 @@ const updateRow = (user) => {
     .update(user)
     .where("id", userId);
 
-  return query.then((returned) => {
+    return query.then((returned) => {
     rowsUpdated += 1;
     return returned;
   })
