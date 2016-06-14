@@ -15,7 +15,7 @@ const knex = require("knex");
 * 3. Update sourceFile and, if needed, nullValue
 * 4. Test locally, then NODE_ENV=production npm run update-users
 */
-const sourceFile = "data/hackboxusers_participants_update-6-8.csv";
+const sourceFile = "data/hackboxusers_participants_update-6-8.CSV";
 const nullValue = "NULL";
 
 let rowsUpdated = 0;
@@ -40,14 +40,14 @@ const updateRow = (user) => {
     .update(user)
     .where("id", userId);
 
-    return query.then((returned) => {
+  return query.then((returned) => {
     rowsUpdated += 1;
     return returned;
   })
-    .catch((e) => {
-      console.log(`Failed to update ${userId}. Reason: ${e}`);
-      return;
-    });
+  .catch((e) => {
+    console.log(`Failed to update ${userId}. Reason: ${e}`);
+    return;
+  });
 };
 
 

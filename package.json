@@ -36,6 +36,7 @@
     "eslint-plugin-filenames": "^0.1.2",
     "eslint-plugin-react": "^3.6.3",
     "lodash": "^3.10.1",
+    "tap": "^5.7.2",
     "tap-spec": "^4.1.0",
     "tape": "^4.2.2"
   },
@@ -56,6 +57,7 @@
     "reset-db": "node reset-db.js",
     "seed-db": "knex seed:run",
     "start": "node server.js",
-    "test": "AUTH_ENABLED=true node test/index | tap-spec && npm run lint"
+    "test": "AUTH_ENABLED=true node test/index | tap-spec && npm run lint",
+    "coverage": "npm run pretest && tap test/*.js --cov --coverage-report=html"
   }
 }
