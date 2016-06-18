@@ -5,7 +5,8 @@
       "database": "$DB_CONNECTION_DATABASE",
       "host": "$DB_CONNECTION_HOST",
       "user": "$DB_CONNECTION_USER",
-      "password": "$DB_CONNECTION_PASSWORD"
+      "password": "$DB_CONNECTION_PASSWORD",
+      "port": "$DB_CONNECTION_PORT"
     },
     "pool": {
       "min": 0
