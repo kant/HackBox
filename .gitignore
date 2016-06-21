@@ -7,3 +7,4 @@ dev.sqlite3
 test.sqlite3
 TOKEN
 *.log
+.nyc_output
