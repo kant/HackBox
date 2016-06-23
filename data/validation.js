@@ -212,25 +212,25 @@ const projectBase = {
   customer_type: customerType,
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
-  venue: Joi.string().max(255).trim().default(""),
+  venue: Joi.string().max(255).trim().allow("").default(""),
   executive_challenges: challengeArray.default([]),
   meta,
-  video_type: Joi.string().max(255).trim().default("")
+  video_type: Joi.string().max(255).trim().allow("").default("")
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
   .requiredKeys("title", "tagline", "description", "needs_hackers")
   .keys({
-    status: projectBase.status.default(""),
-    description: projectBase.description.default(""),
-    inspiration: projectBase.inspiration.default(""),
-    how_it_will_work: projectBase.how_it_will_work.default(""),
+    status: projectBase.status.default("").allow(""),
+    description: projectBase.description.default("").allow(""),
+    inspiration: projectBase.inspiration.default("").allow(""),
+    how_it_will_work: projectBase.how_it_will_work.default("").allow(""),
     needs_hackers: Joi.boolean().default(false),
     writing_code: Joi.boolean().default(false),
     existing: Joi.boolean().default(false),
     external_customers: Joi.boolean().default(false),
     needed_roles: roleArray.default([]),
-    product_focus: product.default(""),
+    product_focus: product.default("").allow(""),
     windows_focus: arrayOfStrings.default([]),
     devices_focus: arrayOfStrings.default([]),
     dynamics_focus: arrayOfStrings.default([]),
@@ -241,7 +241,7 @@ export const newProject = Joi.object(projectBase)
     misc_focus: arrayOfStrings.default([]),
     other_focus: arrayOfStrings.default([]),
     needed_expertise: arrayOfStrings.default([]),
-    customer_type: customerType.default(""),
+    customer_type: customerType.default("").allow(""),
     tags: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
