@@ -17,7 +17,7 @@ export const users = [
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
     bio: "Some JS dev",
-    json_expertise: JSON.stringify(["JSstuff, Azure"]),
+    json_expertise: JSON.stringify(["JSstuff, Azure", "Office"]),
     primary_role: "Services",
     product_focus: "Office",
     country: "United States",
@@ -53,7 +53,7 @@ export const users = [
     primary_role: "Developer",
     product_focus: "Devices",
     country: "India",
-    json_working_on: JSON.stringify(["writing", "building"]),
+    json_working_on: JSON.stringify(["writing", "building", "Office"]),
     bio: "I do not like green eggs and ham.",
     json_profile: JSON.stringify({
       job_title: "Author",
@@ -115,7 +115,7 @@ export const users = [
     email: "f.ish@fishes.com",
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
-    json_expertise: JSON.stringify(["swimming"]),
+    json_expertise: JSON.stringify(["swimming", "Office"]),
     primary_role: "Marketing",
     product_focus: "Windows",
     country: "United States",
@@ -390,7 +390,7 @@ export const projects = [
     json_meta: JSON.stringify({
       is_awesome: true
     }),
-    json_windows_focus: JSON.stringify(["Windows 10"]),
+    json_windows_focus: JSON.stringify(["false", "false", "false", "false", "true", "false"]),
     venue: "Microsoft Garage",
     json_executive_challenges: JSON.stringify(["Artificial Intelligence (Harry Shum)"])
   },

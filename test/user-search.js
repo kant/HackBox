@@ -1,4 +1,4 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
+  /*eslint camelcase: [2, {"properties": "never"}] */
 import test from "tape";
 import ensure from "./helpers";
 import { users as mockUsers } from "../data/mock-data";
@@ -200,16 +200,20 @@ const runFixedTypeFilterTests = (type, value, itemTest) => {
 };
 
 runFixedTypeFilterTests("role", JSON.stringify(["Developer"]), (item) => {
-  return item.primary_role === "Developer";
+  return item.profession === "Engineering" &&
+  (item.discipline === "Software Development" || item.discipline === "Software Engineering");
 });
 runFixedTypeFilterTests("role", JSON.stringify(["Developer", "Marketing"]), (item) => {
-  return item.primary_role === "Developer" || item.primary_role === "Marketing";
+  return item.profession === "Engineering" &&
+  (item.discipline === "Software Development" || item.discipline === "Software Engineering") ||
+  item.profession === "Marketing";
 });
 runFixedTypeFilterTests("product_focus", JSON.stringify(["Office"]), (item) => {
-  return item.product_focus === "Office";
+  return item.working_on.includes("Office") || item.expertise.includes("Office");
 });
 runFixedTypeFilterTests("product_focus", JSON.stringify(["Office", "Windows"]), (item) => {
-  return item.product_focus === "Office" || item.product_focus === "Windows";
+  return item.working_on.includes("Office") || item.expertise.includes("Office") ||
+  item.working_on.includes("Windows") || item.expertise.includes("Windows");
 });
 runFixedTypeFilterTests("country", JSON.stringify(["United States"]), (item) => {
   return item.country === "United States";

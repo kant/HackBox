@@ -141,9 +141,10 @@ runBooleanFilterTests("has_video", (item) => typeof item.video_id === "number");
 // a bit of re-usable code to make sure tests cover everything
 const runFixedTypeFilterTests = (type, value, itemTest) => {
   test(`can filter via '${type}=${value}`, (t) => {
+    const url = `/hackathons/1/projects?${type}=${JSON.stringify(value)}`;
     ensure({
       method: "GET",
-      url: `/hackathons/1/projects?${type}=${JSON.stringify(value)}`,
+      url,
       hasPagination: true,
       statusCode: 200,
       test(result) {
@@ -191,10 +192,11 @@ runFixedTypeFilterTests("needed_roles", ["Developer", "Services"], (item) => {
   item.needed_roles.indexOf("Services") !== -1;
 });
 runFixedTypeFilterTests("product_focus", ["Windows"], (item) => {
-  return item.product_focus === "Windows";
+  return item.product_focus === "Windows" || item.windows_focus.includes("true");
 });
 runFixedTypeFilterTests("product_focus", ["Windows", "Consumer Services"], (item) => {
-  return item.product_focus === "Windows" || item.product_focus === "Consumer Services";
+  return item.product_focus === "Windows" || item.product_focus === "Consumer Services"
+    || item.windows_focus.includes("true") || item.consumer_services_focus.includes("true");
 });
 runFixedTypeFilterTests("customer_type", ["Consumers"], (item) => {
   return item.customer_type === "Consumers";
