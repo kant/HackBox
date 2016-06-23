@@ -10,12 +10,12 @@ const knex = require("knex");
 /*
 * USAGE:
 * 1. Backup users table:
-* mysqldump -h us-cdbr-azure-west-c.cloudapp.net -u bf57695f34b565 -p hackboxdb users > users.sql
+* mysqldump -h db-cea8b19625-1.cloudapp.net -u udd84187ed43e7 -P 3310 -p hackboxdb users > users.sql
 * 2. Ensure CSV column names match db column names.
 * 3. Update sourceFile and, if needed, nullValue
 * 4. Test locally, then NODE_ENV=production npm run update-users
 */
-const sourceFile = "data/hackboxusers_participants_update-6-8.CSV";
+const sourceFile = "data/hackboxusers_participants_update-6-22.csv";
 const nullValue = "NULL";
 
 let rowsUpdated = 0;
