@@ -49,6 +49,7 @@ const register = function (server, options, next) {
           has_challenges: arrayOfStrings,
           venue: arrayOfStrings,
           participant_name: Joi.string(),
+          video_type: Joi.string(),
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
           sort_direction: sortDirection
