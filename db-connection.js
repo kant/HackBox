@@ -293,7 +293,7 @@ export const projectSearch = (queryObj) => {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
     has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
-    participant_name, video_type
+    participant_name
   } = queryObj;
 
   const query = client("projects")
@@ -390,10 +390,6 @@ export const projectSearch = (queryObj) => {
         this[fnName]("projects.venue", "like", `%${item}%`);
       });
     });
-  }
-
-  if (video_type && video_type.length) {
-    query.where("projects.video_type", "like", `%${video_type}%`);
   }
 
   const focii = { //TODO can probably convert with a regex
