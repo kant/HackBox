@@ -3,7 +3,7 @@
 exports.up = (knex) => {
   return knex.schema
     .table("projects", (t) => {
-      t.string("video_type");
+      t.string("video_type").defaultTo("");
     });
 };
 
