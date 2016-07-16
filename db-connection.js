@@ -59,12 +59,12 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
     .as("projects");
 
   const whereClause = {
-    id,
-    deleted: false
+    id
   };
 
-  if (opts.allowDeleted) {
-    delete whereClause.deleted;
+  if (!opts.allowDeleted) {
+    projectCount.where("deleted", false);
+    whereClause.deleted = false;
   }
 
   const mainQuery = client("hackathons")
@@ -83,6 +83,7 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
       hackathon.admins = admins;
       hackathon.status = hackathonStatus(hackathon);
     }
+
     return hackathon;
   });
 };
