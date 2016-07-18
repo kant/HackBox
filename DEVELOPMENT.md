@@ -95,7 +95,7 @@ Linting is automatically run after the test suite or can be run via `npm run lin
 
 Any time you need access to config items within code simply require the `/.config.js` file at the project root.
 
-It will pull in the configuration file from the `config` directory with the same name as the current value of the `NODE_ENV` envronment variable. If `NODE_ENV` is not defined, `./config/development.json` will be used.
+It will pull in the configuration file from the `config` directory with the same name as the current value of the `NODE_ENV` envronment variable. If `NODE_ENV` is not defined, `./config/development.json` will be used.  It is best practice to set `NODE_ENV=development` in your `~/.bashrc` to enable development shortcuts in the code, e.g. auth.
 
 Please note that all sensitive data is expected to be passed via environment variables rather than checked into this codebase.
 
