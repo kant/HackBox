@@ -11,7 +11,7 @@ require("./user-search");
 require("./hackathon-search");
 require("./awards");
 require("./award-categories");
-// require("./auth");
+require("./auth");
 
 // run this last to shut down the server
 // and the DB connection so it ends cleanly
