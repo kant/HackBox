@@ -15,6 +15,31 @@ const cleanCredentials = (credsObject) => {
   };
 };
 
+const loginCache = {
+  _CACHE_TIME: 59 * 60 * 1000, // 59 minutes, don't accidentally exceed a token's hour lifetime
+  _cache: {},
+
+  put: (authToken, credentials, expires) => {
+    if (!expires) {
+      expires = Date.now() + loginCache._CACHE_TIME;
+    }
+
+    loginCache._cache[authToken] = {
+      expires,
+      credentials
+    };
+    return;
+  },
+
+  get: (authToken) => {
+    const cached = loginCache._cache[authToken];
+    if (cached && (cached.expires > Date.now())) {
+      return cached.credentials;
+    }
+    return false;
+  }
+}
+
 export const validate = function (token, next) {
   // to enable simpler testing since we can't programmatically
   // generate valid tokens for multiple users
@@ -41,9 +66,15 @@ export const validate = function (token, next) {
     }
   }
 
+  const cached = loginCache.get(token);
+  if (cached) {
+    return next(null, true, cleanCredentials(cached));
+  }
+
   aad.verify(token, null, (err, result) => {
     if (result) {
       // verify issuer, clientId (app) and user
+      loginCache.put(token, result);
       return next(null, true, cleanCredentials(result));
     } else {
       return next(null, false, null);
