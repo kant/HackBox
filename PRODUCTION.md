@@ -2,7 +2,8 @@
 
 The API is deployed on the Azure platform with ClearDB as the MySQL provider.
 
-Managing the app requires an `@outlook.com` address and access to the API's resources in the [Azure portal][].
+Managing the app requires at minimum an `@outlook.com` address and access to the API's resources in the [Azure portal][].
+Front-end access to the site and ownership of Azure resources requires an `@microsoft.com` email address, followed by inclusion in the site's ACL and granting of owner privileges in Azure.
 
 
 ## Creating a `@outlook.com` account
@@ -28,7 +29,7 @@ $ git remote add production COPIED_GIT_URL
 Deploy by pushing to the production Git remote.
 
 ```sh
-$ git push production master
+$ git push production master production:master
 ```
 
 You'll see a lot of errors and it will take a long time, but trust it will happen and it'll eventually finish.
@@ -44,9 +45,9 @@ Don't forget to undo any changes made to `config/production.json` afterwards to 
 
 ## Managing MySQL
 
-MySQL is managed via ClearDB in the Azure Portal. The resource is called "HackboxDB".
+MySQL is managed via a ClearDB datastore. The production database is `hackboxdb`
 
-TODO: Figure out how to access the ClearDB management portal. This is a very difficult thing to find.
+ClearDB is accessed via `https://www.cleardb.com/login.view` and login credentials available from Mahendra or Steve
 
 
 [Azure portal]: https://ms.portal.azure.com
