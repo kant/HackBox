@@ -40,13 +40,16 @@ See the [production][] docs for more information on gaining access and setting u
 Deploys are done with a simple Git push:
 
 ```sh
-$ git push production master
+$ git push production master production:master
 ```
 
 It's a secondary goal to make it configured to the point where it could be deployed by anybody from GitHub using a [Deploy to Azure button](http://www.bradygaster.com/post/the-deploy-to-azure-button).
 
 The deployed API is available at:
 https://hackbox-api.azurewebsites.net/documentation
+
+The staging API is available at:
+https://hackbox-api-stage.azurewebsites.net/documentation
 
 Production logs are available:
 https://hackbox-api.scm.azurewebsites.net/api/vfs/LogFiles/Application/index.html
