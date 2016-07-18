@@ -82,7 +82,7 @@ export const validate = function (token, next) {
       if (verifyResult) {
         // verify issuer, clientId (app) and user
         loginCache.put(token, verifyResult, () => {
-          return next("uncached", true, cleanCredentials(verifyResult));
+          return next(null, true, cleanCredentials(verifyResult));
         });
       } else {
         return next(null, false, null);
