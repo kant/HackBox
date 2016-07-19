@@ -1,8 +1,10 @@
 /*eslint no-invalid-this: 0, camelcase: [2, {"properties": "never"}] */
+import aad from "azure-ad-jwt-mod";
 import BearerAuthorization from "hapi-auth-bearer-simple";
 import Boom from "boom";
-import aad from "azure-ad-jwt-mod";
-import { credentials } from "../data/mock-data";
+import crypto from "crypto";
+import { credentials as mockCredentials} from "../data/mock-data";
+import db from "../db-connection";
 
 const cleanCredentials = (credsObject) => {
   return {
@@ -13,6 +15,53 @@ const cleanCredentials = (credsObject) => {
     id: credsObject.oid,
     scope: credsObject.roles
   };
+};
+
+const loginCache = {
+  _CACHE_TIME: 59 * 60 * 1000, // 59 minutes, don't accidentally exceed a token's hour lifetime
+  _cache: {},
+
+  put: (authToken, credentials, cb) => {
+    const hash = crypto.createHash("md5").update(authToken).digest("hex");
+    const expires = credentials.exp;
+    loginCache._cache[hash] = {
+      credentials,
+      expires
+    };
+    credentials = JSON.stringify(credentials);
+    const rawQuery =
+      [`INSERT INTO logins values('${hash}', '${credentials}', ${expires})`,
+       `ON DUPLICATE KEY UPDATE expires = ${expires};`].join(" ");
+    return db.raw(rawQuery).then(() => {
+      cb(null);
+    });
+  },
+
+  get: (authToken, cb) => {
+    const hash = crypto.createHash("md5").update(authToken).digest("hex");
+    const cached = loginCache._cache[hash];
+    const now = Date.now() / 1000 | 0;
+    if (cached && cached.expires > now) {
+      return cb(null, cached.credentials);
+    }
+    return db("logins").
+      select(["credentials", "expires"]).where({token_hash: hash}).then((result) => {
+        if (result[0]) {
+          const expires = result[0].expires;
+          if (expires < now) {
+            return cb("Expired");
+          }
+          const credentials = JSON.parse(result[0].credentials);
+
+          loginCache._cache[hash] = {
+            expires,
+            credentials
+          };
+          return cb(null, credentials);
+        }
+        return cb("No cache hits");
+      });
+  }
 };
 
 export const validate = function (token, next) {
@@ -34,20 +83,27 @@ export const validate = function (token, next) {
     so that this only works in TEST mode.
 
   */
-
   if (true) { // eslint-disable-line
     if (token === "super" || token === "regular" || token === "regular2") {
-      return next(null, true, cleanCredentials(credentials[token]));
+      return next(null, true, cleanCredentials(mockCredentials[token]));
     }
   }
 
-  aad.verify(token, null, (err, result) => {
-    if (result) {
-      // verify issuer, clientId (app) and user
-      return next(null, true, cleanCredentials(result));
-    } else {
-      return next(null, false, null);
+  loginCache.get(token, (getErr, getResult) => {
+    if (!getErr && getResult) {
+      return next(null, true, cleanCredentials(getResult));
     }
+
+    aad.verify(token, null, (verifyErr, verifyResult) => {
+      if (verifyResult) {
+        // verify issuer, clientId (app) and user
+        loginCache.put(token, verifyResult, () => {
+          return next(null, true, cleanCredentials(verifyResult));
+        });
+      } else {
+        return next(null, false, null);
+      }
+    });
   });
 };
 
