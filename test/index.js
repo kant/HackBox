@@ -11,7 +11,8 @@ require("./user-search");
 require("./hackathon-search");
 require("./awards");
 require("./award-categories");
-require("./auth");
+// Running this requires a valid auth token <1hr old saved as TOKEN at project route
+// require("./auth");
 
 // run this last to shut down the server
 // and the DB connection so it ends cleanly
