@@ -10,7 +10,7 @@ const register = function (server, options, next) {
     path: "/hackathons/{hackathonId}/project-batch/{projectIds}",
     config: {
       description: "Fetch details about multiple projects",
-      tags: ["api"],
+      tags: ["api", "detail", "batch", "hackbot"],
       handler(request, reply) {
         const { hackathonId, projectIds } = request.params;
         const query = db("projects")
@@ -34,7 +34,7 @@ const register = function (server, options, next) {
     path: "/user-batch/{userIds}",
     config: {
       description: "Fetch details multiple users",
-      tags: ["api", "detail"],
+      tags: ["api", "detail", "batch", "hackbot"],
       handler(request, reply) {
         const { userIds } = request.params;
 
