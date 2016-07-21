@@ -177,6 +177,14 @@ export const ensureProject = (hackathonId, id, opts = {
   });
 };
 
+export const getProjects = (hackathonId, ids) => {
+  const projectQuery = client("projects")
+    .select("projects.*")
+    .whereIn("projects.id", ids);
+
+  return projectQuery;
+};
+
 export const ensureComment = (projectId, id, opts = {checkOwner: false}) => {
   return client("comments").where({id}).then((rows) => {
     const comment = rows[0];
