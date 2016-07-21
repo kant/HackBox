@@ -41,6 +41,7 @@ export const challenge = Joi.string().valid(executiveChallenges).empty("");
 export const challengeArray = Joi.array().items(challenge)
 .description("Array of one or more Executive Challenges");
 export const idArray = Joi.array().items(id);
+export const stringIdArray = Joi.array().items(stringId);
 
 /*
   Pagination
