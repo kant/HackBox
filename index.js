@@ -20,6 +20,7 @@ import DocumentationRoutes from "./routes/documentation";
 import AwardsRoutes from "./routes/awards";
 import AwardCategoriesRoutes from "./routes/award-categories";
 import ReportRoutes from "./routes/reports";
+import HackbotRoutes from "./routes/hackbot";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
@@ -90,6 +91,7 @@ server.register([
   AwardsRoutes,
   AwardCategoriesRoutes,
   ReportRoutes,
+  HackbotRoutes,
   ExpandMetaPlugin
 ], (err) => {
   if (err) {

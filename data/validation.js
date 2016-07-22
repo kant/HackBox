@@ -40,6 +40,8 @@ export const focusArray = Joi.array().items(Joi.string())
 export const challenge = Joi.string().valid(executiveChallenges).empty("");
 export const challengeArray = Joi.array().items(challenge)
 .description("Array of one or more Executive Challenges");
+export const idArray = Joi.array().items(optionalId).required();
+export const stringIdArray = Joi.array().items(stringId).required();
 
 /*
   Pagination
