@@ -265,15 +265,12 @@ export const paginate = (query, {limit, offset}) => {
   // delete any specific columns mentioned by the query for our count query
   // otherwise we can create a query that MySQL doesn't consider to be valid
   // when we add the `.count()` to it.
-
-  const newStatements = [];
-  countQuery._statements.forEach((statement) => {
-    if (statement.grouping !== "columns") {
-      newStatements.push(statement);
+  countQuery._statements.some((statement, index) => {
+    if (statement.grouping === "columns") {
+      countQuery._statements.splice(index, 1);
+      return true;
     }
   });
-  countQuery._statements = newStatements;
-
   return Promise.all([
     countQuery.count(),
     query
