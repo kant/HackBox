@@ -69,7 +69,8 @@ const register = function (server, options, next) {
           video_type: Joi.string(),
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
-            "tagline", "owner_alias"),
+            "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
+            "vote_count_3"),
           sort_direction: sortDirection
         })
       }
