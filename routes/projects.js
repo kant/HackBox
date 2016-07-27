@@ -2,7 +2,7 @@
 import Boom from "boom";
 import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
-  sortDirection, arrayOfStrings } from "../data/validation";
+  sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
   addProjectMembersToPagination, addProjectUrlsToPagination,
@@ -298,6 +298,59 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "POST",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
+    config: {
+      description: "Submit a vote for this project in the given category",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, projectId} = request.params;
+        const voteCategory = request.payload.vote_category;
+        const oid = request.userId();
+        const vote = {
+          oid,
+          hackathon_id: hackathonId,
+          project_id: projectId,
+          vote_category: voteCategory
+        };
+
+        const response = db.transaction((trx) => {
+          return trx("votes")
+            .insert(vote)
+            .then(() => {
+              const colName = `vote_count_${voteCategory}`;
+              return trx("projects")
+                .increment(colName, 1)
+                .where({id: projectId})
+                .then(() => {
+                  return request.generateResponse(vote).code(201);
+                });
+            },
+            (err) => {
+              if (err.code === "ER_DUP_ENTRY") {
+                return request.generateResponse(["Duplicate vote ", JSON.stringify(vote)].join(""))
+                .code(409);
+              } else {
+                return request.generateResponse(err).code(503);
+              }
+            });
+        });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id
+        },
+        payload: {
+          vote_category: voteCategoryId
         }
       }
     }

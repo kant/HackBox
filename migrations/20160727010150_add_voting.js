@@ -7,7 +7,7 @@ exports.up = (knex) => {
       t.integer("hackathon_id").notNull().unsigned().references("hackathons.id");
       t.integer("project_id").notNull().unsigned().references("projects.id");
       t.integer("vote_category").notNull().unsigned();
-      t.primary(["oid", "hackathon_id", "project_id", "vote_category"])
+      t.primary(["oid", "hackathon_id", "project_id", "vote_category"]);
     })
     .table("projects", (t) => {
       t.integer("vote_count_0").notNull().unsigned().defaultTo(0);
