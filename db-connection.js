@@ -294,7 +294,7 @@ export const projectSearch = (queryObj) => {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
     has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
-    participant_name, video_type
+    participant_name, video_type, has_votes
   } = queryObj;
 
   const query = client("projects")
@@ -445,6 +445,16 @@ export const projectSearch = (queryObj) => {
         .from("members")
         .join("users", "users.id", "members.user_id")
         .where("users.name", "like", `%${participant_name}%`);
+    });
+  }
+
+  if (has_votes && has_votes.length) {
+    query.where(function () {
+      has_votes.forEach((voteCategory, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        const colName = `projects.vote_count_${voteCategory}`;
+        this[fnName](colName, ">", 0);
+      });
     });
   }
 
