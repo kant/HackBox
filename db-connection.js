@@ -1076,3 +1076,18 @@ export const getHackathonReport = (queryObj) => {
     .where({"participants.hackathon_id": queryObj.hackathon_id});
   return query;
 };
+
+
+export const addUserVotesToProject = (project, userId) => {
+  const userVotes = {0: false, 1: false, 2: false, 3: false};
+  return client("votes")
+    .select("vote_category")
+    .where({oid: userId, project_id: project.id})
+    .then((votes) => {
+      for (const vote of votes) {
+        userVotes[vote.vote_category] = true;
+      }
+      project.user_votes = userVotes;
+      return project;
+    });
+};

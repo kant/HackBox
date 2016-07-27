@@ -6,7 +6,8 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
   addProjectMembersToPagination, addProjectUrlsToPagination,
-  addProjectTags, addTagsToPagination, addOrUpdateProjectTags
+  addProjectTags, addTagsToPagination, addOrUpdateProjectTags,
+  addUserVotesToProject
 } from "../db-connection";
 import Joi from "joi";
 
@@ -284,12 +285,15 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const userId = request.userId();
 
         const response = ensureProject(hackathonId, projectId, {
           allowDeleted: request.isSuperUser(),
           includeOwner: true
         }).then((project) => {
           return addProjectTags(project);
+        }).then((project) => {
+          return addUserVotesToProject(project, userId);
         });
 
         reply(response);
