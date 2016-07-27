@@ -278,16 +278,11 @@ export const paginate = (query, {limit, offset}) => {
       .offset(offset)
   ]).then((res) => {
     const data = res[1];
-    // In very rare occasions (so far just user search with hackathon_id where has_project = false)
-    // the count query may return an empty set instead of the correct value.
-    // This is thanks to `having has_project=false`
-    // If an accurate count is important in that use case, we'll need to wrap the original query as
-    // an aliased subquery
     return {
       offset,
       limit,
       result_count: data.length,
-      total_count: res [0][0] ? res[0][0]["count(*)"] : data.length,
+      total_count: res[0][0]["count(*)"],
       data
     };
   });
@@ -549,16 +544,49 @@ export const userSearch = (queryObj) => {
   let query;
 
   if (hackathon_id) {
-    query = client("users")
-      .distinct("users.*")
-      .select("participants.json_participation_meta", "participants.joined_at")
-      .select(
-        knex.raw([
-          "(select case when exists (select * from members where members.user_id = users.id",
-          `and members.hackathon_id = ${hackathon_id}) then true else false end) as has_project`
-        ].join(" ")))
-      .innerJoin("participants", "participants.user_id", "users.id")
-      .where("participants.hackathon_id", hackathon_id);
+    /*
+      It would be nice to have this all written using knex's query building
+      capabilities, but I had trouble doing so.
+
+      The important thing to understand is that query creates a derived
+      table that contains user data with two additional fields:
+        - the related `participants.json_participation_meta`
+        - a derived field called 'has_project` that is coerced into a boolean
+
+      The reason it's written as `client.select().joinRaw(` rather than just
+      using `client.raw()` is because the latter doesn't allow for modifying
+      the query as we do later. For example, when using knex.raw `query.where`
+      isn't a function.
+
+      Also, please note that `has_project` only works when passing a `hackathon_id`
+      to scope it. This is enforced at the route level.
+    */
+    let rawQuery = [
+      "select distinct users.*, participants.json_participation_meta, participants.joined_at,",
+      "(select case when exists",
+      "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
+      "then true else false end)",
+      "as has_project from users",
+      "inner join participants on participants.user_id = users.id",
+      "where participants.hackathon_id = ?"
+    ].join(" ");
+    const rawQueryVars = [hackathon_id, hackathon_id];
+
+    /*
+      We need to sort by joined_at in the query that includes participants
+      since this query is used to create a derived table from which we have
+      no reference to the participants table.
+
+      We have to concat the orderByDirection because `joinRaw()` turns the
+      direction into a string like `'asc'`if we pass it as a ?. Instead, let's
+      just double check the value is legit even though it should have already
+      been verified in the route.
+    */
+    if (orderByCol === "joined_at" && _.includes(["asc", "desc"], orderByDirection)) {
+      rawQuery += ` order by participants.joined_at ${orderByDirection}`;
+    }
+
+    query = client.select().joinRaw(`from (${rawQuery}) as derived`, rawQueryVars);
   } else {
     query = client("users");
   }
@@ -701,7 +729,7 @@ export const userSearch = (queryObj) => {
     query.whereIn("country", country);
   }
   if (has_project === true || has_project === false) {
-    query.having("has_project", "=", has_project);
+    query.andWhere("has_project", has_project);
   }
 
   // order by joined_at happens in the hackathon rawQuery above
@@ -709,9 +737,7 @@ export const userSearch = (queryObj) => {
     query.orderByRaw(`given_name ${orderByDirection}, family_name ${orderByDirection}`);
   } else if (orderByCol === "family_name") {
     query.orderByRaw(`family_name ${orderByDirection}, given_name ${orderByDirection}`);
-  } else if (orderByCol === "joined_at") {
-    query.orderByRaw(`participants.joined_at ${orderByDirection}`);
-  } else {
+  } else if (orderByCol !== "joined_at") {
     query.orderByRaw(`${orderByCol} ${orderByDirection}`);
   }
 
