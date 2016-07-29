@@ -2,11 +2,12 @@
 import Boom from "boom";
 import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
-  sortDirection, arrayOfStrings } from "../data/validation";
+  sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch,
   addProjectMembersToPagination, addProjectUrlsToPagination,
-  addProjectTags, addTagsToPagination, addOrUpdateProjectTags
+  addProjectTags, addTagsToPagination, addOrUpdateProjectTags,
+  addUserVotesToProject
 } from "../db-connection";
 import Joi from "joi";
 
@@ -66,9 +67,11 @@ const register = function (server, options, next) {
           venue: arrayOfStrings,
           participant_name: Joi.string(),
           video_type: Joi.string(),
+          has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
-            "tagline", "owner_alias"),
+            "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
+            "vote_count_3"),
           sort_direction: sortDirection
         })
       }
@@ -284,12 +287,15 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
+        const userId = request.userId();
 
         const response = ensureProject(hackathonId, projectId, {
           allowDeleted: request.isSuperUser(),
           includeOwner: true
         }).then((project) => {
           return addProjectTags(project);
+        }).then((project) => {
+          return addUserVotesToProject(project, userId);
         });
 
         reply(response);
@@ -298,6 +304,59 @@ const register = function (server, options, next) {
         params: {
           hackathonId: id,
           projectId: id
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "POST",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
+    config: {
+      description: "Submit a vote for this project in the given category",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, projectId} = request.params;
+        const voteCategory = request.payload.vote_category;
+        const oid = request.userId();
+        const vote = {
+          oid,
+          hackathon_id: hackathonId,
+          project_id: projectId,
+          vote_category: voteCategory
+        };
+
+        const response = db.transaction((trx) => {
+          return trx("votes")
+            .insert(vote)
+            .then(() => {
+              const colName = `vote_count_${voteCategory}`;
+              return trx("projects")
+                .increment(colName, 1)
+                .where({id: projectId})
+                .then(() => {
+                  return request.generateResponse(vote).code(201);
+                });
+            },
+            (err) => {
+              if (err.code === "ER_DUP_ENTRY") {
+                return request.generateResponse(["Duplicate vote ", JSON.stringify(vote)].join(""))
+                .code(409);
+              } else {
+                return request.generateResponse(err).code(503);
+              }
+            });
+        });
+
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id
+        },
+        payload: {
+          vote_category: voteCategoryId
         }
       }
     }
