@@ -71,7 +71,7 @@ const register = function (server, options, next) {
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
             "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
-            "vote_count_3"),
+            "vote_count_3", "video_views"),
           sort_direction: sortDirection
         })
       }

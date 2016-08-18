@@ -468,6 +468,8 @@ export const projectSearch = (queryObj) => {
   const orderByDirection = sort_direction || "desc";
   if (sort_col === "owner_alias") {
     query.orderBy(`users.alias`, orderByDirection);
+  } else if (sort_col === "video_views") {
+    query.orderBy(`video_views.views`, orderByDirection);
   } else {
     query.orderBy(`projects.${orderByCol}`, orderByDirection);
   }

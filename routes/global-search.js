@@ -51,7 +51,8 @@ const register = function (server, options, next) {
           participant_name: Joi.string(),
           video_type: Joi.string(),
           sort_col: Joi.any()
-          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count"),
+          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
+            "video_views"),
           sort_direction: sortDirection
         })
       }
