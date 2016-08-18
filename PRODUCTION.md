@@ -44,7 +44,7 @@ $ NODE_ENV=staging npm run migrate
 Deploy by pushing to the staging Git remote from the production branch.
 
 ```sh
-$ git push staging production production:master
+$ git push staging production:master
 ```
 
 This will take several minutes, and the staging API will remain unresponsive for a couple of minutes after the push appears to have completed. Hard refresh until the staging documentation page loads.
