@@ -141,6 +141,9 @@ export const ensureProject = (hackathonId, id, opts = {
     .select("projects.*", likesCount, sharesCount, viewsCount)
     .where({"projects.id": id});
 
+  projectQuery.leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+    .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
+
   if (opts.includeOwner) {
     projectQuery
       .select("users.name as owner_name")
@@ -457,6 +460,9 @@ export const projectSearch = (queryObj) => {
       });
     });
   }
+
+  query.leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+    .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
 
   const orderByCol = sort_col || "created_at";
   const orderByDirection = sort_direction || "desc";
