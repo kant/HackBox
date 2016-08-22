@@ -956,7 +956,9 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
     const projectsQuery = client("projects")
       .innerJoin("users", "projects.owner_id", "=", "users.id")
       .select("projects.*", "users.name as owner_name")
-      .whereIn("projects.id", projectIds);
+      .whereIn("projects.id", projectIds)
+      .leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+      .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
 
     // all stats are grouped by project_id for augmenting project results
     const statQuery = (table) => {
