@@ -1,8 +1,8 @@
 # Production
 
-The API is deployed on the Azure platform with ClearDB as the MySQL provider.
+The API is deployed on the Azure platform backed by a MySQL VM.  Access to the [Azure portal](https://ms.portal.azure.com) (https://ms.portal.azure.com) is required.
 
-Managing the app requires at minimum an `@outlook.com` address and access to the API's resources in the [Azure portal][].
+Managing the app requires at minimum an `@outlook.com` address and access to the API's resources in the [Azure portal](https://ms.portal.azure.com).
 Front-end access to the site and ownership of Azure resources requires an `@microsoft.com` email address, followed by inclusion in the site's ACL and granting of owner privileges in Azure.
 
 
@@ -15,39 +15,62 @@ https://signup.live.com/
 
 ## Setting up the production Git remote
 
-1. From the Azure Portal, click on the "hackbox-api" resource.
-2. Find and click on "Properties" in the rightmost panel under "General".
-3. Copy the "GIT URL"
-4. Set up a git remote locally from the root of your project with:
+1. From the [Azure Portal](https://ms.portal.azure.com), click on the `hackbox-api` resource.
+2. Under "Deployment Slots", select the `hackbox-api-staging` deployment slot.
+3. Under "Deployment credentials", ensure that a username and password are set (and that you know them). If needed, you can change the username and password, but be aware that it will break anyone else's extant git remote.
+4. Find and click on "Properties" in the rightmost panel under "General".
+4. Copy the "GIT URL"
+5. Set up a git remote locally from the root of your project with:
 
 ```sh
-$ git remote add production COPIED_GIT_URL
+$ git remote add staging COPIED_GIT_URL
 ```
 
 ## Deploying to Production
 
-Deploy by pushing to the production Git remote.
+First, commit approved changes to `master`.
 
+When preparing to deploy, merge needed commits from `master` to `production`.
+
+If migrations need to be run, populate your `config/production.json` and `config/staging.json` files with the appropriate credentials. The DB credentials should be the same, with the **important exception** of the DB name:
+- **Staging DB**: `hackboxstage`
+- **Production DB**: `hackboxdb`
+
+First, run any migrations on staging:
 ```sh
-$ git push production master production:master
+$ NODE_ENV=staging npm run migrate
 ```
 
-You'll see a lot of errors and it will take a long time, but trust it will happen and it'll eventually finish.
+Deploy by pushing to the staging Git remote from the production branch.
 
-If you have any migrations to run, update your `config/production.json` file temporarily with the production DB credentials and run:
+```sh
+$ git push staging production:master
+```
 
+This will take several minutes, and the staging API will remain unresponsive for a couple of minutes after the push appears to have completed. Hard refresh until the staging documentation page loads.
+
+Verify all changes in staging at https://hackbox-api-staging.azurewebsites.net/documentation and/or through the staging front end.  If all looks good, you're ready to go to production!
+
+If migrations were needed, run them on the prod DB:
 ```sh
 $ NODE_ENV=production npm run migrate
 ```
 
-Don't forget to undo any changes made to `config/production.json` afterwards to prevent saving DB credentials to Git.
+Next, from the [Azure Portal](https://ms.portal.azure.com), find the `hackbox-api` webapp once more. On the top of the Overview page, there is a Swap button. Click Swap, then click OK on the next pane to swap `production` and `staging`.  Changes should be available on prod within a minute, and with little or no downtime.
+If something goes wrong in this step, swapping `production` and `staging` again will restore the previous working version of the site. If you ran migrations on `production`, you'll have to manually back those out.
+
+After changes are again verified on the production API (https://hackbox-api.azurewebsites.net/documentation) or website (https://garagehackbox.azurewebsites.net/), and you are sure you won't need to revert to the previous version, push your code to the staging remote again to keep production and staging at parity.
+
+Congrats! You've pushed to production!
+Don't forget to undo any changes made to `config/production.json` and `config/staging.json` afterwards to prevent saving DB credentials to Git.
 
 
 ## Managing MySQL
 
-MySQL is managed via a ClearDB datastore. The production database is `hackboxdb`
+MySQL run on an Ubuntu VM in Azure. Login credentials available from Mahendra or Steve
+```sh
+$ ssh hackboxadmin@13.88.29.145 -P
+```
 
-ClearDB is accessed via `https://www.cleardb.com/login.view` and login credentials available from Mahendra or Steve
 
 
-[Azure portal]: https://ms.portal.azure.com
