@@ -19,7 +19,7 @@ export const textWithDefault = emptyText.default("");
 export const role = Joi.string().valid(participantTypes).empty("");
 export const roleArray = Joi.array().items(role)
   .description("Array of one or more valid participant types");
-export const customerType = Joi.string().valid(customerTypes).empty("");
+export const customerType = Joi.string().valid(customerTypes).not("");
 export const customerTypeArray = Joi.array().items(customerType)
   .description("Array of one or more valid customer types");
 export const neededExpertiseArray = Joi.array().items(Joi.string());
@@ -183,14 +183,14 @@ export const hackathon = newHackathon
   Project
 */
 const projectBase = {
-  owner_id: stringId,
-  video_id: optionalId,
   title: Joi.string().min(1).max(120),
   tagline: emptyString,
+  owner_id: stringId,
+  video_id: optionalId,
   status: emptyString,
   description: emptyTextLarge,
   image_url: url,
-  code_repo_url: stringWithDefault,
+  code_repo_url: url,
   prototype_url: url,
   supporting_files_url: url,
   inspiration: emptyTextLarge,
@@ -214,9 +214,9 @@ const projectBase = {
   customer_type: customerType,
   tags: arrayOfStrings,
   deleted: Joi.boolean(),
-  venue: Joi.string().max(255).trim().default(""),
-  executive_challenges: challengeArray.default([]),
-  video_type: Joi.string().max(255).trim().default("").allow(""),
+  venue: emptyString,
+  executive_challenges: challengeArray,
+  video_type: emptyString,
   meta
 };
 export const projectUpdate = Joi.object(projectBase);
@@ -243,16 +243,16 @@ export const newProject = Joi.object(projectBase)
     misc_focus: arrayOfStrings.default([]),
     other_focus: arrayOfStrings.default([]),
     needed_expertise: arrayOfStrings.default([]),
-    customer_type: customerType.default(""),
+    customer_type: customerType,
     tags: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
-    code_repo_url: stringWithDefault,
+    code_repo_url: urlWithDefault,
     prototype_url: urlWithDefault,
     supporting_files_url: urlWithDefault,
-    venue: projectBase.venue.default(""),
-    executive_challenges: challengeArray.default([]),
-    video_type: Joi.string().max(255).trim().default("").allow("")
+    venue: projectBase.venue,
+    executive_challenges: projectBase.executive_challenges,
+    video_type: projectBase.video_type
   });
 export const project = newProject.keys({id});
 
