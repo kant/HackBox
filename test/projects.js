@@ -34,7 +34,8 @@ const getProjectProps = (overrides) => {
     windows_focus: ["XP"],
     venue: "Microsoft Garage",
     executive_challenges: ["Artificial Intelligence (Harry Shum)"],
-    project_url: "https://garagehackbox.azurewebsites.net/hackathons/1/projects/1"
+    project_url: "https://garagehackbox.azurewebsites.net/hackathons/1/projects/1",
+    customer_type: "Consumers"
   };
   for (const key in overrides) {
     result[key] = overrides[key];
