@@ -141,7 +141,7 @@ export const ensureProject = (hackathonId, id, opts = {
     .select("projects.*", likesCount, sharesCount, viewsCount)
     .where({"projects.id": id});
 
-  projectQuery.leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+  projectQuery.leftJoin("video_views", "video_views.project_id", "=", "projects.id")
     .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
 
   if (opts.includeOwner) {
@@ -461,7 +461,7 @@ export const projectSearch = (queryObj) => {
     });
   }
 
-  query.leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+  query.leftJoin("video_views", "video_views.project_id", "=", "projects.id")
     .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
 
   const orderByCol = sort_col || "created_at";
@@ -957,7 +957,7 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
       .innerJoin("users", "projects.owner_id", "=", "users.id")
       .select("projects.*", "users.name as owner_name")
       .whereIn("projects.id", projectIds)
-      .leftJoin("video_views", "video_views.project_id",  "=", "projects.id")
+      .leftJoin("video_views", "video_views.project_id", "=", "projects.id")
       .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
 
     // all stats are grouped by project_id for augmenting project results
