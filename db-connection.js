@@ -297,7 +297,7 @@ export const projectSearch = (queryObj) => {
     hackathon_id, search, include_deleted, has_video, country,
     needed_roles, needed_expertise, product_focus, customer_type, has_member,
     has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
-    participant_name, video_type, has_votes
+    participant_name, video_type, has_votes, custom_categories
   } = queryObj;
 
   const query = client("projects")
@@ -457,6 +457,15 @@ export const projectSearch = (queryObj) => {
         const fnName = index === 0 ? "where" : "orWhere";
         const colName = `projects.vote_count_${voteCategory}`;
         this[fnName](colName, ">", 0);
+      });
+    });
+  }
+
+  if (custom_categories && custom_categories.length) {
+    query.where(function () {
+      custom_categories.forEach((category, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName](`projects.json_custom_categories`, "like", `%${category}%`);
       });
     });
   }

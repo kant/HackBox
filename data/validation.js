@@ -148,7 +148,8 @@ const hackathonBase = {
   show_judges: Joi.boolean(),
   show_rules: Joi.boolean(),
   show_schedule: Joi.boolean(),
-  meta
+  meta,
+  custom_categories: arrayOfStrings
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
@@ -166,7 +167,8 @@ export const newHackathon = Joi.object(hackathonBase)
     city: hackathonBase.org.default(""),
     meta: metaWithDefault,
     logo_url: urlWithDefault,
-    header_image_url: urlWithDefault
+    header_image_url: urlWithDefault,
+    custom_categories: arrayOfStrings.default([])
   });
 export const hackathon = newHackathon
   .keys({
@@ -217,7 +219,8 @@ const projectBase = {
   venue: emptyString,
   executive_challenges: challengeArray,
   video_type: emptyString,
-  meta
+  meta,
+  custom_categories: arrayOfStrings
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -252,7 +255,8 @@ export const newProject = Joi.object(projectBase)
     supporting_files_url: urlWithDefault,
     venue: projectBase.venue,
     executive_challenges: projectBase.executive_challenges,
-    video_type: projectBase.video_type
+    video_type: projectBase.video_type,
+    custom_categories: arrayOfStrings.default([])
   });
 export const project = newProject.keys({id});
 
