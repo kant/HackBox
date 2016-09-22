@@ -1,5 +1,5 @@
 /*eslint no-invalid-this: 0, camelcase: [2, {"properties": "never"}] */
-import aad from "azure-ad-jwt-mod";
+// import aad from "azure-ad-jwt-mod";
 import BearerAuthorization from "hapi-auth-bearer-simple";
 import Boom from "boom";
 import crypto from "crypto";
@@ -7,7 +7,7 @@ import { credentials as mockCredentials} from "../data/mock-data";
 import db from "../db-connection";
 
 // TODO hack
-const jsonwebtoken = require('jsonwebtoken');
+const jsonwebtoken = require("jsonwebtoken");
 
 const cleanCredentials = (credsObject) => {
   return {
@@ -99,16 +99,16 @@ export const validate = function (token, next) {
     // TODO hack
     return next(null, true, cleanCredentials(jsonwebtoken.decode(token)));
 
-    aad.verify(token, null, (verifyErr, verifyResult) => {
-      if (verifyResult) {
-        // verify issuer, clientId (app) and user
-        loginCache.put(token, verifyResult, () => {
-          return next(null, true, cleanCredentials(verifyResult));
-        });
-      } else {
-        return next(null, false, null);
-      }
-    });
+    // aad.verify(token, null, (verifyErr, verifyResult) => {
+    //   if (verifyResult) {
+    //     // verify issuer, clientId (app) and user
+    //     loginCache.put(token, verifyResult, () => {
+    //       return next(null, true, cleanCredentials(verifyResult));
+    //     });
+    //   } else {
+    //     return next(null, false, null);
+    //   }
+    // });
   });
 };
 
