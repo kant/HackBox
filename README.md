@@ -6,6 +6,16 @@ It's written in ES6 transpiled with Babel to allow full ES6 support. In order to
 
 ## Getting Started
 
++ Install [node](https://nodejs.org), version [4.2.1](https://nodejs.org/dist/v4.2.1/) or newer (note: `4.2.1` is the serverside node version we run with).
++ Install [mysql](https://dev.mysql.com/downloads/installer/)
++ From the project directory, run `npm install`
++ Modify [the development config](./config/development.json) to match your mysql database values (if needed)
++ From the project directory, run `npm start`
++ Visit http://localhost:3000/documentation from a browser
+
+
+## Troubleshooting
+
 Make sure MySQL is installed and running locally. If you use these settings for your local DB you won't have to mess with configs:
 
 ```json
@@ -17,17 +27,11 @@ Make sure MySQL is installed and running locally. If you use these settings for 
 }
 ```
 
-Once it's up and running you can run the server with:
+## Testing
 
-```
-npm install
-npm start
-open http://localhost:3000/documentation
-```
+> Note: Running the tests will seed the DB with test data.
 
-Running the tests will also seed the DB with test data.
-
-Run the tests with `npm test`.
+From the project directory, run the tests with `npm test`.
 
 Further information is available in the [development][] docs.
 
@@ -67,6 +71,9 @@ It's using Swagger UI which also includes a test client so you can query the API
 
 ![screenshot of docs page](https://cldup.com/1HYizp2fQc.png)
 
+## Database Documentation
+
+You can learn more about the database, [here](./DATABASE,md)
 
 ## Available Scripts
 
@@ -97,89 +104,6 @@ available via `npm run-script`:
 ```
 
 
-## Database diagram
-
-Created with [Mondraw](http://monodraw.helftone.com/) original file in `/graphics`
-
-```
-┌─────────────────────────────────┐   ┌───────────────────┐     ┌───────────────────┐
-│ projects                        │   │ hackathons        │     │ hackathon_admins  │
-├─────────────────────────────────┤   ├───────────────────┤    ╱├───────────────────┤╲
-│ id                              │   │ id                │  ┌──│ user_id           │──┐
-│ owner_id                        │   │ name              │  │ ╲│ hackathon_id      │╱ │
-│ hackathon_id                    │   │ slug              │  │  └───────────────────┘  │
-│ title                           │   │ tagline           │  │                         │
-│ tagline                         │   │ description       │  │  ┌───────────────────┐  │
-│ status                          │   │ judges            │  │  │ participants      │  │
-│ description                     │   │ rules             │  │ ╱├───────────────────┤╲ │
-│ image_url                       │   │ schedule          │  ├──│ user_id           │──┤
-│ code_repo_url                   │   │ quick_links       │  │ ╲│ hackathon_id      │╱ │
-│ prototype_url                   │   │ resources         │  │  └───────────────────┘  │
-│ supporting_files_url            │   │ logo_url          │  │                         │
-│ inspiration                     │   │ header_image_url  │  │  ┌───────────────────┐  │
-│ how_it_will_work                │   │ start_at          │  │  │ users             │  │
-│ needs_hackers                   │ ┌┼│ end_at            │┼─┘  ├───────────────────┤  │
-│ writing_code                    │ │ │ org               │     │ id                │  │
-│ existing                        │╲│ │ city              │     │ name              │  │
-│ external_customers              │─┘ │ country           │     │ family_name       │  │
-│ needed_role                     │╱  │ color_scheme      │     │ given_name        │  │
-│ json_needed_expertise           │   │ created_at        │     │ email             │  │
-│ product_focus                   │   │ updated_at        │     │ bio               │  │
-│ json_windows_focus              │   │ show_name         │     │ country           │  │
-│ json_devices_focus              │   │ show_judges       │     │ city              │  │
-│ json_dynamics_focus             │   │ show_rules        │     │ created_at        │  │
-│ json_third_party_platforms_focus│   │ show_schedule     │     │ updated_at        │┼─┘
-│ json_cloud_enterprise_focus     │   │ deleted           │     │ deleted           │
-│ json_consumer_services_focus    │   │ is_public         │     │ json_working_on   │
-│ json_office_focus               │   │ is_published      │     │ json_expertise    │
-│ json_misc_focus                 │   │ json_meta         │     │ primary_role      │
-│ json_other_focus                │   └───────────────────┘     │ product_focus     │
-│ customer_type                   │             ┼               │ profession        │
-│ json_tags                       │    ┌────────┤               │ discipline        │
-│ video_id                        │    │        │               │ alias             │
-│ created_at                      │    │        └────────┐      │ json_profile      │
-│ updated_at                      │    │                 │      │ json_meta         │
-│ deleted                         │    │                 │      │ json_interests    │
-└─────────────────────────────────┘    │                ╱│╲     └───────────────────┘
-                 ┼                     │       ┌───────────────────┐      ┼
-             ┌───┴────────────┐        │       │ members           │      │
-            ╱│╲               │        │       ├───────────────────┤      │
-┌─────────────────────────┐   │        │      ╱│ user_id           │╲     │
-│ awards                  │   └────────┼──┬────│ project_id        │──────┤
-├─────────────────────────┤            │  │   ╲│ hackathon_id      │╱     │
-│ id                      │            │  │    │ joined_at         │      │
-│ hackathon_id            │            │  │    └───────────────────┘      │
-│ project_id              │            │  │    ┌───────────────────┐      │
-│ name                    │            │  │    │ comments          │      │
-│ json_meta               │            │  │    ├───────────────────┤      │
-└─────────────────────────┘            │  │   ╱│ id                │╲     │
-             ┼                         │  ├────│ user_id           │──────┤
-             │                         │  │   ╲│ project_id        │╱     │
-            ╱│╲                        │  │    │ body              │      │
-┌─────────────────────────┐            │  │    │ created_at        │      │
-│ awards_award_categories │            │  │    └───────────────────┘      │
-├─────────────────────────┤            │  │    ┌───────────────────┐      │
-│ award_id                │            │  │    │ likes             │      │
-│ award_category_id       │            │  │   ╱├───────────────────┤╲     │
-└─────────────────────────┘            │  ├────│ user_id           │──────┤
-            ╲│╱                        │  │   ╲│ project_id        │╱     │
-             │                         │  │    │ created_at        │      │
-             ┼                         │  │    └───────────────────┘      │
-┌─────────────────────────┐            │  │    ┌───────────────────┐      │
-│ award_categories        │            │  │    │ shares            │      │
-├─────────────────────────┤            │  │   ╱├───────────────────┤╲     │
-│ id                      │╲           │  ├────│ user_id           │──────┤
-│ hackathon_id            │────────────┘  │   ╲│ project_id        │╱     │
-│ parent_id               │╱              │    │ created_at        │      │
-│ name                    │               │    └───────────────────┘      │
-│                         │               │    ┌───────────────────┐      │
-└─────────────────────────┘               │    │ views             │      │
-                                          │   ╱├───────────────────┤╲     │
-                                          └────│ user_id           │──────┘
-                                              ╲│ project_id        │╱
-                                               │ created_at        │
-                                               └───────────────────┘
-```
 
 [development]: ./DEVELOPMENT.md
 [production]: ./PRODUCTION.md
