@@ -6,7 +6,7 @@ It's written in ES6 transpiled with Babel to allow full ES6 support. In order to
 
 ## Getting Started
 
-Make sure MySQL is installed and running locally. If you use these settings for your local DB you won't have to mess with configs:
+Make sure MySQL is installed and running locally, then create a database called `hackbox`. If you use these settings for your local DB you won't have to mess with configs:
 
 ```json
 {
@@ -25,7 +25,7 @@ npm start
 open http://localhost:3000/documentation
 ```
 
-Running the tests will also seed the DB with test data.
+Running the tests will migrate the `hackbox` database to the latest schema, and also seed the DB with test data.
 
 Run the tests with `npm test`.
 
