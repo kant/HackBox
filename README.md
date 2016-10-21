@@ -74,7 +74,7 @@ It's using Swagger UI which also includes a test client so you can query the API
 
 ## Database Documentation
 
-You can learn more about the database, [here](./DATABASE,md)
+The best source of truth for the database is to inspect the schema directly, and/or consult the migrations.
 
 ## Available Scripts
 
