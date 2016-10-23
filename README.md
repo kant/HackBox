@@ -6,7 +6,6 @@ It's written in ES6 transpiled with Babel to allow full ES6 support. In order to
 
 ## Getting Started
 
-<<<<<<< HEAD
 + Install [node](https://nodejs.org), version [4.2.1](https://nodejs.org/dist/v4.2.1/) or newer (note: `4.2.1` is the serverside node version we run with).
 + Install [mysql](https://dev.mysql.com/downloads/installer/)
 + From the project directory, run `npm install`
