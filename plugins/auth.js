@@ -43,7 +43,7 @@ const loginCache = {
   get: (authToken, cb) => {
     const hash = crypto.createHash("md5").update(authToken).digest("hex");
     const cached = loginCache._cache[hash];
-    const now = Date.now() / 1000 | 0;
+    const now = Date.now() / 1000 || 0;
     if (cached && cached.expires > now) {
       return cb(null, cached.credentials);
     }
