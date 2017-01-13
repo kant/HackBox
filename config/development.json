@@ -2,10 +2,11 @@
   "db": {
     "client": "mysql",
     "connection": {
-      "database": "hackbox",
-      "host": "localhost",
-      "user": "root",
-      "password": "pass"
+      "database": "$DB_CONNECTION_DATABASE",
+      "host": "$DB_CONNECTION_HOST",
+      "user": "$DB_CONNECTION_USER",
+      "password": "$DB_CONNECTION_PASSWORD",
+      "port": "$DB_CONNECTION_PORT"
     },
     "pool": {
       "min": 0
