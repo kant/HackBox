@@ -70,7 +70,8 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   const mainQuery = client("hackathons")
     .select("*", participantCount, projectCount)
     .from("hackathons")
-    .where(whereClause);
+    .where("organization_id", 1);
+    // .where(whereClause);
 
   const adminQuery = client("users")
     .select("users.*")
