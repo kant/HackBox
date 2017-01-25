@@ -5,6 +5,8 @@ import Boom from "boom";
 import crypto from "crypto";
 import { credentials as mockCredentials} from "../data/mock-data";
 import db from "../db-connection";
+import jwt from "jsonwebtoken";
+
 
 // TODO hack
 const jsonwebtoken = require("jsonwebtoken");
@@ -68,48 +70,46 @@ const loginCache = {
 };
 
 export const validate = function (token, next) {
-  // to enable simpler testing since we can't programmatically
-  // generate valid tokens for multiple users
 
-  /*
+  jwt.verify(token, 'superSecret', function(err, decoded) {
 
-    WARNING!
-
-    BEFORE GOING TO PRODUCTION YOU MUST REMOVE THIS!
-
-    the `if (true)`
-
-    should be replaced with
-
-    `if (process.env.NODE_ENV === "test") {`
-
-    so that this only works in TEST mode.
-
-  */
-  if (true) { // eslint-disable-line
-    if (token === "super" || token === "regular" || token === "regular2") {
-      return next(null, true, cleanCredentials(mockCredentials[token]));
+    if (err) {
+      return next(err, false);
+    } else if (decoded.data){
+      return next(null, true, JSON.parse(decoded.data));
+    } else {
+      return next(null, true, {});
     }
-  }
 
-  loginCache.get(token, (getErr, getResult) => {
-    if (!getErr && getResult) {
-      return next(null, true, cleanCredentials(getResult));
-    }
-    // TODO hack
-    return next(null, true, cleanCredentials(jsonwebtoken.decode(token)));
-
-    // aad.verify(token, null, (verifyErr, verifyResult) => {
-    //   if (verifyResult) {
-    //     // verify issuer, clientId (app) and user
-    //     loginCache.put(token, verifyResult, () => {
-    //       return next(null, true, cleanCredentials(verifyResult));
-    //     });
-    //   } else {
-    //     return next(null, false, null);
-    //   }
-    // });
   });
+
+
+
+
+  // if (true) { // eslint-disable-line
+  //   if (token === "super" || token === "regular" || token === "regular2") {
+  //     return next(null, true, cleanCredentials(mockCredentials[token]));
+  //   }
+  // }
+  //
+  // loginCache.get(token, (getErr, getResult) => {
+  //   if (!getErr && getResult) {
+  //     return next(null, true, cleanCredentials(getResult));
+  //   }
+  //   // TODO hack
+  //   return next(null, true, cleanCredentials(jsonwebtoken.decode(token)));
+  //
+  //   // aad.verify(token, null, (verifyErr, verifyResult) => {
+  //   //   if (verifyResult) {
+  //   //     // verify issuer, clientId (app) and user
+  //   //     loginCache.put(token, verifyResult, () => {
+  //   //       return next(null, true, cleanCredentials(verifyResult));
+  //   //     });
+  //   //   } else {
+  //   //     return next(null, false, null);
+  //   //   }
+  //   // });
+  // });
 };
 
 const register = function (plugin, options, next) {

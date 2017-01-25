@@ -43,7 +43,10 @@ const register = function (server, options, next) {
             return reply(Boom.forbidden(`Can only request your own unpublished unless admin`));
           }
         }
-
+        
+        if (request.auth.credentials && request.auth.credentials.organization_id) {
+          request.query.organization_id = request.auth.credentials.organization_id;
+        }
         const response = hackathonSearch(request.query);
 
         reply(paginate(response, {limit, offset}));
