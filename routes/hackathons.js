@@ -28,7 +28,6 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { limit, offset } = request.query;
         const requestorId = request.userId();
-        console.log('userId::: ', requestorId);
         const adminsContain = request.query.admins_contain;
 
         // allow users to pass `me` instead of full user ID
