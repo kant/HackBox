@@ -70,8 +70,7 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   const mainQuery = client("hackathons")
     .select("*", participantCount, projectCount)
     .from("hackathons")
-    .where("organization_id", 1);
-    // .where(whereClause);
+    .where(whereClause);
 
   const adminQuery = client("users")
     .select("users.*")
@@ -797,10 +796,13 @@ export const hackathonSearch = (queryObj) => {
     "hackathons.deleted",
     "hackathons.is_public",
     "hackathons.is_published",
-    "hackathons.json_meta"
+    "hackathons.json_meta",
+    "hackathons.organization_id"
   ];
-
+  
   const query = client.select(columns).from("hackathons");
+
+  query.where({organization_id: 2});
 
   if (search) {
     query.where(function () {
@@ -811,7 +813,7 @@ export const hackathonSearch = (queryObj) => {
   }
 
   if (!include_unpublished) {
-    query.andWhere({is_published: true});
+    query.andWhere({is_published: true})
   }
 
   if (!include_deleted) {
