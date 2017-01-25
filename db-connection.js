@@ -774,7 +774,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, participants_contain, search, sort_col, sort_direction
+    admins_contain, participants_contain, search, sort_col, sort_direction, organization_id
   } = queryObj;
 
   // we don't include all fields
@@ -799,10 +799,12 @@ export const hackathonSearch = (queryObj) => {
     "hackathons.json_meta",
     "hackathons.organization_id"
   ];
-  
+
   const query = client.select(columns).from("hackathons");
 
-  query.where({organization_id: 2});
+  if (organization_id) {
+    query.where({organization_id: organization_id});
+  }
 
   if (search) {
     query.where(function () {
