@@ -149,7 +149,8 @@ const hackathonBase = {
   show_rules: Joi.boolean(),
   show_schedule: Joi.boolean(),
   meta,
-  custom_categories: arrayOfStrings
+  custom_categories: arrayOfStrings,
+  organization_id: Joi.number().integer().min(0)
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
