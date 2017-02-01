@@ -198,6 +198,35 @@ const register = function (server, options, next) {
     }
   });
 
+  server.route({
+    method: "GET",
+    path: "/users/email/{userEmail}",
+    config: {
+      description: "Get email to registered emails table",
+      tags: ["email", "detail"],
+      handler(request, reply) {
+        const { userEmail } = request.params;
+        const response = db("registered_emails").where({email: userEmail});
+        reply(response);
+      }
+    }
+  });
+
+  server.route({
+    method: "POST",
+    path: "/users/email",
+    config: {
+      description: "Add email to registered emails table",
+      tags: ["email", "detail"],
+      handler(request, reply) {
+        console.log('-------------');
+        console.log(request.payload);
+        const response = db("registered_emails").insert(request.payload);
+        reply(response);
+      }
+    }
+  });
+
   next();
 };
 
