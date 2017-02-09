@@ -14,10 +14,10 @@ const register = function (server, options, next) {
     path: "/whitelist/{userEmail}",
     config: {
       description: "Get email from registered emails table",
-      tags: ["email", "detail"],
+      tags: ["email", "whitelist"],
       handler(request, reply) {
         const { userEmail } = request.params;
-        const response = db("registered_emails").where({email: userEmail});
+        const response = db("whitelist").where({email: userEmail});
         reply(response);
       }
     }
@@ -28,16 +28,27 @@ const register = function (server, options, next) {
     path: "/whitelist",
     config: {
       description: "Add email to registered emails table",
-      tags: ["email", "detail"],
+      tags: ["email", "whitelist"],
       handler(request, reply) {
-        console.log('------------->>>>');
-        console.log(request.payload);
-        const response = db("whitelist").insert(request.payload);
-        reply(response);
+
+        var response = db("whitelist").whereIn('email', request.payload.emails).then((result) => {
+          console.log(result.length);
+          if (result.length == 0) {
+            const emails = request.payload.emails.map((email) => {
+              return {email: email, organization_id: 2};
+            })
+            return db("whitelist").insert(emails);
+          } else {
+            throw Boom.conflict(`Email is already in the invitation list`);
+          }
+        });
+
+        reply(response)
       },
       validate: {
         payload: {
-          emails: Joi.array().items(Joi.string().email())
+          emails: Joi.array().items(Joi.string().email().required()),
+          organization_id: Joi.number().required()
         }
       }
     }
