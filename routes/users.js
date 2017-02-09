@@ -202,7 +202,7 @@ const register = function (server, options, next) {
     method: "GET",
     path: "/users/email/{userEmail}",
     config: {
-      description: "Get email to registered emails table",
+      description: "Get email from registered emails table",
       tags: ["email", "detail"],
       handler(request, reply) {
         const { userEmail } = request.params;
@@ -214,7 +214,7 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/users/email",
+    path: "/users/whitelist",
     config: {
       description: "Add email to registered emails table",
       tags: ["email", "detail"],

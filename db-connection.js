@@ -796,15 +796,11 @@ export const hackathonSearch = (queryObj) => {
     "hackathons.deleted",
     "hackathons.is_public",
     "hackathons.is_published",
-    "hackathons.json_meta",
-    "hackathons.organization_id"
+    "hackathons.json_meta"
   ];
 
   const query = client.select(columns).from("hackathons");
 
-  if (organization_id) {
-    query.where({organization_id: organization_id});
-  }
 
   if (search) {
     query.where(function () {
@@ -821,6 +817,12 @@ export const hackathonSearch = (queryObj) => {
   if (!include_deleted) {
     query.andWhere({"hackathons.deleted": false});
   }
+
+  if (organization_id) {
+    var subquery = client.select('hackathon_id').from("hackathons_orgs").andWhere('organization_id', organization_id);
+    query.andWhere('id', 'in', subquery);
+  }
+
 
   if (admins_contain) {
     query.whereIn("hackathons.id", function () {
