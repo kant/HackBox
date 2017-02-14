@@ -48,8 +48,10 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const userProps = {};
-        const { id, name, family_name, given_name, email } = request.auth.credentials;
-
+        const { id, organization_id } = request.auth.credentials;
+        const { name, family_name, given_name, email } = request.payload;
+        console.log('-----><<<<<<<');
+        console.log(request.auth.credentials);
         // only super users can specify that payload should be trusted
         if (request.query.trust_payload && !request.isSuperUser()) {
           return reply(Boom.forbidden("only super users can pass 'trust_payload'"));
@@ -62,6 +64,8 @@ const register = function (server, options, next) {
         // userProps is what will ultimately be persisted.
         // here we add things from payload and override updated_at
         // and deleted
+        console.log('Payload');
+        console.log(request.payload);
         Object.assign(userProps, request.payload, {
           updated_at: new Date(),
           // we force this to be false
@@ -82,7 +86,8 @@ const register = function (server, options, next) {
             email
           });
         }
-
+        console.log('--------->>>>>>>');
+        console.log(userProps);
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.
         const response = db("users").where({id: userProps.id}).then((result) => {
