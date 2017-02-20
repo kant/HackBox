@@ -17,6 +17,8 @@ const trackEvent = function (type) {
       return db("projects").where("id", "=", projectId).increment(column, 1);
     }).then(() => {
       return request.generateResponse().code(204);
+    }).catch(() => {
+      return request.generateResponse("No user found").code(404);
     });
 
     reply(response);
