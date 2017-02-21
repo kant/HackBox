@@ -242,12 +242,9 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
 
 export const ensureParticipant = (hackathonId, userId, opts = {includeUser: false}) => {
   return client("participants").where({user_id: userId, hackathon_id: hackathonId}).then((rows) => {
-    if (rows.length === 0) {
-      throw Boom.notFound(`User id ${userId} was not found in hackathon ${hackathonId}.`);
-    }
     return rows[0];
   }).then((participant) => {
-    if (!opts.includeUser) {
+    if (!participant || !opts.includeUser) {
       return participant;
     }
 
@@ -257,6 +254,8 @@ export const ensureParticipant = (hackathonId, userId, opts = {includeUser: fals
       }
       return participant;
     });
+  }).catch((err) => {
+    throw err;
   });
 };
 
