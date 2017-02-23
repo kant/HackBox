@@ -19,16 +19,10 @@ const cleanCredentials = (credsObject) => {
 };
 
 export const validate = function (token, next) {
-  console.log('Validate Token: -------->>>>>>');
   jwt.verify(token, 'lasn1112asrhA123DRJSDrjonblifbu35641adbzfaifsu325bvarsbADbrad21rndnxcnDtNsD36tnsdTnqeryeshsd5676tJDGmxmcmgmfgm780fGmMXcbMvBJ897611vJFM90snaRrA', function(err, decoded) {
-    console.log('Validated-------->>>>>>');
-    console.log(decoded);
     if (err) {
       return next(err, false);
-    } else if (decoded.data){
-      console.log('-------->>>>>>');
-      console.log(JSON.parse(decoded.data));
-
+    } else if (decoded.data) {
       return next(null, true, JSON.parse(decoded.data));
     } else {
       return next(null, true, {});
