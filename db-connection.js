@@ -220,7 +220,8 @@ export const ensureUser = (userId, opts = {allowDeleted: false}) => {
     const user = users[0];
 
     if (!user || user && user.deleted && !opts.allowDeleted) {
-      throw Boom.notFound(`User id ${userId} was not found.`);
+      // throw Boom.notFound(`User id ${userId} was not found.`);
+      return {};
     }
 
     const participationQuery = client("hackathons")
