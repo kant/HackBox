@@ -22,8 +22,8 @@ export const validate = function (token, next) {
   jwt.verify(token, 'lasn1112asrhA123DRJSDrjonblifbu35641adbzfaifsu325bvarsbADbrad21rndnxcnDtNsD36tnsdTnqeryeshsd5676tJDGmxmcmgmfgm780fGmMXcbMvBJ897611vJFM90snaRrA', function(err, decoded) {
     if (err) {
       return next(err, false);
-    } else if (decoded.data) {
-      return next(null, true, JSON.parse(decoded.data));
+    } else if (decoded) {
+      return next(null, true, decoded);
     } else {
       return next(null, true, {});
     }
