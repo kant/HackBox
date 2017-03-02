@@ -194,10 +194,12 @@ const register = function (server, options, next) {
       tags: ["api", "detail"],
       handler(request, reply) {
         const { email } = request.params;
-        const isSuperUser = request.isSuperUser();
-        if (!isSuperUser) {
-          throw Boom.forbidden("You must be a super user to access this data.");
-        }
+
+        //THis lines was used with "Bearer super" in Authorization header which is not realy a securing
+        // const isSuperUser = request.isSuperUser();
+        // if (!isSuperUser) {
+        //   throw Boom.forbidden("You must be a super user to access this data.");
+        // }
 
         const response = db("reports")
           .select("json_reporting_data")

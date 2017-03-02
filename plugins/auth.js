@@ -5,9 +5,7 @@ import Boom from "boom";
 import crypto from "crypto";
 import { credentials as mockCredentials} from "../data/mock-data";
 import db from "../db-connection";
-
-// TODO hack
-const jsonwebtoken = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const cleanCredentials = (credsObject) => {
   return {
@@ -20,95 +18,16 @@ const cleanCredentials = (credsObject) => {
   };
 };
 
-const loginCache = {
-  _CACHE_TIME: 59 * 60 * 1000, // 59 minutes, don't accidentally exceed a token's hour lifetime
-  _cache: {},
-
-  put: (authToken, credentials, cb) => {
-    const hash = crypto.createHash("md5").update(authToken).digest("hex");
-    const expires = credentials.exp;
-    loginCache._cache[hash] = {
-      credentials,
-      expires
-    };
-    credentials = JSON.stringify(credentials);
-    const rawQuery =
-      [`INSERT INTO logins values('${hash}', '${credentials}', ${expires})`,
-       `ON DUPLICATE KEY UPDATE expires = ${expires};`].join(" ");
-    return db.raw(rawQuery).then(() => {
-      cb(null);
-    });
-  },
-
-  get: (authToken, cb) => {
-    const hash = crypto.createHash("md5").update(authToken).digest("hex");
-    const cached = loginCache._cache[hash];
-    const now = Date.now() / 1000 || 0;
-    if (cached && cached.expires > now) {
-      return cb(null, cached.credentials);
-    }
-    return db("logins").
-      select(["credentials", "expires"]).where({token_hash: hash}).then((result) => {
-        if (result[0]) {
-          const expires = result[0].expires;
-          if (expires < now) {
-            return cb("Expired");
-          }
-          const credentials = JSON.parse(result[0].credentials);
-
-          loginCache._cache[hash] = {
-            expires,
-            credentials
-          };
-          return cb(null, credentials);
-        }
-        return cb("No cache hits");
-      });
-  }
-};
-
 export const validate = function (token, next) {
-  // to enable simpler testing since we can't programmatically
-  // generate valid tokens for multiple users
-
-  /*
-
-    WARNING!
-
-    BEFORE GOING TO PRODUCTION YOU MUST REMOVE THIS!
-
-    the `if (true)`
-
-    should be replaced with
-
-    `if (process.env.NODE_ENV === "test") {`
-
-    so that this only works in TEST mode.
-
-  */
-  if (true) { // eslint-disable-line
-    if (token === "super" || token === "regular" || token === "regular2") {
-      return next(null, true, cleanCredentials(mockCredentials[token]));
+  jwt.verify(token, 'lasn1112asrhA123DRJSDrjonblifbu35641adbzfaifsu325bvarsbADbrad21rndnxcnDtNsD36tnsdTnqeryeshsd5676tJDGmxmcmgmfgm780fGmMXcbMvBJ897611vJFM90snaRrA', function(err, decoded) {
+    if (err) {
+      return next(err, false);
+    } else if (decoded) {
+      return next(null, true, decoded);
+    } else {
+      return next(null, true, {});
     }
-  }
 
-  loginCache.get(token, (getErr, getResult) => {
-    if (!getErr && getResult) {
-      return next(null, true, cleanCredentials(getResult));
-    }
-    // TODO hack
-    return next(null, true, cleanCredentials(jsonwebtoken.decode(token)));
-
-    // aad.verify(token, null, (verifyErr, verifyResult) => {
-    //   if (verifyResult) {
-    //     // verify issuer, clientId (app) and user
-    //     loginCache.put(token, verifyResult, () => {
-    //       return next(null, true, cleanCredentials(verifyResult));
-    //     });
-    //   } else {
-    //     return next(null, false, null);
-    //   }
-    // });
   });
 };
 
