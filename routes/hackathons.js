@@ -38,11 +38,12 @@ const register = function (server, options, next) {
 
         const askingForOwn = request.query.admins_contain === requestorId;
 
-        if (request.query.include_unpublished) {
-          if (!request.isSuperUser() && !askingForOwn) {
-            return reply(Boom.forbidden(`Can only request your own unpublished unless admin`));
-          }
-        }
+        //Turned it off unless we will write better authorization then 'Bearer super''
+        // if (request.query.include_unpublished) {
+        //   if (!request.isSuperUser() && !askingForOwn) {
+        //     return reply(Boom.forbidden(`Can only request your own unpublished unless admin`));
+        //   }
+        // }
 
         const response = hackathonSearch(request.query);
 
