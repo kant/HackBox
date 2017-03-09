@@ -7,6 +7,9 @@ import { newHackathon, hackathonUpdate, id,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
   from "../db-connection";
+import appInsights from "applicationinsights";
+
+const client = appInsights.getClient();
 
 const register = function (server, options, next) {
   server.route({
@@ -93,6 +96,7 @@ const register = function (server, options, next) {
               });
             });
         }).then(() => {
+          client.trackEvent("NewHackathon", {hackId: hackathonId});
           return ensureHackathon(hackathonId);
         }).then((result) => {
           return request.generateResponse(result).code(201);
@@ -162,6 +166,7 @@ const register = function (server, options, next) {
             .where({id: hackathonId})
             .update(payload);
         }).then(() => {
+          client.trackEvent("HackUpdated", {hackId: hackathonId});
           return ensureHackathon(hackathonId);
         });
 
