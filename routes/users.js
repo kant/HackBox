@@ -5,6 +5,9 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
+import appInsights from "applicationinsights";
+
+const client = appInsights.getClient();
 
 const register = function (server, options, next) {
   server.route({
@@ -47,6 +50,7 @@ const register = function (server, options, next) {
       description: "Create a new user",
       tags: ["api"],
       handler(request, reply) {
+        client.trackEvent("NewUser", {credentials: request.auth.credentials.name});
         const userProps = {};
         const { id, name, family_name, given_name, email } = request.auth.credentials;
 

@@ -1,6 +1,5 @@
 import appInsights from "applicationinsights";
 
-// Instantiate client to set custom telemetry
 const client = appInsights.getClient();
 
 /*eslint camelcase: [2, {"properties": "never"}] */

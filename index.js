@@ -117,7 +117,6 @@ server.views({
 });
 
 server.start(() => {
-  client.trackEvent('ServerStart')
   server.log(["info", "start"], `api server started at ${server.info.uri}\n`);
 });
 
