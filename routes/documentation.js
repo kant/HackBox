@@ -1,3 +1,8 @@
+import appInsights from "applicationinsights";
+
+// Instantiate client to set custom telemetry
+const client = appInsights.getClient();
+
 /*eslint camelcase: [2, {"properties": "never"}] */
 const register = function (server, options, next) {
   server.route({
@@ -6,6 +11,7 @@ const register = function (server, options, next) {
     config: {
       auth: false,
       handler(request, reply) {
+        client.trackEvent("Documentation", {});
         reply.view("documentation");
       }
     }
