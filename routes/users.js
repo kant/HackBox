@@ -170,6 +170,7 @@ const register = function (server, options, next) {
           return ensureUser(userId);
         });
 
+        client.trackEvent("UserUpdate", {});
         reply(response);
       },
       validate: {
