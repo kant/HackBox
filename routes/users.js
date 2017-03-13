@@ -5,6 +5,9 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
+import appInsights from "applicationinsights";
+
+const client = appInsights.getClient();
 
 const register = function (server, options, next) {
   server.route({
@@ -21,7 +24,8 @@ const register = function (server, options, next) {
           return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
         }
         const response = userSearch(request.query);
-
+              
+        client.trackEvent("Get Hackers", {hackId: query.hackathon_id});
         reply(paginate(response, {limit, offset}));
       },
       validate: {
@@ -98,6 +102,7 @@ const register = function (server, options, next) {
           return request.generateResponse(result).code(201);
         });
 
+        client.trackEvent("New User", {credentials: id});
         reply(response);
       },
       validate: {
@@ -166,6 +171,7 @@ const register = function (server, options, next) {
           return ensureUser(userId);
         });
 
+        client.trackEvent("User Update", {});
         reply(response);
       },
       validate: {

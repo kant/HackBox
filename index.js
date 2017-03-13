@@ -27,6 +27,8 @@ import HapiSwagger from "hapi-swagger";
 import Jade from "jade";
 import appInsights from "applicationinsights";
 
+const client = appInsights.getClient();
+
 //This line starts sending azure application insight info about node server stats
 //App should has env veriable with instrumentation key of app insights service
 appInsights.setup().start();

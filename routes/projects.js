@@ -10,6 +10,9 @@ import db, {
   addUserVotesToProject
 } from "../db-connection";
 import Joi from "joi";
+import appInsights from "applicationinsights";
+
+const client = appInsights.getClient();
 
 const register = function (server, options, next) {
   server.route({
@@ -35,6 +38,8 @@ const register = function (server, options, next) {
         }
 
         const response = projectSearch(query);
+
+        client.trackEvent("Get Projects", {hackId: query.hackathon_id});
 
         reply(
           addProjectMembersToPagination(
@@ -126,6 +131,7 @@ const register = function (server, options, next) {
         }).then(() => {
           return ensureProject(hackathonId, projectId);
         }).then((data) => {
+          client.trackEvent("New Project", {hackId: data.hackathon_id, title: data.title, ownerId: data.owner_id});
           return request.generateResponse(data).code(201);
         });
 
