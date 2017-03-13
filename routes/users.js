@@ -99,10 +99,10 @@ const register = function (server, options, next) {
           request.log(["database", "response", "insert"], res);
           return ensureUser(userProps.id);
         }).then((result) => {
+          client.trackEvent("New User", {credentials: id});
           return request.generateResponse(result).code(201);
         });
 
-        client.trackEvent("New User", {credentials: id});
         reply(response);
       },
       validate: {
