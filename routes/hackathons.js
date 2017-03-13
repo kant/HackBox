@@ -96,7 +96,7 @@ const register = function (server, options, next) {
               });
             });
         }).then(() => {
-          client.trackEvent("NewHackathon", {hackId: hackathonId});
+          client.trackEvent("New Hackathon", {hackId: hackathonId});
           return ensureHackathon(hackathonId);
         }).then((result) => {
           return request.generateResponse(result).code(201);
@@ -166,7 +166,7 @@ const register = function (server, options, next) {
             .where({id: hackathonId})
             .update(payload);
         }).then(() => {
-          client.trackEvent("HackUpdated", {hackId: hackathonId});
+          client.trackEvent("Hack Updated", {hackId: hackathonId});
           return ensureHackathon(hackathonId);
         });
 
