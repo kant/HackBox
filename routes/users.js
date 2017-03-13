@@ -24,7 +24,8 @@ const register = function (server, options, next) {
           return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
         }
         const response = userSearch(request.query);
-
+              
+        client.trackEvent("Get Hackers", {hackId: query.hackathon_id});
         reply(paginate(response, {limit, offset}));
       },
       validate: {
