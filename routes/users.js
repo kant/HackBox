@@ -51,7 +51,6 @@ const register = function (server, options, next) {
       description: "Create a new user",
       tags: ["api"],
       handler(request, reply) {
-        client.trackEvent("NewUser", {credentials: request.auth.credentials.name});
         const userProps = {};
         const { id, name, family_name, given_name, email } = request.auth.credentials;
 
@@ -103,6 +102,7 @@ const register = function (server, options, next) {
           return request.generateResponse(result).code(201);
         });
 
+        client.trackEvent("New User", {credentials: id});
         reply(response);
       },
       validate: {
@@ -171,7 +171,7 @@ const register = function (server, options, next) {
           return ensureUser(userId);
         });
 
-        client.trackEvent("UserUpdate", {});
+        client.trackEvent("User Update", {});
         reply(response);
       },
       validate: {
