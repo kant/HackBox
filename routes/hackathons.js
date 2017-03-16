@@ -48,6 +48,10 @@ const register = function (server, options, next) {
         //   }
         // }
 
+        if (request.auth.credentials && request.auth.credentials.organization_id) {
+          request.query.organization_id = request.auth.credentials.organization_id;
+        }
+
         const response = hackathonSearch(request.query);
 
         reply(paginate(response, {limit, offset}));
@@ -95,6 +99,12 @@ const register = function (server, options, next) {
                 user_id: ownerId
               });
             });
+        }).then(() => {
+          //Always on hackathon creation make this hack belong to Microsoft organization
+          return db("hackathons_orgs").insert({
+            hackathon_id: hackathonId,
+            organization_id: 1
+          });
         }).then(() => {
           client.trackEvent("New Hackathon", {hackId: hackathonId});
           return ensureHackathon(hackathonId);

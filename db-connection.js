@@ -774,7 +774,7 @@ export const userSearch = (queryObj) => {
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, participants_contain, search, sort_col, sort_direction
+    admins_contain, participants_contain, search, sort_col, sort_direction, organization_id
   } = queryObj;
 
   // we don't include all fields
@@ -815,6 +815,11 @@ export const hackathonSearch = (queryObj) => {
 
   if (!include_deleted) {
     query.andWhere({"hackathons.deleted": false});
+  }
+
+  if (organization_id) {
+    var subquery = client.select('hackathon_id').from("hackathons_orgs").andWhere('organization_id', organization_id);
+    query.andWhere('id', 'in', subquery);
   }
 
   if (admins_contain) {
