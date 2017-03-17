@@ -93,7 +93,8 @@ const userBase = {
   city: Joi.string().max(255).trim(),
   alias: Joi.string().max(255).trim(),
   job_title: Joi.string().max(255).trim(),
-  department: Joi.string().max(255).trim()
+  department: Joi.string().max(255).trim(),
+  organization_id: Joi.number().integer().min(0)
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
