@@ -200,13 +200,33 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const ownerId = request.isSuperUser() ? false : request.userId();
+        var hackathon = {};
 
         const response = ensureHackathon(hackathonId, {
           allowDeleted: request.isSuperUser(),
           checkPublished: ownerId
+        }).then((hack) => {
+          hackathon = hack;
+
+          //Check if hackathon belongs to the same organization as user
+          return db("hackathons_orgs")
+            .where({hackathon_id: hack.id})
+        }).then((data) => {
+          var authorized = false;
+
+          data.forEach((hack) => {
+            if (hack.organization_id == request.auth.credentials.organization_id) {
+              authorized = true;
+            }
+          });
+
+          if (authorized) {
+            reply(hackathon);
+          } else {
+            reply().code(403);
+          }
         });
 
-        reply(response);
       },
       validate: {
         params: {
