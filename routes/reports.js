@@ -160,6 +160,7 @@ const register = function (server, options, next) {
               return paginated;
             });
         });
+
         return reply(response);
       },
       validate: {
