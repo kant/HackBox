@@ -121,7 +121,6 @@ const register = function (server, options, next) {
       description: "Fetch detailed participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
-        logger.info('Reports ALL handler invoked');
         const { hackathonId } = request.params;
 
         const response = ensureHackathon(hackathonId)
@@ -154,9 +153,7 @@ const register = function (server, options, next) {
               addTagsToPagination(
                 paginate(members, {limit, offset}))))
             .then((paginated) => {
-              logger.info('Paginating data');
               paginated.data = _.map(paginated.data, cleanUpUser);
-              logger.info('Return paginated data');
               return paginated;
             });
         });
