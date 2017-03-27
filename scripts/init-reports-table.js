@@ -6,7 +6,7 @@ const client = require("../db-connection").default;
 const fs = require("fs");
 const Promise = require("bluebird");
 
-const sourceFile = "data/reporting-data-5-18.csv";
+const sourceFile = "data/feedstore-032217-small.csv";
 let rowsInserted = 0;
 let rowsSkipped = 0;
 
@@ -48,6 +48,7 @@ fs.readFile(sourceFile, (err, csv) => {
             }
             delete row.data[0].Email;
             inserts.push(insertRow(email, row.data[0]));
+            console.log(inserts.length);
           }
           return;
         },
