@@ -35,6 +35,33 @@ const register = function (server, options, next) {
     }
   });
 
+  server.route({
+    method: "GET",
+    path: "/oneweekstats",
+    config: {
+      description: "Get global statistics for oneweek hackathon",
+      tags: ["api"],
+      handler(request, reply) {
+        const hackathonId = 1074;
+        const response = Promise.all([
+          db("projects").count().as("value").where({hackathon_id: hackathonId}).whereNot({deleted: true}),
+          db("users").join('participants', function() {
+              this.on('users.id', '=', 'participants.user_id').andOn('participants.hackathon_id', '=', hackathonId)
+          }).select('users.id', 'users.country', 'users.city').countDistinct('users.country as country').countDistinct('users.city as city').countDistinct('users.id as id')
+        ]).then(([projects, users]) => {
+          return {
+            users: users[0].id,
+            cities: users[0].city,
+            countries: users[0].country,
+            projects: projects[0]['count(*)']
+          };
+        });
+
+        reply(response);
+      }
+    }
+  });
+
   next();
 };
 
