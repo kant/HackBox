@@ -6,9 +6,16 @@
 import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
+import winston from "winston";
 import { id, pagination } from "../data/validation";
 import db, { ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
   from "../db-connection";
+
+const logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({'timestamp':true, 'colorize': true})
+  ]
+});
 
 const register = function (server, options, next) {
 
