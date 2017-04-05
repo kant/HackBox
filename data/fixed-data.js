@@ -192,12 +192,28 @@ const executiveChallenges = [
   "Cloud Penetration and Consumption (Kevin Turner)"
 ];
 
+const motivationTypes = [
+
+  "Learn something new",
+  "Explore a new area/technology",
+  "Improve my day job",
+  "Solve a customer problem",
+  "Improve a relationship with a partner/customer",
+  "Pursue an interest/passion",
+  "Work with people outside my workgroup",
+  "Build something cool",
+  "Try a new role",
+  "Fix/improve an existing product or service",
+  "Start a new product or service"
+];
+
 export default {
   customerTypes,
   productTypes,
   expertiseTypes,
   projectTypes,
   participantTypes,
+  motivationTypes,
   countryList,
   colorSchemes,
   executiveChallenges
