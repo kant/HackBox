@@ -9,6 +9,7 @@ import db, { paginate } from "../db-connection";
 const register = function (server, options, next) {
 
 
+
   server.route({
     method: "GET",
     path: "/whitelist/{userEmail}",
@@ -35,8 +36,9 @@ const register = function (server, options, next) {
           console.log(result.length);
           if (result.length == 0) {
             const emails = request.payload.emails.map((email) => {
-              return {email: email, organization_id: 2};
+              return {email: email, organization_id: request.payload.organization_id};
             })
+
             return db("whitelist").insert(emails);
           } else {
             throw Boom.conflict(`Email is already in the invitation list`);

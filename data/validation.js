@@ -94,7 +94,14 @@ const userBase = {
   alias: Joi.string().max(255).trim(),
   job_title: Joi.string().max(255).trim(),
   department: Joi.string().max(255).trim(),
-  organization_id: Joi.number().integer().min(0)
+  organization_id: Joi.number().integer().min(0),
+  year: Joi.string().max(255).trim(),
+  major: Joi.string().max(255).trim(),
+  school: Joi.string().max(255).trim(),
+  state: Joi.string().max(255).trim(),
+  group: Joi.string().max(255).trim(),
+  organization: Joi.string().max(255).trim(),
+  external: Joi.string().max(255).trim()
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);

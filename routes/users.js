@@ -77,25 +77,34 @@ const register = function (server, options, next) {
         // Unless trust_payload is passed
         // we also override payload data with
         // items from the auth credentials
-        if (!request.query.trust_payload) {
-          Object.assign(userProps, {
-            id,
-            name,
-            family_name,
-            given_name,
-            email
-          });
-        }
+        // if (!request.query.trust_payload) {
+        //   Object.assign(userProps, {
+        //     id,
+        //     name,
+        //     family_name,
+        //     given_name,
+        //     email
+        //   });
+        // }
 
+        console.log('------>>>>>');
+        console.log(request.payload);
+        console.log(userProps);
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.
         const response = db("users").where({id: userProps.id}).then((result) => {
           if (result.length) {
+            console.log('1');
+            console.log(userProps);
             return db("users").update(userProps).where({id: userProps.id});
           } else {
+            console.log('2');
+            console.log(userProps);
             return db("users").insert(userProps);
           }
         }).then((res) => {
+          console.log('3');
+          console.log(res);
           request.log(["database", "response", "insert"], res);
           return ensureUser(userProps.id);
         }).then((result) => {
