@@ -8,7 +8,7 @@ import Boom from "boom";
 import Joi from "joi";
 import winston from "winston";
 import { id, pagination } from "../data/validation";
-import db, { ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
+import db, { clientReplica, ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
   from "../db-connection";
 
 const logger = new (winston.Logger)({
@@ -53,7 +53,7 @@ const register = function (server, options, next) {
   const addTeamDataToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const projectIds = _.pluck(paginated.data, "project_id");
-      const teamQuery = db("members")
+      const teamQuery = clientReplica("members")
         .select("members.project_id", "users.email")
         .distinct()
         .join("users", "users.id", "members.user_id")
@@ -75,7 +75,7 @@ const register = function (server, options, next) {
   const addReportsToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const emails = _.pluck(paginated.data, "email");
-      const reportsQuery = db("reports")
+      const reportsQuery = clientReplica("reports")
         .select("email", "json_reporting_data")
         .whereIn("email", emails)
         .groupBy("email");
@@ -127,7 +127,7 @@ const register = function (server, options, next) {
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
-          const members = db("members")
+          const members = clientReplica("members")
             .select(["users.alias as alias",
               "users.email as email",
               "users.json_expertise as json_expertise",
