@@ -1119,7 +1119,7 @@ export const getHackathonCities = (hackathonId) => {
 };
 
 export const getHackathonReport = (queryObj) => {
-  const query = client("users")
+  const query = client2("users")
     .select(
     [
       "users.email as email",

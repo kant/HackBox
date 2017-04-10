@@ -28,6 +28,8 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
 
+        // ensureHackathon will force to query the master DB, not replica 4/10/17
+        // It's used in other API endpoints that cannot use the replica.
         const response = ensureHackathon(hackathonId)
         .then(() => {
           const { query } = request;
