@@ -9,12 +9,16 @@ import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
 import _ from "lodash";
+import slaveDB from "./config";
 import { db } from "./config";
 import { projectTypes } from "./data/fixed-data";
 
 const client = knex(db);
+const client2 = knex(slaveDB.slave.db);
 
 export default client;
+
+export const clientReplica = knex(slaveDB.slave.db);
 
 export const resolveOr404 = (promise, label = "resource") => {
   return promise.then((rows) => {
@@ -300,7 +304,7 @@ export const projectSearch = (queryObj) => {
     participant_name, video_type, has_votes, custom_categories
   } = queryObj;
 
-  const query = client("projects")
+  const query = client2("projects")
     .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
     .innerJoin("users", "projects.owner_id", "users.id")
     .andWhere(include_deleted ? {} : {"projects.deleted": false});
@@ -502,7 +506,7 @@ const addMembersToProjects = (projects, usersByProject) => {
 export const addTagsToPagination = (paginationQuery, key = "project_id") => {
   return paginationQuery.then((paginated) => {
     const projects = _.pluck(paginated.data, key);
-    const tagsQuery = client("project_tags")
+    const tagsQuery = client2("project_tags")
       .select("project_id", "json_tags")
       .whereIn("project_id", projects);
     return tagsQuery.then((tags) => {
@@ -1115,7 +1119,7 @@ export const getHackathonCities = (hackathonId) => {
 };
 
 export const getHackathonReport = (queryObj) => {
-  const query = client("users")
+  const query = client2("users")
     .select(
     [
       "users.email as email",

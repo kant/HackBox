@@ -17,10 +17,12 @@ var envRE = /^\$[A-Z0-9_]+$/;
 var env = process.env.NODE_ENV || "development";
 var config;
 var configPath = `${__dirname}/config/${env}.json`;
+var slaveDB = `${__dirname}/config/replica.json`;
 
 // try to find a module with name corresponding to environment.
 try {
   config = require(configPath);
+  config.slave = require(slaveDB);
 } catch (e) {
   if (e.code === "MODULE_NOT_FOUND") {
     throw new Error(`Unable to find a config at path: ${configPath}`);
