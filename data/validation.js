@@ -228,7 +228,8 @@ const projectBase = {
   executive_challenges: challengeArray,
   video_type: emptyString,
   meta,
-  custom_categories: arrayOfStrings
+  custom_categories: arrayOfStrings,
+  video_data: Joi.string().min(2)
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
