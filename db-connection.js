@@ -304,7 +304,7 @@ export const projectSearch = (queryObj) => {
     participant_name, video_type, has_votes, custom_categories
   } = queryObj;
 
-  const query = client2("projects")
+  const query = client("projects")
     .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
     .innerJoin("users", "projects.owner_id", "users.id")
     .andWhere(include_deleted ? {} : {"projects.deleted": false});
