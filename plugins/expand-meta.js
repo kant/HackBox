@@ -57,7 +57,7 @@ const JSON_KEYS = [
   "third_party_platforms_focus", "cloud_enterprise_focus",
   "consumer_services_focus", "office_focus", "misc_focus",
   "other_focus", "interests", "executive_challenges", "reporting_data",
-  "needed_roles", "custom_categories"
+  "needed_roles", "custom_categories", "motivations"
 ];
 
 const stringifyKeys = (obj) => {
