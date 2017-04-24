@@ -8,6 +8,7 @@ import Boom from "boom";
 import Joi from "joi";
 import winston from "winston";
 import { id, pagination } from "../data/validation";
+//clientReplica will replace 'db' references for reports when replica is complete - ASC
 import db, { clientReplica, ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
   from "../db-connection";
 
@@ -55,7 +56,7 @@ const register = function (server, options, next) {
   const addTeamDataToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const projectIds = _.pluck(paginated.data, "project_id");
-      const teamQuery = clientReplica("members")
+      const teamQuery = db("members")
         .select("members.project_id", "users.email")
         .distinct()
         .join("users", "users.id", "members.user_id")
@@ -77,7 +78,7 @@ const register = function (server, options, next) {
   const addReportsToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const emails = _.pluck(paginated.data, "email");
-      const reportsQuery = clientReplica("reports")
+      const reportsQuery = db("reports")
         .select("email", "json_reporting_data")
         .whereIn("email", emails)
         .groupBy("email");
@@ -129,7 +130,7 @@ const register = function (server, options, next) {
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
-          const members = clientReplica("members")
+          const members = db("members")
             .select(["users.alias as alias",
               "users.email as email",
               "users.json_expertise as json_expertise",
