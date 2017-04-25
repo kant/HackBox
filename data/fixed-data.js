@@ -180,16 +180,20 @@ const colorSchemes = [
 ];
 
 const executiveChallenges = [
+  "Enable Digital Transformation (Judson Althoff)",
+  "Care for Current Fans (Chris Capossela)",
+  "Grow Industry Verticals (Jean-Philippe Courtois)",
+  "Gaming Growth (Kurt DelBene)",
+  "Azure in Commercial Segments (Scott Guthrie)",
+  "Culture of Learning (Kathleen Hogan)",
+  "Customer-growth Scenarios (Amy Hood)",
+  "Student Productivity (Rajesh Jha)",
+  "Disruptive Innovation (Peggy Johnson)",
+  "Windows 10 Creators Update (Terry Myerson)",
+  "Improve Quality and Speed (Kevin Scott)",
+  "Infuse AI (Harry Shum)",
   "Hack for Good (Brad Smith)",
-  "Earn Fans for Microsoft (Chris Capossela)",
-  "Quality for Cloud Customers (Scott Guthrie)",
-  "Aspire-to Culture (Kathleen Hogan)",
-  "Simplify How We Work (Amy Hood)",
-  "Creative Partnerships (Peggy Johnson)",
-  "Mobile End Points (Qi Lu)",
-  "Universal Windows App (Terry Myerson)",
-  "Artificial Intelligence (Harry Shum)",
-  "Cloud Penetration and Consumption (Kevin Turner)"
+  "Professional Cloud & Network (Jeff Weiner)"
 ];
 
 const motivationTypes = [
