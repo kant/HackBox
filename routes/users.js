@@ -77,15 +77,15 @@ const register = function (server, options, next) {
         // Unless trust_payload is passed
         // we also override payload data with
         // items from the auth credentials
-        if (!request.query.trust_payload) {
-          Object.assign(userProps, {
-            id,
-            name,
-            family_name,
-            given_name,
-            email
-          });
-        }
+        // if (!request.query.trust_payload) {
+        //   Object.assign(userProps, {
+        //     id,
+        //     name,
+        //     family_name,
+        //     given_name,
+        //     email
+        //   });
+        // }
 
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.

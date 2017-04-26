@@ -47,7 +47,7 @@ export const stringIdArray = Joi.array().items(stringId).required();
   Pagination
 */
 export const pagination = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100).default(25),
+  limit: Joi.number().integer().min(1).max(1000000).default(25),
   offset: Joi.number().integer().min(0).default(0)
 });
 
@@ -93,7 +93,15 @@ const userBase = {
   city: Joi.string().max(255).trim(),
   alias: Joi.string().max(255).trim(),
   job_title: Joi.string().max(255).trim(),
-  department: Joi.string().max(255).trim()
+  department: Joi.string().max(255).trim(),
+  organization_id: Joi.number().integer().min(0),
+  year: Joi.string().max(255).trim(),
+  major: Joi.string().max(255).trim(),
+  school: Joi.string().max(255).trim(),
+  state: Joi.string().max(255).trim(),
+  group: Joi.string().max(255).trim(),
+  organization: Joi.string().max(255).trim(),
+  external: Joi.string().max(255).trim()
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
@@ -215,12 +223,14 @@ const projectBase = {
   needed_expertise: arrayOfStrings,
   customer_type: customerType,
   tags: arrayOfStrings,
+  motivations: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: emptyString,
   executive_challenges: challengeArray,
   video_type: emptyString,
   meta,
-  custom_categories: arrayOfStrings
+  custom_categories: arrayOfStrings,
+  video_data: Joi.string().min(2)
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -248,6 +258,7 @@ export const newProject = Joi.object(projectBase)
     needed_expertise: arrayOfStrings.default([]),
     customer_type: customerType,
     tags: arrayOfStrings.default([]),
+    motivations: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,
