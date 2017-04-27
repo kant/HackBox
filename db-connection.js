@@ -408,11 +408,14 @@ export const projectSearch = (queryObj) => {
     Windows: "windows",
     Devices: "devices",
     "Consumer Services": "consumer_services",
-    "Cloud + Enterprise": "cloud_enterprise",
-    Office: "office",
+    "Cloud & Enterprise": "cloud_and_enterprise",
+    "AI & Research": "ai_and_research",
+    "Office 365": "office_365",
+    "Dynamics 365": "dynamics_365",
     Dynamics: "dynamics",
     "3rd Party Platforms": "third_party_platforms",
     Misc: "misc",
+    Linkedin: "linkedin",
     Other: "other"
   };
   if (product_focus && product_focus.length) {
@@ -420,7 +423,7 @@ export const projectSearch = (queryObj) => {
       product_focus.forEach((focus, index) => {
         const fnName = index === 0 ? "where" : "orWhere";
         const col = focii[focus];
-        this[fnName](`projects.json_${col}_focus`, "like", "%true%");
+        this[fnName](`projects.json_focus`, "like", `%${col}%`);
       });
     });
   }
@@ -489,6 +492,7 @@ export const projectSearch = (queryObj) => {
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
     "hackathons.name as hackathon_name");
+    
   return query;
 };
 
@@ -771,7 +775,6 @@ export const userSearch = (queryObj) => {
   } else if (orderByCol !== "joined_at") {
     query.orderByRaw(`${orderByCol} ${orderByDirection}`);
   }
-
   return query;
 };
 

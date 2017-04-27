@@ -17,14 +17,17 @@ const customerTypes = [
 
 const productTypes = [
   "3rd Party Platforms",
-  "Cloud + Enterprise",
+  "Cloud & Enterprise",
+  "AI & Research",
   "Consumer Services",
   "Devices",
   "Dynamics",
   "Misc",
-  "Office",
+  "Office 365",
+  "Dynamics 365",
   "Other",
-  "Windows"
+  "Windows",
+  "Linkedin"
 ];
 
 const expertiseTypes = [
