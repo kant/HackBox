@@ -231,7 +231,7 @@ const projectBase = {
   video_type: emptyString,
   meta,
   custom_categories: arrayOfStrings,
-  video_data: Joi.string().min(2)
+  video_data: Joi.string().allow(null)
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
