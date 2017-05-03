@@ -183,20 +183,20 @@ const colorSchemes = [
 ];
 
 const executiveChallenges = [
-  "Enable Digital Transformation (Judson Althoff)",
-  "Care for Current Fans (Chris Capossela)",
-  "Grow Industry Verticals (Jean-Philippe Courtois)",
-  "Gaming Growth (Kurt DelBene)",
-  "Azure in Commercial Segments (Scott Guthrie)",
-  "Culture of Learning (Kathleen Hogan)",
-  "Customer-growth Scenarios (Amy Hood)",
-  "Student Productivity (Rajesh Jha)",
-  "Disruptive Innovation (Peggy Johnson)",
-  "Windows 10 Creators Update (Terry Myerson)",
-  "Improve Quality and Speed (Kevin Scott)",
-  "Infuse AI (Harry Shum)",
-  "Hack for Good (Brad Smith)",
-  "Professional Cloud & Network (Jeff Weiner)"
+  "Judson Althoff",
+  "Chris Capossela",
+  "Jean-Philippe Courtois",
+  "Kurt DelBene",
+  "Scott Guthrie",
+  "Kathleen Hogan",
+  "Amy Hood",
+  "Rajesh Jha",
+  "Peggy Johnson",
+  "Terry Myerson",
+  "Kevin Scott",
+  "Harry Shum",
+  "Brad Smith",
+  "Jeff Weiner"
 ];
 
 const motivationTypes = [
