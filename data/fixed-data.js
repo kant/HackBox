@@ -183,21 +183,20 @@ const colorSchemes = [
 ];
 
 const executiveChallenges = [
-  "Judson Althoff -- Share ideas that enable the digital transformation of our customers.",
-  "Chris Capossela -- Yes, we need more fans – but suggest ways to take better care of our current fans.",
-  "Jean-Philippe Courtois -- Inspire us with your strategies to grow our business in Industry verticals.",
-  "Kurt DelBene -- What can we do to capitalize on gaming growth for PC, Mobile and Console?",
-  "Scott Guthrie -- Show ways to make Azure the #1 cloud in commercial segments.",
-  "Kathleen Hogan -- How can we establish a culture of learning that is as strong as our culture of giving?",
-  "Amy Hood -- Suggest ways we can link our internal product investments to customer-growth scenarios supported by data.",
-  "Rajesh Jha -- Build something to make students all around the world more productive.",
-  "Peggy Johnson -- Show me a disruptive innovation that will drive growth.",
-  "Terry Myerson -- Use Windows 10 Creators Update to make something that inspires the creator in all of us.",
-  "Kevin Scott -- How can we improve quality and speed by working better together on engineering assets?",
-  "Harry Shum -- Build solutions that infuse AI into Microsoft products and services.",
-  "Brad Smith -- Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems.",
-  "Jeff Weiner -- Build something that demonstrates the power of connecting the professional cloud and our professional network."
-];
+  "Judson Althoff -- Empower customers to harness the power of the cloud to drive digital transformation. -- Power of the Cloud",
+  "Chris Capossela -- How do we grow millennial fans in both enterprise and consumer for Office? -- Millennial Fans",
+  "Jean-Philippe Courtois -- Inspire us with your strategies to grow our business in Industry verticals. -- Grow Industry Verticals",
+  "Kurt DelBene -- How can Microsoft empower employees and accelerate customer engagement with digital transformation? -- Empower Employees",
+  "Scott Guthrie -- Show ways to make Azure the #1 cloud in commercial segments. -- Azure in Commercial Segments",
+  "Kathleen Hogan -- How can we establish a culture of learning that is as strong as our culture of giving? -- Culture of Learning",
+  "Amy Hood -- Suggest ways we can link our internal product investments to customer-growth scenarios supported by data. -- Customer-growth Scenarios",
+  "Rajesh Jha -- Show us how our products and services can work together seamlessly in service of end to end customer scenarios. -- End to End Customer Scenarios",
+  "Terry Myerson -- Use Windows 10 Creators Update to make something that inspires the creator in all of us. -- Windows 10 Creators Update",
+  "Kevin Scott -- How can we help more developers innovate and achieve success with Microsoft technology and platforms? -- Help Developers Innovate",
+  "Harry Shum -- Build solutions that infuse AI into Microsoft products and services. -- Infuse AI",
+  "Brad Smith -- Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. -- Hack for Good",
+  "Jeff Weiner -- How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers? -- Growing LinkedIn"
+  ];
 
 const motivationTypes = [
 
