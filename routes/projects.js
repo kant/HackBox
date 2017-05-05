@@ -1,5 +1,4 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
-import Boom from "boom";
+/*eslint camelcase: [2, {"properties": "never"}] */ import Boom from "boom";
 import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
   sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
@@ -70,6 +69,7 @@ const register = function (server, options, next) {
           has_member: stringId,
           has_challenges: arrayOfStrings,
           venue: arrayOfStrings,
+          project_motivations: arrayOfStrings,
           participant_name: Joi.string(),
           video_type: Joi.string(),
           has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
@@ -112,6 +112,7 @@ const register = function (server, options, next) {
         if (!payload.owner_id) {
           payload.owner_id = userId;
         }
+
 
         const response = ensureHackathon(hackathonId).then(() => {
           return db.transaction((trx) => {

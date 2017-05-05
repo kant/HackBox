@@ -1,4 +1,5 @@
 const customerTypes = [
+
   "Advertisers",
   "Businesses",
   "Consumers",
@@ -13,9 +14,11 @@ const customerTypes = [
   "Students and Educators",
   "Women and Girls",
   "Other"
+
 ];
 
 const productTypes = [
+
   "3rd Party Platforms",
   "Cloud & Enterprise",
   "AI & Research",
@@ -28,9 +31,11 @@ const productTypes = [
   "Other",
   "Windows",
   "Linkedin"
+
 ];
 
 const expertiseTypes = [
+
   "JavaScript",
   "Azure",
   "Android",
@@ -40,9 +45,11 @@ const expertiseTypes = [
   "Cortana",
   "iOS",
   "Skype"
+
 ];
 
 const projectTypes = [
+
   "Azure",
   "Office",
   "Bing",
@@ -65,9 +72,11 @@ const projectTypes = [
   "Mobile",
   "InTune",
   "Yammer"
+
 ];
 
 const participantTypes = [
+
   "Business Programs & Ops",
   "Content Publishing",
   "Data Science",
@@ -86,9 +95,11 @@ const participantTypes = [
   "Service Eng",
   "Services",
   "Supply Chain & Ops"
+
 ];
 
 const countryList = [
+
   "United States",
   "Worldwide",
   "No country",
@@ -170,9 +181,11 @@ const countryList = [
   "Uruguay",
   "Vietnam",
   "Zimbabwe"
+
 ];
 
 const colorSchemes = [
+
   "Azure blue",
   "Bing gold",
   "Office red",
@@ -180,9 +193,11 @@ const colorSchemes = [
   "Windows blue",
   "Xbox green",
   "Skype blue"
+
 ];
 
 const executiveChallenges = [
+
   "Judson Althoff--Empower customers to harness the power of the cloud to drive digital transformation.--Power of the Cloud",
   "Chris Capossela--How do we grow millennial fans in both enterprise and consumer for Office?--Millennial Fans",
   "Jean-Philippe Courtois--Inspire us with your strategies to grow our business in Industry verticals.--Grow Industry Verticals",
@@ -196,21 +211,23 @@ const executiveChallenges = [
   "Harry Shum--Build solutions that infuse AI into Microsoft products and services.--Infuse AI",
   "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems.--Hack for Good",
   "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?--Growing LinkedIn"
-  ];
 
-const motivationTypes = [
+];
+
+const projectMotivations = [
 
   "Learn something new",
-  "Explore a new area/technology",
   "Improve my day job",
-  "Solve a customer problem",
-  "Improve a relationship with a partner/customer",
-  "Pursue an interest/passion",
-  "Work with people outside my workgroup",
-  "Build something cool",
+  "Fix a customer issue",
+  "Follow a personal passion",
+  "Work with new people",
+  "Have fun",
   "Try a new role",
-  "Fix/improve an existing product or service",
-  "Start a new product or service"
+  "Fix something",
+  "Start something new",
+  "Escape my day job (for a bit) ;)",
+  "No Additional Motivations"
+
 ];
 
 export default {
@@ -219,7 +236,7 @@ export default {
   expertiseTypes,
   projectTypes,
   participantTypes,
-  motivationTypes,
+  projectMotivations,
   countryList,
   colorSchemes,
   executiveChallenges

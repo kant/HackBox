@@ -1,7 +1,15 @@
 import Joi from "joi";
-import { countryList, colorSchemes,
-  customerTypes, productTypes, projectTypes,
-  participantTypes, executiveChallenges } from "./fixed-data";
+import { 
+
+    countryList, 
+    colorSchemes,
+    customerTypes, 
+    productTypes, 
+    projectTypes,
+    participantTypes, 
+    executiveChallenges 
+
+} from "./fixed-data";
 
 /*
   re-usable types
@@ -223,7 +231,7 @@ const projectBase = {
   needed_expertise: arrayOfStrings,
   customer_type: customerType,
   tags: arrayOfStrings,
-  motivations: arrayOfStrings,
+  project_motivations: arrayOfStrings,
   focus: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: emptyString,
@@ -259,7 +267,7 @@ export const newProject = Joi.object(projectBase)
     needed_expertise: arrayOfStrings.default([]),
     customer_type: customerType,
     tags: arrayOfStrings.default([]),
-    motivations: arrayOfStrings.default([]),
+    project_motivations: arrayOfStrings.default([]),
     focus: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
