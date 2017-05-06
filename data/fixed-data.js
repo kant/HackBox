@@ -216,17 +216,15 @@ const executiveChallenges = [
 
 const projectMotivations = [
 
-  "Learn something new",
-  "Improve my day job",
-  "Fix a customer issue",
-  "Follow a personal passion",
-  "Work with new people",
-  "Have fun",
-  "Try a new role",
-  "Fix something",
-  "Start something new",
-  "Escape my day job (for a bit) ;)",
-  "No Additional Motivations"
+    "Have fun",
+    "Learn a new technology or skill",
+    "Work on something that is not part of my day job",
+    "Collaborate with people outside my usual workgroup", 
+    "Create a new product, service, program, or process",
+    "Improve or update an existing product, service, program, or process",
+    "I am passionate about a cause",
+    "Finally work on the idea that we haven’t had time for",
+    "Other"  
 
 ];
 
