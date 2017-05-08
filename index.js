@@ -46,7 +46,8 @@ server.connection({
   host: "0.0.0.0",
   routes: {
     cors: {
-      credentials: true
+      credentials: true,
+      headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'x-ms-request-id', 'x-ms-request-root-id']
     },
     validate: {
       options: {
