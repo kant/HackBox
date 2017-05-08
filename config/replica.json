@@ -6,7 +6,8 @@
       "host": "$DB_CONNECTION_HOST_REPLICA",
       "user": "$DB_CONNECTION_USER_REPLICA",
       "password": "$DB_CONNECTION_PASSWORD_REPLICA",
-      "port": "$DB_CONNECTION_PORT"
+      "port": "$DB_CONNECTION_PORT",
+      "multipleStatements": true
     },
     "pool": {
       "min": 0,

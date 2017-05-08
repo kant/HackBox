@@ -129,15 +129,18 @@ const register = function (server, options, next) {
           return reply(Boom.forbidden(`Users can only delete themselves`));
         }
 
-        const response = db("users")
-          .where({id: userId})
-          .update({deleted: true}).then((result) => {
-            if (result === 0) {
-              throw Boom.notFound(`User id ${userId} not found`);
-            }
+        const response = db.raw(
+          `SET foreign_key_checks=0;
+           DELETE FROM users WHERE id = '${userId}';
+           DELETE FROM participants WHERE user_id = '${userId}';
+           DELETE FROM members WHERE user_id = '${userId}';
+           SET foreign_key_checks=1;`).then((result) => {
+             if (result === 0) {
+               throw Boom.badRequest('There was a problem deleting all affilliated data');
+             }
 
-            return request.generateResponse().code(204);
-          });
+             return request.generateResponse().code(204);
+           });
 
         reply(response);
       },
