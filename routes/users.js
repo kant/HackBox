@@ -121,12 +121,11 @@ const register = function (server, options, next) {
       description: "Delete a user",
       tags: ["api"],
       handler(request, reply) {
-        const isSuperUser = request.isSuperUser();
         const requestorId = request.userId();
         const { userId } = request.params;
 
-        if (userId !== requestorId && !isSuperUser) {
-          return reply(Boom.forbidden(`Only admins can delete users other than themselves`));
+        if (userId !== requestorId) {
+          return reply(Boom.forbidden(`Users can only delete themselves`));
         }
 
         const response = db("users")
