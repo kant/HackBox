@@ -200,7 +200,7 @@ const executiveChallenges = [
 
   "Judson Althoff--Empower customers to harness the power of the cloud to drive digital transformation.--Power of the Cloud",
   "Chris Capossela--How do we grow millennial fans in both enterprise and consumer for Office?--Millennial Fans",
-  "Jean-Philippe Courtois--Inspire us with your strategies to grow our business in Industry verticals.--Grow Industry Verticals",
+  "Jean-Philippe Courtois--Empower our field organization to identify the highest propensity Cloud customers and partners.--Grow Industry Verticals",
   "Kurt DelBene--How can Microsoft empower employees and accelerate customer engagement with digital transformation?--Empower Employees",
   "Scott Guthrie--Show ways to make Azure the #1 cloud in commercial segments.--Azure in Commercial Segments",
   "Kathleen Hogan--How can we establish a culture of learning that is as strong as our culture of giving?--Culture of Learning",
@@ -209,7 +209,7 @@ const executiveChallenges = [
   "Terry Myerson--Use Windows 10 Creators Update to make something that inspires the creator in all of us.--Windows 10 Creators Update",
   "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?--Help Developers Innovate",
   "Harry Shum--Build solutions that infuse AI into Microsoft products and services.--Infuse AI",
-  "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems.--Hack for Good",
+  "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. (Hack for Good)--Hack for Good",
   "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?--Growing LinkedIn"
 
 ];
@@ -219,12 +219,12 @@ const projectMotivations = [
     "Have fun",
     "Learn a new technology or skill",
     "Work on something that is not part of my day job",
-    "Collaborate with people outside my usual workgroup", 
+    "Collaborate with people outside my usual workgroup",
     "Create a new product, service, program, or process",
     "Improve or update an existing product, service, program, or process",
     "I am passionate about a cause",
     "Finally work on the idea that we haven’t had time for",
-    "Other"  
+    "Other"
 
 ];
 
