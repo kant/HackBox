@@ -108,6 +108,7 @@ const userBase = {
   school: Joi.string().max(255).trim(),
   state: Joi.string().max(255).trim(),
   group: Joi.string().max(255).trim(),
+  phone: Joi.string().max(16).trim(),
   organization: Joi.string().max(255).trim(),
   external: Joi.string().max(255).trim()
 };

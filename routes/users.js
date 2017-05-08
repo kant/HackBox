@@ -37,7 +37,7 @@ const register = function (server, options, next) {
           role: roleArray,
           country: countryArray,
           sort_col: Joi.any().valid("given_name", "family_name", "alias", "job_title", "department",
-            "city", "country"),
+            "city", "country","phone"),
           sort_direction: sortDirection
         })
       }
@@ -89,6 +89,7 @@ const register = function (server, options, next) {
 
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.
+        console.log
         const response = db("users").where({id: userProps.id}).then((result) => {
           if (result.length) {
             return db("users").update(userProps).where({id: userProps.id});
