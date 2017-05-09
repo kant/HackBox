@@ -1,7 +1,15 @@
 import Joi from "joi";
-import { countryList, colorSchemes,
-  customerTypes, productTypes, projectTypes,
-  participantTypes, executiveChallenges } from "./fixed-data";
+import { 
+
+    countryList, 
+    colorSchemes,
+    customerTypes, 
+    productTypes, 
+    projectTypes,
+    participantTypes, 
+    executiveChallenges 
+
+} from "./fixed-data";
 
 /*
   re-usable types
@@ -90,16 +98,17 @@ const userBase = {
   email: Joi.string().email().trim(),
   profession: Joi.string().max(255).trim(),
   discipline: Joi.string().max(255).trim(),
-  city: Joi.string().max(255).trim(),
+  city: Joi.string().max(255).trim().allow(""),
   alias: Joi.string().max(255).trim(),
   job_title: Joi.string().max(255).trim(),
   department: Joi.string().max(255).trim(),
   organization_id: Joi.number().integer().min(0),
   year: Joi.string().max(255).trim(),
-  major: Joi.string().max(255).trim(),
-  school: Joi.string().max(255).trim(),
-  state: Joi.string().max(255).trim(),
-  group: Joi.string().max(255).trim(),
+  major: Joi.string().max(255).trim().allow(""),
+  school: Joi.string().max(255).trim().allow(""),
+  state: Joi.string().max(255).trim().allow(""),
+  group: Joi.string().max(255).trim().allow(""),
+  phone: Joi.string().max(16).trim().allow(""),
   organization: Joi.string().max(255).trim(),
   external: Joi.string().max(255).trim()
 };
@@ -223,7 +232,7 @@ const projectBase = {
   needed_expertise: arrayOfStrings,
   customer_type: customerType,
   tags: arrayOfStrings,
-  motivations: arrayOfStrings,
+  project_motivations: arrayOfStrings,
   focus: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: emptyString,
@@ -259,7 +268,7 @@ export const newProject = Joi.object(projectBase)
     needed_expertise: arrayOfStrings.default([]),
     customer_type: customerType,
     tags: arrayOfStrings.default([]),
-    motivations: arrayOfStrings.default([]),
+    project_motivations: arrayOfStrings.default([]),
     focus: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
