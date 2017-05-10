@@ -131,6 +131,7 @@ const register = function (server, options, next) {
 
         const response = db.raw(
           `SET foreign_key_checks=0;
+           UPDATE projects SET deleted = 1 WHERE owner_id = '${userId}';
            DELETE FROM users WHERE id = '${userId}';
            DELETE FROM participants WHERE user_id = '${userId}';
            DELETE FROM members WHERE user_id = '${userId}';
