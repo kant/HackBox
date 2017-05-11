@@ -205,7 +205,7 @@ const projectBase = {
   title: Joi.string().min(1).max(120),
   tagline: emptyString,
   owner_id: stringId,
-  video_id: optionalId,
+  video_id: Joi.number().integer().positive().allow(null),
   status: emptyString,
   description: emptyTextLarge,
   image_url: url,
