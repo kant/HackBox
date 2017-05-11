@@ -9,12 +9,16 @@ import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
 import _ from "lodash";
+// import slaveDB from "./config";
 import { db } from "./config";
 import { projectTypes } from "./data/fixed-data";
 
 const client = knex(db);
+// const client2 = knex(slaveDB.slave.db);
 
 export default client;
+
+// export const clientReplica = knex(slaveDB.slave.db);
 
 export const resolveOr404 = (promise, label = "resource") => {
   return promise.then((rows) => {
@@ -404,11 +408,14 @@ export const projectSearch = (queryObj) => {
     Windows: "windows",
     Devices: "devices",
     "Consumer Services": "consumer_services",
-    "Cloud + Enterprise": "cloud_enterprise",
-    Office: "office",
+    "Cloud & Enterprise": "cloud_and_enterprise",
+    "AI & Research": "ai_and_research",
+    "Office 365": "office_365",
+    "Dynamics 365": "dynamics_365",
     Dynamics: "dynamics",
     "3rd Party Platforms": "third_party_platforms",
     Misc: "misc",
+    Linkedin: "linkedin",
     Other: "other"
   };
   if (product_focus && product_focus.length) {
@@ -416,7 +423,7 @@ export const projectSearch = (queryObj) => {
       product_focus.forEach((focus, index) => {
         const fnName = index === 0 ? "where" : "orWhere";
         const col = focii[focus];
-        this[fnName](`projects.json_${col}_focus`, "like", "%true%");
+        this[fnName](`projects.json_focus`, "like", `%${col}%`);
       });
     });
   }
@@ -485,6 +492,7 @@ export const projectSearch = (queryObj) => {
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
     "hackathons.name as hackathon_name");
+    
   return query;
 };
 
@@ -767,14 +775,13 @@ export const userSearch = (queryObj) => {
   } else if (orderByCol !== "joined_at") {
     query.orderByRaw(`${orderByCol} ${orderByDirection}`);
   }
-
   return query;
 };
 
 export const hackathonSearch = (queryObj) => {
   const {
     include_deleted, include_unpublished, country,
-    admins_contain, participants_contain, search, sort_col, sort_direction
+    admins_contain, participants_contain, search, sort_col, sort_direction, organization_id
   } = queryObj;
 
   // we don't include all fields
@@ -815,6 +822,11 @@ export const hackathonSearch = (queryObj) => {
 
   if (!include_deleted) {
     query.andWhere({"hackathons.deleted": false});
+  }
+
+  if (organization_id) {
+    var subquery = client.select('hackathon_id').from("hackathons_orgs").andWhere('organization_id', organization_id);
+    query.andWhere('id', 'in', subquery);
   }
 
   if (admins_contain) {

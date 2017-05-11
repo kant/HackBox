@@ -3,14 +3,15 @@
     "client": "mysql",
     "connection": {
       "database": "$DB_CONNECTION_DATABASE",
-      "host": "$DB_CONNECTION_HOST",
-      "user": "$DB_CONNECTION_USER",
-      "password": "$DB_CONNECTION_PASSWORD",
+      "host": "$DB_CONNECTION_HOST_REPLICA",
+      "user": "$DB_CONNECTION_USER_REPLICA",
+      "password": "$DB_CONNECTION_PASSWORD_REPLICA",
       "port": "$DB_CONNECTION_PORT",
       "multipleStatements": true
     },
     "pool": {
-      "min": 0
+      "min": 0,
+      "max": 100
     },
     "migrations": {
       "tableName": "knex_migrations"
@@ -21,6 +22,6 @@
     "response": "*",
     "error": "*"
   },
-  "serverDebug": true,
-  "https": false
+  "serverDebug": false,
+  "https": true
 }

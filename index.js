@@ -21,6 +21,7 @@ import AwardsRoutes from "./routes/awards";
 import AwardCategoriesRoutes from "./routes/award-categories";
 import ReportRoutes from "./routes/reports";
 import HackbotRoutes from "./routes/hackbot";
+import WhitelistRoutes from "./routes/whitelist";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
@@ -45,7 +46,8 @@ server.connection({
   host: "0.0.0.0",
   routes: {
     cors: {
-      credentials: true
+      credentials: true,
+      headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'x-ms-request-id', 'x-ms-request-root-id']
     },
     validate: {
       options: {
@@ -99,6 +101,7 @@ server.register([
   AwardCategoriesRoutes,
   ReportRoutes,
   HackbotRoutes,
+  WhitelistRoutes,
   ExpandMetaPlugin
 ], (err) => {
   if (err) {

@@ -48,6 +48,10 @@ const register = function (server, options, next) {
         //   }
         // }
 
+        if (request.auth.credentials && request.auth.credentials.organization_id) {
+          request.query.organization_id = request.auth.credentials.organization_id;
+        }
+
         const response = hackathonSearch(request.query);
 
         reply(paginate(response, {limit, offset}));
@@ -95,6 +99,12 @@ const register = function (server, options, next) {
                 user_id: ownerId
               });
             });
+        }).then(() => {
+          //Always on hackathon creation make this hack belong to Microsoft organization
+          return db("hackathons_orgs").insert({
+            hackathon_id: hackathonId,
+            organization_id: 1
+          });
         }).then(() => {
           client.trackEvent("New Hackathon", {hackId: hackathonId});
           return ensureHackathon(hackathonId);
@@ -190,13 +200,33 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
         const ownerId = request.isSuperUser() ? false : request.userId();
+        var hackathon = {};
 
         const response = ensureHackathon(hackathonId, {
           allowDeleted: request.isSuperUser(),
           checkPublished: ownerId
+        }).then((hack) => {
+          hackathon = hack;
+
+          //Check if hackathon belongs to the same organization as user
+          return db("hackathons_orgs")
+            .where({hackathon_id: hack.id})
+        }).then((data) => {
+          var authorized = false;
+
+          data.forEach((hack) => {
+            if (hack.organization_id == request.auth.credentials.organization_id) {
+              authorized = true;
+            }
+          });
+
+          if (authorized) {
+            reply(hackathon);
+          } else {
+            reply().code(403);
+          }
         });
 
-        reply(response);
       },
       validate: {
         params: {

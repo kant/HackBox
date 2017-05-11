@@ -101,9 +101,9 @@ const register = function (server, options, next) {
           const participantResult = results[2];
           const isHackathonAdmin = hackathonResult.admins.some((item) => item.id === requestorId);
 
-          if (participantResult.length > 0) {
-            throw Boom.conflict(`User ${userId} is already in hackathon ${hackathonId}`);
-          }
+          // if (participantResult.length > 0) {
+          //   throw Boom.conflict(`User ${userId} is already in hackathon ${hackathonId}`);
+          // }
 
           if (!hackathonResult.is_public && isAddingSelf && !isHackathonAdmin) {
             throw Boom.forbidden(`Hackathon is not public. You must be added by a hackathon admin`);
@@ -185,12 +185,12 @@ const register = function (server, options, next) {
         const { hackathonId, userId } = request.params;
         const requestorId = request.userId();
         const isRemovingSelf = requestorId === userId;
-        const isSuperUser = request.isSuperUser();
+        // const isSuperUser = request.isSuperUser();
         let checkOwner = false;
 
         // unless you're a super user, or adding yourself
         // make sure requestor is an owner
-        if (!isRemovingSelf && !isSuperUser) {
+        if (!isRemovingSelf) {
           checkOwner = requestorId;
         }
 

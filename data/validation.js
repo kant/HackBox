@@ -1,7 +1,15 @@
 import Joi from "joi";
-import { countryList, colorSchemes,
-  customerTypes, productTypes, projectTypes,
-  participantTypes, executiveChallenges } from "./fixed-data";
+import { 
+
+    countryList, 
+    colorSchemes,
+    customerTypes, 
+    productTypes, 
+    projectTypes,
+    participantTypes, 
+    executiveChallenges 
+
+} from "./fixed-data";
 
 /*
   re-usable types
@@ -47,7 +55,7 @@ export const stringIdArray = Joi.array().items(stringId).required();
   Pagination
 */
 export const pagination = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100).default(25),
+  limit: Joi.number().integer().min(1).max(1000000).default(25),
   offset: Joi.number().integer().min(0).default(0)
 });
 
@@ -90,10 +98,19 @@ const userBase = {
   email: Joi.string().email().trim(),
   profession: Joi.string().max(255).trim(),
   discipline: Joi.string().max(255).trim(),
-  city: Joi.string().max(255).trim(),
+  city: Joi.string().max(255).trim().allow(""),
   alias: Joi.string().max(255).trim(),
   job_title: Joi.string().max(255).trim(),
-  department: Joi.string().max(255).trim()
+  department: Joi.string().max(255).trim(),
+  organization_id: Joi.number().integer().min(0),
+  year: Joi.string().max(255).trim(),
+  major: Joi.string().max(255).trim().allow(""),
+  school: Joi.string().max(255).trim().allow(""),
+  state: Joi.string().max(255).trim().allow(""),
+  group: Joi.string().max(255).trim().allow(""),
+  phone: Joi.string().max(16).trim().allow(""),
+  organization: Joi.string().max(255).trim(),
+  external: Joi.string().max(255).trim()
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
@@ -188,7 +205,7 @@ const projectBase = {
   title: Joi.string().min(1).max(120),
   tagline: emptyString,
   owner_id: stringId,
-  video_id: optionalId,
+  video_id: Joi.number().integer().positive().allow(null),
   status: emptyString,
   description: emptyTextLarge,
   image_url: url,
@@ -215,12 +232,15 @@ const projectBase = {
   needed_expertise: arrayOfStrings,
   customer_type: customerType,
   tags: arrayOfStrings,
+  project_motivations: arrayOfStrings,
+  focus: arrayOfStrings,
   deleted: Joi.boolean(),
   venue: emptyString,
   executive_challenges: challengeArray,
   video_type: emptyString,
   meta,
-  custom_categories: arrayOfStrings
+  custom_categories: arrayOfStrings,
+  video_data: Joi.string().allow(null)
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -248,6 +268,8 @@ export const newProject = Joi.object(projectBase)
     needed_expertise: arrayOfStrings.default([]),
     customer_type: customerType,
     tags: arrayOfStrings.default([]),
+    project_motivations: arrayOfStrings.default([]),
+    focus: arrayOfStrings.default([]),
     meta: metaWithDefault,
     image_url: urlWithDefault,
     code_repo_url: urlWithDefault,

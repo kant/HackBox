@@ -37,7 +37,7 @@ const register = function (server, options, next) {
           role: roleArray,
           country: countryArray,
           sort_col: Joi.any().valid("given_name", "family_name", "alias", "job_title", "department",
-            "city", "country"),
+            "city", "country","phone"),
           sort_direction: sortDirection
         })
       }
@@ -77,18 +77,19 @@ const register = function (server, options, next) {
         // Unless trust_payload is passed
         // we also override payload data with
         // items from the auth credentials
-        if (!request.query.trust_payload) {
-          Object.assign(userProps, {
-            id,
-            name,
-            family_name,
-            given_name,
-            email
-          });
-        }
+        // if (!request.query.trust_payload) {
+        //   Object.assign(userProps, {
+        //     id,
+        //     name,
+        //     family_name,
+        //     given_name,
+        //     email
+        //   });
+        // }
 
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.
+        console.log
         const response = db("users").where({id: userProps.id}).then((result) => {
           if (result.length) {
             return db("users").update(userProps).where({id: userProps.id});
@@ -99,10 +100,10 @@ const register = function (server, options, next) {
           request.log(["database", "response", "insert"], res);
           return ensureUser(userProps.id);
         }).then((result) => {
+          client.trackEvent("New User", {credentials: id});
           return request.generateResponse(result).code(201);
         });
 
-        client.trackEvent("New User", {credentials: id});
         reply(response);
       },
       validate: {
@@ -121,23 +122,26 @@ const register = function (server, options, next) {
       description: "Delete a user",
       tags: ["api"],
       handler(request, reply) {
-        const isSuperUser = request.isSuperUser();
         const requestorId = request.userId();
         const { userId } = request.params;
 
-        if (userId !== requestorId && !isSuperUser) {
-          return reply(Boom.forbidden(`Only admins can delete users other than themselves`));
+        if (userId !== requestorId) {
+          return reply(Boom.forbidden(`Users can only delete themselves`));
         }
 
-        const response = db("users")
-          .where({id: userId})
-          .update({deleted: true}).then((result) => {
-            if (result === 0) {
-              throw Boom.notFound(`User id ${userId} not found`);
-            }
+        const response = db.raw(
+          `SET foreign_key_checks=0;
+           UPDATE projects SET deleted = 1 WHERE owner_id = '${userId}';
+           DELETE FROM users WHERE id = '${userId}';
+           DELETE FROM participants WHERE user_id = '${userId}';
+           DELETE FROM members WHERE user_id = '${userId}';
+           SET foreign_key_checks=1;`).then((result) => {
+             if (result === 0) {
+               throw Boom.badRequest('There was a problem deleting all affilliated data');
+             }
 
-            return request.generateResponse().code(204);
-          });
+             return request.generateResponse().code(204);
+           });
 
         reply(response);
       },

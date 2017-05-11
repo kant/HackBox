@@ -1,4 +1,5 @@
 const customerTypes = [
+
   "Advertisers",
   "Businesses",
   "Consumers",
@@ -13,21 +14,28 @@ const customerTypes = [
   "Students and Educators",
   "Women and Girls",
   "Other"
+
 ];
 
 const productTypes = [
+
   "3rd Party Platforms",
-  "Cloud + Enterprise",
+  "Cloud & Enterprise",
+  "AI & Research",
   "Consumer Services",
   "Devices",
   "Dynamics",
   "Misc",
-  "Office",
+  "Office 365",
+  "Dynamics 365",
   "Other",
-  "Windows"
+  "Windows",
+  "Linkedin"
+
 ];
 
 const expertiseTypes = [
+
   "JavaScript",
   "Azure",
   "Android",
@@ -37,9 +45,11 @@ const expertiseTypes = [
   "Cortana",
   "iOS",
   "Skype"
+
 ];
 
 const projectTypes = [
+
   "Azure",
   "Office",
   "Bing",
@@ -62,9 +72,11 @@ const projectTypes = [
   "Mobile",
   "InTune",
   "Yammer"
+
 ];
 
 const participantTypes = [
+
   "Business Programs & Ops",
   "Content Publishing",
   "Data Science",
@@ -83,9 +95,11 @@ const participantTypes = [
   "Service Eng",
   "Services",
   "Supply Chain & Ops"
+
 ];
 
 const countryList = [
+
   "United States",
   "Worldwide",
   "No country",
@@ -167,9 +181,11 @@ const countryList = [
   "Uruguay",
   "Vietnam",
   "Zimbabwe"
+
 ];
 
 const colorSchemes = [
+
   "Azure blue",
   "Bing gold",
   "Office red",
@@ -177,19 +193,39 @@ const colorSchemes = [
   "Windows blue",
   "Xbox green",
   "Skype blue"
+
 ];
 
 const executiveChallenges = [
-  "Hack for Good (Brad Smith)",
-  "Earn Fans for Microsoft (Chris Capossela)",
-  "Quality for Cloud Customers (Scott Guthrie)",
-  "Aspire-to Culture (Kathleen Hogan)",
-  "Simplify How We Work (Amy Hood)",
-  "Creative Partnerships (Peggy Johnson)",
-  "Mobile End Points (Qi Lu)",
-  "Universal Windows App (Terry Myerson)",
-  "Artificial Intelligence (Harry Shum)",
-  "Cloud Penetration and Consumption (Kevin Turner)"
+
+  "Judson Althoff--Empower customers to harness the power of the cloud to drive digital transformation.",
+  "Chris Capossela--How do we grow millennial fans in both enterprise and consumer for Office?",
+  "Jean-Philippe Courtois--Empower our field organization to identify the highest propensity Cloud customers and partners.",
+  "Kurt DelBene--How can Microsoft empower employees and accelerate customer engagement with digital transformation?",
+  "Scott Guthrie--Show ways to make Azure the #1 cloud in commercial segments.",
+  "Kathleen Hogan--How can we establish a culture of learning that is as strong as our culture of giving?",
+  "Amy Hood--Suggest ways we can link our internal product investments to customer-growth scenarios supported by data.",
+  "Rajesh Jha--Show us how our products and services can work together seamlessly in service of end to end customer scenarios.",
+  "Terry Myerson--Use Windows 10 Creators Update to make something that inspires the creator in all of us.",
+  "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?",
+  "Harry Shum--Build solutions that infuse AI into Microsoft products and services.",
+  "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. (Hack for Good)",
+  "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?"
+
+];
+
+const projectMotivations = [
+
+    "Have fun",
+    "Learn a new technology or skill",
+    "Work on something that is not part of my day job",
+    "Collaborate with people outside my usual workgroup",
+    "Create a new product, service, program, or process",
+    "Improve or update an existing product, service, program, or process",
+    "I am passionate about a cause",
+    "Finally work on the idea that we haven’t had time for",
+    "Other"
+
 ];
 
 export default {
@@ -198,6 +234,7 @@ export default {
   expertiseTypes,
   projectTypes,
   participantTypes,
+  projectMotivations,
   countryList,
   colorSchemes,
   executiveChallenges
