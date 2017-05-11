@@ -205,13 +205,15 @@ const register = function (server, options, next) {
         const response = ensureHackathon(hackathonId, {
           allowDeleted: request.isSuperUser(),
           checkPublished: ownerId
-        }).then((hack) => {
+        })
+        .then((hack) => {
           hackathon = hack;
 
           //Check if hackathon belongs to the same organization as user
           return db("hackathons_orgs")
             .where({hackathon_id: hack.id})
-        }).then((data) => {
+        })
+        .then((data) => {
           var authorized = false;
 
           data.forEach((hack) => {
@@ -225,7 +227,10 @@ const register = function (server, options, next) {
           } else {
             reply().code(403);
           }
-        });
+        })
+        .catch((err) => {
+            reply(err);
+          });
 
       },
       validate: {
