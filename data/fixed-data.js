@@ -224,6 +224,7 @@ const projectMotivations = [
     "Improve or update an existing product, service, program, or process",
     "I am passionate about a cause",
     "Finally work on the idea that we haven’t had time for",
+    "Work on a project I hope to eventually launch to external customers",
     "Other"
 
 ];
