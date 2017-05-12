@@ -25,7 +25,8 @@ const BOOLEAN_KEYS = [
   "deleted", "blocked", "is_public", "is_published",
   "needs_hackers", "has_project", "show_name",
   "show_rules", "show_judges", "show_schedule",
-  "writing_code", "existing", "external_customers"
+  "writing_code", "existing", "external_customers",
+  "garage_ship_channel"
 ];
 
 const expandResult = (obj) => {
