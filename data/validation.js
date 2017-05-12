@@ -1,13 +1,13 @@
 import Joi from "joi";
-import { 
+import {
 
-    countryList, 
+    countryList,
     colorSchemes,
-    customerTypes, 
-    productTypes, 
+    customerTypes,
+    productTypes,
     projectTypes,
-    participantTypes, 
-    executiveChallenges 
+    participantTypes,
+    executiveChallenges
 
 } from "./fixed-data";
 
@@ -103,11 +103,9 @@ const userBase = {
   job_title: Joi.string().max(255).trim(),
   department: Joi.string().max(255).trim(),
   organization_id: Joi.number().integer().min(0),
-  year: Joi.string().max(255).trim(),
   major: Joi.string().max(255).trim().allow(""),
   school: Joi.string().max(255).trim().allow(""),
   state: Joi.string().max(255).trim().allow(""),
-  group: Joi.string().max(255).trim().allow(""),
   phone: Joi.string().max(16).trim().allow(""),
   organization: Joi.string().max(255).trim(),
   external: Joi.string().max(255).trim()
@@ -216,6 +214,7 @@ const projectBase = {
   how_it_will_work: emptyTextLarge,
   needs_hackers: Joi.boolean(),
   writing_code: Joi.boolean(),
+  garage_ship_channel: Joi.boolean(),
   existing: Joi.boolean(),
   external_customers: Joi.boolean(),
   needed_roles: roleArray,
@@ -252,6 +251,7 @@ export const newProject = Joi.object(projectBase)
     how_it_will_work: projectBase.how_it_will_work.default(""),
     needs_hackers: Joi.boolean().default(false),
     writing_code: Joi.boolean().default(false),
+    garage_ship_channel: Joi.boolean().default(false),
     existing: Joi.boolean().default(false),
     external_customers: Joi.boolean().default(false),
     needed_roles: roleArray.default([]),
