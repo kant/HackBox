@@ -225,6 +225,7 @@ const projectMotivations = [
     "I am passionate about a cause",
     "Finally work on the idea that we haven’t had time for",
     "Work on a project I hope to eventually launch to external customers",
+    "Work on a project I think has commercial or strategic value for Microsoft",
     "Other"
 
 ];
