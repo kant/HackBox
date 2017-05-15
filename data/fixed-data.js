@@ -204,7 +204,7 @@ const executiveChallenges = [
   "Kurt DelBene--How can Microsoft empower employees and accelerate customer engagement with digital transformation?",
   "Scott Guthrie--Show ways to make Azure the #1 cloud in commercial segments.",
   "Kathleen Hogan--How can we establish a culture of learning that is as strong as our culture of giving?",
-  "Amy Hood--Suggest ways we can link our internal product investments to customer-growth scenarios supported by data.",
+  "Amy Hood--TBD",
   "Rajesh Jha--Show us how our products and services can work together seamlessly in service of end to end customer scenarios.",
   "Terry Myerson--Use Windows 10 Creators Update to make something that inspires the creator in all of us.",
   "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?",
