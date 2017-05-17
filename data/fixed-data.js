@@ -210,7 +210,7 @@ const executiveChallenges = [
   "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?",
   "Harry Shum--Build solutions that infuse AI into Microsoft products and services.",
   "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. (Hack for Good)",
-  "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time differentiating Microsoft products to create more value for customers?"
+  "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?"
 
 ];
 
