@@ -23,7 +23,7 @@
     "inert": "^3.1.0",
     "jade": "^1.11.0",
     "joi": "^6.9.1",
-    "jsonwebtoken": "^5.4.1",
+    "jsonwebtoken": "^7.4.1",
     "knex": "^0.12.9",
     "lodash.sample": "^3.1.0",
     "moment": "^2.10.6",
