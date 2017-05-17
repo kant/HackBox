@@ -19,9 +19,9 @@ const cleanCredentials = (credsObject) => {
 };
 
 export const validate = function (token, next) {
-  jwt.verify(token, 'lasn1112asrhA123DRJSDrjonblifbu35641adbzfaifsu325bvarsbADbrad21rndnxcnDtNsD36tnsdTnqeryeshsd5676tJDGmxmcmgmfgm780fGmMXcbMvBJ897611vJFM90snaRrA', function(err, decoded) {
+  jwt.verify(token, process.env.SESSION_SECRET, function(err, decoded) {
     if (err) {
-      return next(err, false);
+      return next(null, false);
     } else if (decoded) {
       return next(null, true, decoded);
     } else {
