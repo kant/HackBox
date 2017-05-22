@@ -324,13 +324,23 @@ export const projectSearch = (queryObj) => {
     });
   };
 
+  let sponSearched = false;
+  const sponAddSearch = (searchFor) => {
+    const fnName = sponSearched ? "orWhere" : "where";
+    sponSearched = true;
+    query[fnName](function () {
+      this.where("projects.hackathon_id", "=", 1074)
+        .andWhere("projects.json_tags", "like", `%${searchFor}%`);
+    });
+  };
+
   if (search) {
     addSearch(search);
   }
 
   if (search_array && search_array.length) {
     search_array.forEach((item) => {
-      addSearch(item);
+      sponAddSearch(item);
     });
   }
 
@@ -492,7 +502,7 @@ export const projectSearch = (queryObj) => {
 
   query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
     "hackathons.name as hackathon_name");
-    
+
   return query;
 };
 
