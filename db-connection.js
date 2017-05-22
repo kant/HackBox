@@ -318,6 +318,17 @@ export const projectSearch = (queryObj) => {
     const fnName = searched ? "orWhere" : "where";
     searched = true;
     query[fnName](function () {
+      this.where("projects.title", "like", `%${searchFor}%`)
+        .orWhere("projects.json_tags", "like", `%${searchFor}%`)
+        .orWhere("projects.tagline", "like", `%${searchFor}%`);
+    });
+  };
+
+  let sponSearched = false;
+  const sponAddSearch = (searchFor) => {
+    const fnName = sponSearched ? "orWhere" : "where";
+    sponSearched = true;
+    query[fnName](function () {
       this.where("projects.hackathon_id", "=", 1074)
         .andWhere("projects.json_tags", "like", `%${searchFor}%`);
     });
@@ -329,7 +340,7 @@ export const projectSearch = (queryObj) => {
 
   if (search_array && search_array.length) {
     search_array.forEach((item) => {
-      addSearch(item);
+      sponAddSearch(item);
     });
   }
 
@@ -1133,14 +1144,13 @@ export const getHackathonReport = (queryObj) => {
       "reports.json_reporting_data as json_reporting_data"
     ])
     .select(
-      client.raw(
+      knex.raw(
         `exists (select 1 from members where
         user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
     .from("users")
     .join("participants", "users.id", "participants.user_id")
     .leftJoin("reports", "users.email", "reports.email")
-    .where({"participants.hackathon_id": queryObj.hackathon_id})
-    .orderBy("joined_at", "asc");
+    .where({"participants.hackathon_id": queryObj.hackathon_id});
   return query;
 };
 
