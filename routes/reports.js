@@ -77,6 +77,7 @@ const register = function (server, options, next) {
 
   const addReportsToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
+      console.log('paginated data: ', paginated.data);
       const emails = _.pluck(paginated.data, "email");
       const reportsQuery = db("reports")
         .select("email", "json_reporting_data")
