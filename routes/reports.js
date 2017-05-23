@@ -76,9 +76,11 @@ const register = function (server, options, next) {
   };
 
   const addReportsToPagination = (paginationQuery) => {
+    // Background: We use 'alias' because it's the only data in a user profile that matches an entry in reports.
+    // Think of alias as 'email' in this case. Using 'email' would produce incorrect output due to differences
+    // between an FTE's contact info.
     return paginationQuery.then((paginated) => {
-      console.log('paginated data: ', paginated.data);
-      const emails = _.pluck(paginated.data, "email");
+      const emails = _.pluck(paginated.data, "alias");
       const reportsQuery = db("reports")
         .select("email", "json_reporting_data")
         .whereIn("email", emails)
@@ -87,8 +89,8 @@ const register = function (server, options, next) {
       return reportsQuery.then((reports) => {
         reports = _.groupBy(reports, "email");
         paginated.data = _.map(paginated.data, (entry) => {
-          entry.json_reporting_data = reports[entry.email] ?
-          reports[entry.email][0].json_reporting_data : "{}";
+          entry.json_reporting_data = reports[entry.alias] ?
+          reports[entry.alias][0].json_reporting_data : "{}";
           return entry;
         });
         return paginated;
