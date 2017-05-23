@@ -1149,7 +1149,7 @@ export const getHackathonReport = (queryObj) => {
         user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
     .from("users")
     .join("participants", "users.id", "participants.user_id")
-    .leftJoin("reports", "users.email", "reports.email")
+    .leftJoin("reports", "users.alias", "reports.email")
     .where({"participants.hackathon_id": queryObj.hackathon_id})
     .orderBy('joined_at', 'asc');
   return query;
