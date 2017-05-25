@@ -1136,9 +1136,12 @@ export const getHackathonReport = (queryObj) => {
     .select(
     [
       "users.email as email",
+      "users.name as hb_name",
       "users.json_working_on as json_working_on",
       "users.json_expertise as json_expertise",
       "users.json_interests as json_interests",
+      "users.city as hb_city",
+      "users.country as hb_country",
       "participants.json_participation_meta as json_participation_meta",
       "participants.joined_at as registration_date",
       "reports.json_reporting_data as json_reporting_data"
