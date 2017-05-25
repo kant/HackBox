@@ -136,6 +136,9 @@ const register = function (server, options, next) {
           const members = db("members")
             .select(["users.alias as alias",
               "users.email as email",
+              "users.name as hb_name",
+              "users.city as hb_city",
+              "users.country as hb_country",
               "users.json_expertise as json_expertise",
               "users.json_interests as json_interests",
               "users.json_working_on as json_working_on",
