@@ -1,6 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import Joi from "joi";
+import fs from "fs";
 import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
@@ -204,6 +205,58 @@ const register = function (server, options, next) {
         params: {
           userId: stringId
         }
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/initmsftemployees",
+    config: {
+      description: "Write details about all employees to a file",
+      tags: ["api"],
+      handler(request, reply) {
+        const response = db("reports")
+          .select('*')
+        .then((data) => {
+          
+          console.log(data);
+          let parsedData = [];
+          data.forEach((elem) => {
+            let reportingData = JSON.parse(elem.json_reporting_data);
+            parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName])
+          })
+          fs.writeFile('data/msft.json', JSON.stringify(parsedData), 'utf8', function(err, result) {
+            if (!err) {
+                return request.generateResponse().code(200);
+            } else {
+              console.log(err);
+            }
+          });
+
+        });
+        reply(response);
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/msftemployees",
+    config: {
+      description: "Fetch details about all employees",
+      tags: ["api"],
+      handler(request, reply) {
+      
+          fs.readFile('data/msft.json', 'utf8', function(err, result) {
+            if (!err) {
+                reply(JSON.parse(result));
+            } else {
+              console.log(err);
+            }
+          });
+
+        
       }
     }
   });
