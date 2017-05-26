@@ -250,7 +250,7 @@ const register = function (server, options, next) {
       
           fs.readFile('data/msft.json', 'utf8', function(err, result) {
             if (!err) {
-                reply(JSON.parse(result));
+                reply(result);
             } else {
               console.log(err);
             }
