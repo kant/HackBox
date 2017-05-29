@@ -247,10 +247,19 @@ const register = function (server, options, next) {
       description: "Fetch details about all employees",
       tags: ["api"],
       handler(request, reply) {
-      
+        console.log(request.query);
+          let time = Date.now();
           fs.readFile('data/msft.json', 'utf8', function(err, result) {
             if (!err) {
-                reply(result);
+                let list = JSON.parse(result);
+                let filteredResult = [];
+                list.forEach((person) => {
+                  if (person[0].includes(request.query.q) || person[1].toLowerCase().includes(request.query.q)) {
+                      filteredResult.push({alias: person[0], name: person[1]});
+                  }
+                })
+                console.log('Time elapsed: ' + (Date.now() - time) + 'ms');
+                reply(filteredResult);
             } else {
               console.log(err);
             }
