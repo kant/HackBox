@@ -84,10 +84,17 @@ const register = function (server, options, next) {
       tags: ["api"],
       handler(request, reply) {
         const { hackathonId, projectId, userId } = request.params;
+        console.log('this hit')
         const checkMember = request.isSuperUser() ? false : request.userId();
+        console.log('then this hit')
 
         const response = ensureProject(hackathonId, projectId, {checkMember}).then((project) => {
-          if (project.owner_id === request.userId()) {
+          const theUser = request.userId();
+          console.log('The User: ', theUser);
+          console.log('UserId: ', userId)
+          console.log('The Owner: ', project.owner_id)
+          if (project.owner_id === userId) {
+            console.log('uh oh')
             throw Boom.forbidden(`An owner cannot remove themselves from a project`);
           }
           return db("members").where({
