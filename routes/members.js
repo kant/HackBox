@@ -87,7 +87,8 @@ const register = function (server, options, next) {
         const checkMember = request.isSuperUser() ? false : request.userId();
 
         const response = ensureProject(hackathonId, projectId, {checkMember}).then((project) => {
-          if (project.owner_id === request.userId()) {
+          const theUser = request.userId();
+          if (project.owner_id === userId) {
             throw Boom.forbidden(`An owner cannot remove themselves from a project`);
           }
           return db("members").where({
