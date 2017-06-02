@@ -160,10 +160,15 @@ export const ensureProject = (hackathonId, id, opts = {
     .where("members.project_id", "=", id)
     .andWhere("members.hackathon_id", "=", hackathonId);
 
+  // pending member query which we'll use to augment project results
+  const pendingMemberQuery = client("members_invitations").select("*")
+    .where("members_invitations.project_id", "=", id);
+
   return Promise.all([
     projectQuery,
-    memberQuery
-  ]).then(([projectResult, members]) => {
+    memberQuery,
+    pendingMemberQuery
+  ]).then(([projectResult, members, pendingMembers]) => {
     const project = projectResult[0];
 
     if (!project || project.deleted && !opts.allowDeleted) {
@@ -179,6 +184,7 @@ export const ensureProject = (hackathonId, id, opts = {
     }
 
     project.members = members;
+    project.pendingMembers = pendingMembers;
 
     return project;
   });

@@ -24,6 +24,7 @@ export const stringWithDefault = emptyString.default("");
 export const emptyText = Joi.string().trim().empty("").max(1000);
 export const emptyTextLarge = Joi.string().trim().empty("").max(65535, "utf8");
 export const textWithDefault = emptyText.default("");
+export const name = Joi.string().min(1).max(140).trim();
 export const role = Joi.string().valid(participantTypes).empty("");
 export const roleArray = Joi.array().items(role)
   .description("Array of one or more valid participant types");
