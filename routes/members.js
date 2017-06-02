@@ -214,6 +214,37 @@ const register = function (server, options, next) {
     }
   });
 
+  server.route({
+    method: "DELETE",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/members/{userId}/invitation",
+    config: {
+      description: "Delete member invitation",
+      tags: ["api"],
+      handler(request, reply) {
+        const { hackathonId, projectId, userId } = request.params;
+
+        const response = db("members_invitations").where({
+            user_id: userId,
+            project_id: projectId
+          }).del()
+        .then(() => {
+          return ensureUser(userId);
+        }).then((user) => {
+          return request.generateResponse({id: user.id, email: user.email}).code(201);
+        });;
+        
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id,
+          userId: stringId
+        }
+      }
+    }
+  });
+
   next();
 };
 
