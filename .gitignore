@@ -6,6 +6,7 @@ coverage.html
 dev.sqlite3
 test.sqlite3
 env.txt
+env-prod.txt
 TOKEN
 *.log
 .nyc_output
