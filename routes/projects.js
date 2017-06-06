@@ -320,6 +320,7 @@ const register = function (server, options, next) {
           if (authorized) {
             return request.generateResponse(finalProject).code(200);
           } else {
+            console.log('Error getting project. Auth.Credentials: ' + JSON.stringify(request.auth ? request.auth.credentials : 'Auth is undefined'));
             return request.generateResponse().code(403);
           }
         });
