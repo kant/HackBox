@@ -216,25 +216,38 @@ const register = function (server, options, next) {
       description: "Write details about all employees to a file",
       tags: ["api"],
       handler(request, reply) {
+        let parsedData = [];
+
         const response = db("reports")
-          .select('*')
+            .select('*')
         .then((data) => {
-          
-          console.log(data);
-          let parsedData = [];
-          data.forEach((elem) => {
-            let reportingData = JSON.parse(elem.json_reporting_data);
-            parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName])
-          })
-          fs.writeFile('data/msft.json', JSON.stringify(parsedData), 'utf8', function(err, result) {
-            if (!err) {
-                return request.generateResponse().code(200);
-            } else {
-              console.log(err);
-            }
-          });
+            data.forEach((elem) => {
+              let reportingData = JSON.parse(elem.json_reporting_data);
+              parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName])
+            })
+            return db("users").select('*').where('email', 'like', 'v-%').orWhereNotNull('external');
+        })
+        .then((data) => {
+            data.forEach((elem) => {
+              if (elem.external == null) {
+                parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), elem.name, elem.id]);
+              } else {
+                parsedData.push([elem.email.toLowerCase(), elem.name, elem.id]);
+              }
+            })
+
+           
+
+            fs.writeFile('data/msft.json', JSON.stringify(parsedData), 'utf8', function(err, result) {
+              if (!err) {
+                  return request.generateResponse().code(200);
+              } else {
+                console.log(err);
+              }
+            });
 
         });
+        
         reply(response);
       }
     }
@@ -255,7 +268,7 @@ const register = function (server, options, next) {
                 let filteredResult = [];
                 list.forEach((person) => {
                   if (person[0].includes(request.query.q) || person[1].toLowerCase().includes(request.query.q)) {
-                      filteredResult.push({alias: person[0], name: person[1]});
+                      filteredResult.push({alias: person[0], name: person[1], id: person[2] ? person[2] : undefined});
                   }
                 })
                 console.log('Time elapsed: ' + (Date.now() - time) + 'ms');

@@ -126,20 +126,19 @@ const register = function (server, options, next) {
         const { hackathonId, projectId, userId } = request.params;
         const { payload } = request;
 
-        const response = db("users").where({id: userId}).then((result) => {
+        const response = db("participants").where({user_id: userId, hackathon_id: hackathonId}).then((result) => {
           //Prepare object to insert
-          const invite = {
+          let invite = {
             user_id: userId,
             name: payload.name,
             hackathon_id: hackathonId,
-            project_id: projectId,
-            status: 'pendingRegistration'
+            project_id: projectId
           };
           //Change status depend on user existance in DB
           if (result.length == 0) {
-            invite.status == "pendingRegistration";
+            invite.status = "pendingRegistration";
           } else {
-            invite.status == "pendingApproval";
+            invite.status = "pendingApproval";
           }
           //Insert invitation
           return db("members_invitations").insert(invite)
