@@ -296,7 +296,6 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId, projectId } = request.params;
         const userId = request.userId();
-        let finalProject = {};
 
         const response = ensureProject(hackathonId, projectId, {
           allowDeleted: request.isSuperUser(),
@@ -305,24 +304,6 @@ const register = function (server, options, next) {
           return addProjectTags(project);
         }).then((project) => {
           return addUserVotesToProject(project, userId);
-        }).then((project) => {
-          finalProject = project;
-          //Check the user organization
-          return db("hackathons_orgs")
-            .where({hackathon_id: project.hackathon_id})
-        }).then((data) => {
-          var authorized = false;
-          data.forEach((hack) => {
-            if (hack.organization_id == request.auth.credentials.organization_id) {
-              authorized = true;
-            }
-          });
-          if (authorized) {
-            return request.generateResponse(finalProject).code(200);
-          } else {
-            console.log('Error getting project. Auth.Credentials: ' + JSON.stringify(request.auth ? request.auth.credentials : 'Auth is undefined'));
-            return request.generateResponse().code(403);
-          }
         });
 
         reply(response);
@@ -336,6 +317,7 @@ const register = function (server, options, next) {
     }
   });
 
+  
   server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
