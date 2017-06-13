@@ -405,7 +405,7 @@ export const projectSearch = (queryObj) => {
         // first time through we want to call `where`
         // then subsequesntly use `orWhere`
         const fnName = index === 0 ? "where" : "orWhere";
-        this[fnName]("projects.venue", "like", `%${item}%`);
+        this[fnName]("projects.venue", item);
       });
     });
   }
