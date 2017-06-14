@@ -1,6 +1,7 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import Joi from "joi";
+import fs from "fs";
 import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
@@ -204,6 +205,80 @@ const register = function (server, options, next) {
         params: {
           userId: stringId
         }
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/initmsftemployees",
+    config: {
+      description: "Write details about all employees to a file",
+      tags: ["api"],
+      handler(request, reply) {
+        let parsedData = [];
+
+        const response = db("reports")
+            .select('*')
+        .then((data) => {
+            data.forEach((elem) => {
+              let reportingData = JSON.parse(elem.json_reporting_data);
+              parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName])
+            })
+            return db("users").select('*').where('email', 'like', 'v-%').orWhereNotNull('external');
+        })
+        .then((data) => {
+            data.forEach((elem) => {
+              if (elem.external == null) {
+                parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), elem.name, elem.id]);
+              } else {
+                parsedData.push([elem.email.toLowerCase(), elem.name, elem.id]);
+              }
+            })
+
+           
+
+            fs.writeFile('data/msft.json', JSON.stringify(parsedData), 'utf8', function(err, result) {
+              if (!err) {
+                  return request.generateResponse().code(200);
+              } else {
+                console.log(err);
+              }
+            });
+
+        });
+        
+        reply(response);
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/msftemployees",
+    config: {
+      description: "Fetch details about all employees",
+      tags: ["api"],
+      handler(request, reply) {
+        console.log(request.query);
+          let time = Date.now();
+          fs.readFile('data/msft.json', 'utf8', function(err, result) {
+            if (!err) {
+                let list = JSON.parse(result);
+                let filteredResult = [];
+                list.forEach((person) => {
+                  if (person[0].includes(request.query.q) || person[1].toLowerCase().includes(request.query.q)) {
+                      filteredResult.push({alias: person[0], name: person[1], id: person[2] ? person[2] : undefined});
+                  }
+                })
+                console.log('Time elapsed: ' + (Date.now() - time) + 'ms');
+                reply(filteredResult);
+            } else {
+              console.log(err);
+            }
+          });
+
+        
       }
     }
   });
