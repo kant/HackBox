@@ -374,6 +374,8 @@ const register = function (server, options, next) {
   next();
 };
 
+
+
 register.attributes = {
   name: "projects",
   version: "1.0.0"
