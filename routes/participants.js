@@ -112,8 +112,33 @@ const register = function (server, options, next) {
           return db("participants").insert(payload);
         }).then(() => {
           return incrementCityCount(hackathonId, userId);
+        })
+        
+        //If user was invited to any project - add it to the project immediately
+        .then((user) => {
+          return db("members_invitations").where({user_id: userId, hackathon_id: hackathonId});
+        }).then((result) => {
+          if (result.length == 0) {
+            return Promise.reject('goToResponse');
+          } else {
+            var projectsToInsert = [];
+            result.forEach((invitation) => {
+              projectsToInsert.push({user_id: userId, project_id: invitation.project_id, hackathon_id: hackathonId});
+            });
+            return db("members").insert(projectsToInsert); 
+          }
+            
+        }).then((result) => {
+            return db("members_invitations").where({user_id: userId, hackathon_id: hackathonId}).del();
         }).then(() => {
-          return ensureParticipant(hackathonId, userId, {includeUser: true});
+            return ensureParticipant(hackathonId, userId, {includeUser: true});
+        })
+        .catch((err) => {
+            if (err == "goToResponse") {
+              return ensureParticipant(hackathonId, userId, {includeUser: true});
+            } else {
+              return Boom.create(500, err);
+            }
         });
 
         reply(response);
