@@ -71,7 +71,8 @@ const projectTypes = [
   "Machine Learning",
   "Mobile",
   "InTune",
-  "Yammer"
+  "Yammer",
+  "LinkedIn"
 
 ];
 
