@@ -1148,6 +1148,7 @@ export const getHackathonReport = (queryObj) => {
       "users.json_interests as json_interests",
       "users.city as hb_city",
       "users.country as hb_country",
+      "users.profession as hb_profession",
       "participants.json_participation_meta as json_participation_meta",
       "participants.joined_at as registration_date",
       "reports.json_reporting_data as json_reporting_data"
