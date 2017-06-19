@@ -11,7 +11,7 @@ import assert from "assert";
 import _ from "lodash";
 // import slaveDB from "./config";
 import { db } from "./config";
-import { projectTypes } from "./data/fixed-data";
+import { projectTypes, europeList } from "./data/fixed-data";
 
 const client = knex(db);
 // const client2 = knex(slaveDB.slave.db);
@@ -585,7 +585,7 @@ export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
 };
 
 export const userSearch = (queryObj) => {
-  const {
+  let {
     search, hackathon_id, has_project, include_deleted,
     role, product_focus, country, sort_col, sort_direction
   } = queryObj;
@@ -777,6 +777,11 @@ export const userSearch = (queryObj) => {
     });
   }
   if (country && country.length) {
+    let hasEurope = country.indexOf('Europe');
+    if (hasEurope >= 0) {
+        country.splice(hasEurope);
+        country = country.concat(europeList);
+    }
     query.whereIn("country", country);
   }
   if (has_project === true || has_project === false) {
