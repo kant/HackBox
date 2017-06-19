@@ -104,6 +104,7 @@ const countryList = [
   "United States",
   "Worldwide",
   "No country",
+  "Europe",
   "Algeria",
   "Argentina",
   "Australia",
@@ -185,6 +186,49 @@ const countryList = [
 
 ];
 
+const europeList = [
+    "Albania",
+    "Austria",
+    "Belarus",
+    "Belgium",
+    "Bosnia and Herzegovina",
+    "Bulgaria",
+    "Croatia",
+    "Cyprus",
+    "Czech Republic",
+    "Denmark",
+    "Estonia",
+    "Finland",
+    "France",
+    "Georgia",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "Ireland",
+    "Italy",
+    "Latvia",
+    "Lithuania",
+    "Luxembourg",
+    "Malta",
+    "Montenegro",
+    "Netherlands",
+    "Norway",
+    "Poland",
+    "Romania",
+    "Russia",
+    "Serbia",
+    "Serbia and Montenegro",
+    "Slovakia",
+    "Slovenia",
+    "Spain",
+    "Sweden",
+    "Switzerland",
+    "Turkey",
+    "Ukraine",
+    "United Kingdom"
+
+]
+
 const colorSchemes = [
 
   "Azure blue",
@@ -239,6 +283,7 @@ export default {
   participantTypes,
   projectMotivations,
   countryList,
+  europeList,
   colorSchemes,
   executiveChallenges
 };
