@@ -777,14 +777,11 @@ export const userSearch = (queryObj) => {
     });
   }
   if (country && country.length) {
-      console.log("country1:::", country);
     let europeIndex = country.indexOf('Europe');
     if (europeIndex !== -1) {
         country.splice(europeIndex, 1);
         country = country.concat(europeList);
     }
-    console.log("country2:::", country);
-
     query.whereIn("country", country);
   }
   if (has_project === true || has_project === false) {
