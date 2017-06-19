@@ -777,9 +777,9 @@ export const userSearch = (queryObj) => {
     });
   }
   if (country && country.length) {
-    let hasEurope = country.indexOf('Europe');
-    if (hasEurope >= 0) {
-        country.splice(hasEurope);
+    let europeIndex = country.indexOf('Europe');
+    if (europeIndex !== -1) {
+        country.splice(europeIndex, 1);
         country = country.concat(europeList);
     }
     query.whereIn("country", country);
