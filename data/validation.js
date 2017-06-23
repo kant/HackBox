@@ -106,8 +106,8 @@ const userBase = {
   organization_id: Joi.number().integer().min(0),
   major: Joi.string().max(255).trim().allow(""),
   school: Joi.string().max(255).trim().allow(""),
-  state: Joi.string().max(255).trim().allow(""),
-  phone: Joi.string().max(16).trim().allow(""),
+  state: Joi.string().max(255).trim().allow("").allow(null),
+  phone: Joi.string().max(16).trim().allow("").allow(null),
   organization: Joi.string().max(255).trim(),
   external: Joi.string().max(255).trim()
 };
