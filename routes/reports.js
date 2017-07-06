@@ -134,7 +134,8 @@ const register = function (server, options, next) {
           const { query } = request;
           const { limit, offset } = query;
           const members = db("members")
-            .select(["users.alias as alias",
+            .select([
+              "users.alias as alias",
               "users.email as email",
               "users.name as hb_name",
               "users.city as hb_city",
@@ -146,21 +147,22 @@ const register = function (server, options, next) {
               "members.project_id as project_id",
               "members.joined_at as registration_date",
               "participants.json_participation_meta as json_participation_meta",
-              "projects.*"
+              "projects.*",
+              "reports.json_reporting_data as json_reporting_data"
             ])
             .innerJoin("users", "users.id", "members.user_id")
             .innerJoin("projects", "projects.id", "members.project_id")
+            .leftJoin("reports", "users.alias", "reports.email")
             .leftJoin("participants", "users.id", "participants.user_id")
             .where({
               "members.hackathon_id": hackathonId,
               "projects.deleted": false,
               "participants.hackathon_id": hackathonId})
-            .orderBy("users.alias")
+            .orderBy("participants.joined_at")
             .orderBy("projects.title");
           return addTeamDataToPagination(
-            addReportsToPagination(
               addTagsToPagination(
-                paginate(members, {limit, offset}))))
+                paginate(members, {limit, offset})))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;

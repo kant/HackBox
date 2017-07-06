@@ -1146,6 +1146,7 @@ export const getHackathonReport = (queryObj) => {
   const query = client("users")
     .select(
     [
+      "users.alias as alias",
       "users.email as email",
       "users.name as hb_name",
       "users.json_working_on as json_working_on",
