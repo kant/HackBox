@@ -61,13 +61,35 @@ const register = function (server, options, next) {
         .distinct()
         .join("users", "users.id", "members.user_id")
         .whereIn("project_id", projectIds);
-
       return teamQuery.then((teams) => {
         teams = _.groupBy(teams, "project_id");
         paginated.data = _.map(paginated.data, (entry) => {
           const team = teams[entry.project_id];
           entry.team_size = team ? team.length : 0;
           entry.team_emails = team ? _.pluck(team, "email") : {};
+          return entry;
+        });
+
+        return paginated;
+      });
+    });
+  };
+
+  const addOwnersToPagination = (paginationQuery) => {
+    return paginationQuery.then((paginated) => {
+      const ownerIds = _.pluck(paginated.data, "owner_id");
+      const ownersQuery = db("users")
+        .select("users.id as owner_id", "users.name as owner_name", "users.alias as owner_alias")
+        .distinct()
+        .whereIn("users.id", ownerIds);
+
+      return ownersQuery.then((owners) => {
+        owners = _.groupBy(owners, "owner_id");
+        paginated.data = _.map(paginated.data, (entry) => {
+          const owner = owners[entry.owner_id];
+          // consol.log(owner);
+          entry.owner_name = owner ? _.pluck(owner, "owner_name") : {};
+          entry.owner_alias = owner ? _.pluck(owner, "owner_alias") : {};
           return entry;
         });
         return paginated;
@@ -106,13 +128,9 @@ const register = function (server, options, next) {
     ].join("");
     user.page_view_count = user.view_count;
     delete user.view_count;
-    delete user.like_count;
-    delete user.comment_count;
-    delete user.share_count;
     delete user.deleted;
     delete user.product_focus;
     delete user.json_meta;
-    delete user.owner_id;
     delete user.user_id;
     delete user.project_id;
     delete user.id;
@@ -134,7 +152,8 @@ const register = function (server, options, next) {
           const { query } = request;
           const { limit, offset } = query;
           const members = db("members")
-            .select(["users.alias as alias",
+            .select([
+              "users.alias as alias",
               "users.email as email",
               "users.name as hb_name",
               "users.city as hb_city",
@@ -146,19 +165,23 @@ const register = function (server, options, next) {
               "members.project_id as project_id",
               "members.joined_at as registration_date",
               "participants.json_participation_meta as json_participation_meta",
-              "projects.*"
+              "video_views.views as video_views",
+              "projects.*",
+              "reports.json_reporting_data as json_reporting_data"
             ])
             .innerJoin("users", "users.id", "members.user_id")
             .innerJoin("projects", "projects.id", "members.project_id")
+            .leftJoin("reports", "users.alias", "reports.email")
+            .leftJoin("video_views", "members.project_id", "video_views.project_id")
             .leftJoin("participants", "users.id", "participants.user_id")
             .where({
               "members.hackathon_id": hackathonId,
               "projects.deleted": false,
               "participants.hackathon_id": hackathonId})
-            .orderBy("users.alias")
+            .orderBy("participants.joined_at")
             .orderBy("projects.title");
           return addTeamDataToPagination(
-            addReportsToPagination(
+                addOwnersToPagination(
               addTagsToPagination(
                 paginate(members, {limit, offset}))))
             .then((paginated) => {
