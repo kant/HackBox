@@ -38,6 +38,37 @@ const register = function (server, options, next) {
 
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
+          return paginate(getHackathonReport(query), {limit, offset});
+        });
+        reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: pagination
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/generalreports/reports",
+    config: {
+      description: "Fetch detailed participant report for non One Week hackathon",
+      tags: ["api", "detail", "paginated", "list"],
+      handler(request, reply) {
+        const { hackathonId } = request.params;
+
+        // ensureHackathon will force to query the master DB, not replica 4/10/17
+        // It's used in other API endpoints that cannot use the replica.
+        const response = ensureHackathon(hackathonId)
+        .then(() => {
+          const { query } = request;
+          const { limit, offset } = query;
+
+          // make sure we limit search to within this hackathon
+          query.hackathon_id = hackathonId;
 
           return paginate(getHackathonReport(query), {limit, offset});
         });
@@ -145,6 +176,7 @@ const register = function (server, options, next) {
       description: "Fetch detailed participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
+        console.log('<>><<><><><><<><><><><><<><><><>')
         const { hackathonId } = request.params;
 
         const response = ensureHackathon(hackathonId)
@@ -180,10 +212,73 @@ const register = function (server, options, next) {
               "participants.hackathon_id": hackathonId})
             .orderBy("participants.joined_at")
             .orderBy("projects.title");
+            console.log('88888888888888888888888888888888')
           return addTeamDataToPagination(
                 addOwnersToPagination(
               addTagsToPagination(
                 paginate(members, {limit, offset}))))
+            .then((paginated) => {
+              paginated.data = _.map(paginated.data, cleanUpUser);
+              return paginated;
+            });
+        });
+        
+        console.log('PAGINATED DATA, ', response)
+
+        return reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: pagination
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/generalreports/project-reports",
+    config: {
+      description: "Fetch detailed participant report for all projects in a hackathon",
+      tags: ["api", "detail", "paginated", "list"],
+      handler(request, reply) {
+        const { hackathonId } = request.params;
+
+        const response = ensureHackathon(hackathonId)
+        .then(() => {
+          const { query } = request;
+          const { limit, offset } = query;
+          const members = db("members")
+            .select([
+              "users.alias as alias",
+              "users.email as email",
+              "users.city as hb_city",
+              "users.country as hb_country",
+              "users.json_expertise as json_expertise",
+              "users.json_interests as json_interests",
+              "users.json_working_on as json_working_on",
+              "members.user_id as user_id",
+              "members.project_id as project_id",
+              "members.joined_at as registration_date",
+              "participants.json_participation_meta as json_participation_meta",
+              "video_views.views as video_views",
+              "reports.json_reporting_data as json_reporting_data"
+            ])
+            .innerJoin("users", "users.id", "members.user_id")
+            .innerJoin("projects", "projects.id", "members.project_id")
+            .leftJoin("reports", "users.alias", "reports.email")
+            .leftJoin("video_views", "members.project_id", "video_views.project_id")
+            .leftJoin("participants", "users.id", "participants.user_id")
+            .where({
+              "members.hackathon_id": hackathonId,
+              "projects.deleted": false,
+              "participants.hackathon_id": hackathonId})
+            .orderBy("participants.joined_at")
+            .orderBy("projects.title");
+          return addTeamDataToPagination(
+              addTagsToPagination(
+                paginate(members, {limit, offset})))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;
