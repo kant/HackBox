@@ -317,7 +317,7 @@ const register = function (server, options, next) {
     }
   });
 
-  
+
   server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
