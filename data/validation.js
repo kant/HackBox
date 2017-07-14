@@ -240,7 +240,8 @@ const projectBase = {
   video_type: emptyString,
   meta,
   custom_categories: arrayOfStrings,
-  video_data: Joi.string().allow(null)
+  video_data: Joi.string().allow(null),
+  video_views: Joi.number().integer().min(0),
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -279,6 +280,7 @@ export const newProject = Joi.object(projectBase)
     venue: projectBase.venue,
     executive_challenges: projectBase.executive_challenges,
     video_type: projectBase.video_type,
+    video_views: projectBase.video_views,
     custom_categories: arrayOfStrings.default([])
   });
 export const project = newProject.keys({id});
