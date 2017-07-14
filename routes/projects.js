@@ -74,6 +74,7 @@ const register = function (server, options, next) {
           video_type: Joi.string(),
           has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
           custom_categories: arrayOfStrings,
+          video_views: Joi.number().integer(),
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
             "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
@@ -387,7 +388,6 @@ const register = function (server, options, next) {
     }
   });
 
-  
   server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
