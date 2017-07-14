@@ -241,6 +241,7 @@ const projectBase = {
   meta,
   custom_categories: arrayOfStrings,
   video_data: Joi.string().allow(null),
+  video_views: Joi.number().integer().min(0),
   tent_name: Joi.string().max(255).allow(null),
   tent_color: Joi.string().max(255).allow(null)
 };
@@ -282,6 +283,7 @@ export const newProject = Joi.object(projectBase)
     executive_challenges: projectBase.executive_challenges,
     video_type: projectBase.video_type,
     custom_categories: arrayOfStrings.default([]),
+    video_views: projectBase.video_views,
     tent_name: projectBase.tent_name,
     tent_color: projectBase.tent_color
   });

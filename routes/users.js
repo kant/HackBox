@@ -211,6 +211,25 @@ const register = function (server, options, next) {
 
   server.route({
     method: "GET",
+    path: "/users/alias/{alias}",
+    config: {
+      description: "Fetch details about a single user by alias",
+      tags: ["api", "detail"],
+      handler(request, reply) {
+        const { alias } = request.params;
+        const response = db("users").where({alias});
+        reply(response);
+      },
+      validate: {
+        params: {
+          alias: stringId
+        }
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
     path: "/initmsftemployees",
     config: {
       description: "Write details about all employees to a file",
