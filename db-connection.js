@@ -1171,6 +1171,33 @@ export const getHackathonReport = (queryObj) => {
   return query;
 };
 
+export const getHackathonGeneralReport = (queryObj) => {
+  const query = client("users")
+    .select(
+    [
+      "users.alias as alias",
+      "users.json_working_on as json_working_on",
+      "users.json_expertise as json_expertise",
+      "users.json_interests as json_interests",
+      "users.city as hb_city",
+      "users.country as hb_country",
+      "users.profession as hb_profession",
+      "participants.json_participation_meta as json_participation_meta",
+      "participants.joined_at as registration_date",
+      "reports.json_reporting_data as json_reporting_data"
+    ])
+    .select(
+      client.raw(
+        `exists (select 1 from members where
+        user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
+    .from("users")
+    .join("participants", "users.id", "participants.user_id")
+    .leftJoin("reports", "users.alias", "reports.email")
+    .where({"participants.hackathon_id": queryObj.hackathon_id})
+    .orderBy('joined_at', 'asc');
+  return query;
+};
+
 
 export const addUserVotesToProject = (project, userId) => {
   const userVotes = {0: false, 1: false, 2: false, 3: false};

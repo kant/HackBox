@@ -9,7 +9,7 @@ import Joi from "joi";
 import winston from "winston";
 import { id, pagination } from "../data/validation";
 //clientReplica will replace 'db' references for reports when replica is complete - ASC
-import db, { clientReplica, ensureHackathon, getHackathonReport, paginate, addTagsToPagination }
+import db, { clientReplica, ensureHackathon, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPagination }
   from "../db-connection";
 
 const logger = new (winston.Logger)({
@@ -70,7 +70,7 @@ const register = function (server, options, next) {
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          return paginate(getHackathonReport(query), {limit, offset});
+          return paginate(getHackathonGeneralReport(query), {limit, offset});
         });
 
         reply(response);
@@ -176,7 +176,6 @@ const register = function (server, options, next) {
       description: "Fetch detailed participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
-        console.log('<>><<><><><><<><><><><><<><><><>')
         const { hackathonId } = request.params;
 
         const response = ensureHackathon(hackathonId)
@@ -212,7 +211,6 @@ const register = function (server, options, next) {
               "participants.hackathon_id": hackathonId})
             .orderBy("participants.joined_at")
             .orderBy("projects.title");
-            console.log('88888888888888888888888888888888')
           return addTeamDataToPagination(
                 addOwnersToPagination(
               addTagsToPagination(
@@ -223,8 +221,6 @@ const register = function (server, options, next) {
             });
         });
         
-        console.log('PAGINATED DATA, ', response)
-
         return reply(response);
       },
       validate: {
