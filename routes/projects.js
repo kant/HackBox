@@ -86,6 +86,76 @@ const register = function (server, options, next) {
   });
 
   server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/generalreports/projects",
+    config: {
+      description: "Fetch all project data for non OneWeek hackathons",
+      tags: ["api", "paginated", "list", "filterable"],
+      notes: [
+        `The 'has_member' query paramater can either be a `,
+        `user ID or the string 'me' as an alias to fetch your own.`
+      ].join(""),
+      handler(request, reply) {
+        const { query } = request;
+        const { limit, offset } = query;
+
+        // hardcode hackathon id to match
+        query.hackathon_id = request.params.hackathonId;
+
+        // allow alias "me" for searching for own
+        if (query.has_member === "me") {
+          query.has_member = request.userId();
+        }
+
+        const response = projectSearch(query);
+
+        client.trackEvent("Get General Projects Reporting Data", {hackId: query.hackathon_id});
+
+        reply(
+          addProjectMembersToPagination(
+            addTagsToPagination(
+              addProjectUrlsToPagination(
+                paginate(response, {limit, offset}),
+                request.params.hackathonId),
+              "id")
+            )
+          );
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          search_array: arrayOfStrings,
+          has_video: Joi.boolean(),
+          needs_hackers: Joi.boolean(),
+          writing_code: Joi.boolean(),
+          existing: Joi.boolean(),
+          external_customers: Joi.boolean(),
+          needed_roles: roleArray,
+          needed_expertise: neededExpertiseArray,
+          product_focus: productArray,
+          customer_type: customerTypeArray,
+          has_member: stringId,
+          has_challenges: arrayOfStrings,
+          venue: arrayOfStrings,
+          project_motivations: arrayOfStrings,
+          participant_name: Joi.string(),
+          video_type: Joi.string(),
+          has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
+          custom_categories: arrayOfStrings,
+          sort_col: Joi.any()
+          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
+            "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
+            "vote_count_3", "video_views"),
+          sort_direction: sortDirection
+        })
+      }
+    }
+  });
+
+  server.route({
     method: "POST",
     path: "/hackathons/{hackathonId}/projects",
     config: {
