@@ -3,7 +3,7 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
   sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
 import db, {
-  paginate, ensureHackathon, ensureProject, projectSearch,
+  paginate, ensureHackathon, ensureProject, projectSearch, projectSearchReports,
   addProjectMembersToPagination, addProjectUrlsToPagination,
   addProjectTags, addTagsToPagination, addOrUpdateProjectTags,
   addUserVotesToProject
@@ -89,7 +89,7 @@ const register = function (server, options, next) {
     method: "GET",
     path: "/hackathons/{hackathonId}/generalreports/projects",
     config: {
-      description: "Fetch all project data for non OneWeek hackathons",
+      description: "Fetch all projects",
       tags: ["api", "paginated", "list", "filterable"],
       notes: [
         `The 'has_member' query paramater can either be a `,
@@ -107,9 +107,7 @@ const register = function (server, options, next) {
           query.has_member = request.userId();
         }
 
-        const response = projectSearch(query);
-
-        client.trackEvent("Get General Projects Reporting Data", {hackId: query.hackathon_id});
+        const response = projectSearchReports(query);
 
         reply(
           addProjectMembersToPagination(
@@ -145,6 +143,7 @@ const register = function (server, options, next) {
           video_type: Joi.string(),
           has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
           custom_categories: arrayOfStrings,
+          video_views: Joi.number().integer(),
           sort_col: Joi.any()
           .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
             "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",

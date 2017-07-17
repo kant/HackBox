@@ -9,12 +9,12 @@ import knex from "knex";
 import Boom from "boom";
 import assert from "assert";
 import _ from "lodash";
-// import slaveDB from "./config";
-import { db } from "./config";
+import dbConfig from "./config";
 import { projectTypes, europeList } from "./data/fixed-data";
 
-const client = knex(db);
-// const client2 = knex(slaveDB.slave.db);
+const client = knex(dbConfig.db);
+const clientReplica = knex(dbConfig.replica.db);
+// const client2 = knex(replica.slave.db);
 
 export default client;
 
@@ -508,6 +508,219 @@ export const projectSearch = (queryObj) => {
 
   return query;
 };
+// end projectSearch
+
+// Using a replica-based project search. Should all be refactored/moved because modules are too big.
+export const projectSearchReports = (queryObj) => {
+  const {
+    hackathon_id, search, include_deleted, has_video, country,
+    needed_roles, needed_expertise, product_focus, customer_type, has_member,
+    has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
+    participant_name, video_type, has_votes, custom_categories
+  } = queryObj;
+
+  const query = clientReplica("projects")
+    .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
+    .innerJoin("users", "projects.owner_id", "users.id")
+    .andWhere(include_deleted ? {} : {"projects.deleted": false});
+
+  if (hackathon_id) {
+    query.where("projects.hackathon_id", hackathon_id);
+  }
+
+  let searched = false;
+  const addSearch = (searchFor) => {
+    const fnName = searched ? "orWhere" : "where";
+    searched = true;
+    query[fnName](function () {
+      this.where("projects.title", "like", `%${searchFor}%`)
+        .orWhere("projects.json_tags", "like", `%${searchFor}%`)
+        .orWhere("projects.tagline", "like", `%${searchFor}%`);
+    });
+  };
+
+  let sponSearched = false;
+  const sponAddSearch = (searchFor) => {
+    const fnName = sponSearched ? "orWhere" : "where";
+    sponSearched = true;
+    query[fnName](function () {
+      this.where("projects.hackathon_id", "=", 1074)
+        .andWhere("projects.json_tags", "like", `%${searchFor}%`);
+    });
+  };
+
+  if (search) {
+    addSearch(search);
+  }
+
+  if (search_array && search_array.length) {
+    search_array.forEach((item) => {
+      sponAddSearch(item);
+    });
+  }
+
+  if (has_member) {
+    query.whereIn("projects.id", function () {
+      this.select("project_id")
+        .from("members")
+        .where("user_id", has_member);
+    });
+  }
+
+  if (has_video === false || has_video === true) {
+    if (has_video) {
+      query.whereNot("projects.video_data", "{}");
+    } else {
+      query.where("projects.video_data", "{}");
+    }
+  }
+  const checkBoolean = (col) => {
+    const val = queryObj[col];
+    if (val === false || val === true) {
+      query.andWhere(`projects.${col}`, val);
+    }
+  };
+  checkBoolean("needs_hackers");
+  checkBoolean("writing_code");
+  checkBoolean("existing");
+  checkBoolean("external_customers");
+  if (needed_roles && needed_roles.length) {
+    query.where(function () {
+      needed_roles.forEach((role, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.json_needed_roles", "like", `%${role}%`);
+      });
+    });
+  }
+  if (needed_expertise && needed_expertise.length) {
+    query.where(function () {
+      needed_expertise.forEach((expertise, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.json_needed_expertise", "like", `%${expertise}%`);
+      });
+    });
+  }
+  if (has_challenges && has_challenges.length) {
+    query.where(function () {
+      has_challenges.forEach((item, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.json_executive_challenges", "like", `%${item}%`);
+      });
+    });
+  }
+  if (venue && venue.length) {
+    query.where(function () {
+      venue.forEach((item, index) => {
+        // first time through we want to call `where`
+        // then subsequesntly use `orWhere`
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.venue", item);
+      });
+    });
+  }
+
+  if (video_type && video_type.length) {
+    query.where("projects.video_type", "like", `%${video_type}%`);
+  }
+
+  const focii = { //TODO can probably convert with a regex
+    Windows: "windows",
+    Devices: "devices",
+    "Consumer Services": "consumer_services",
+    "Cloud & Enterprise": "cloud_and_enterprise",
+    "AI & Research": "ai_and_research",
+    "Office 365": "office_365",
+    "Dynamics 365": "dynamics_365",
+    Dynamics: "dynamics",
+    "3rd Party Platforms": "third_party_platforms",
+    Misc: "misc",
+    Linkedin: "linkedin",
+    Other: "other"
+  };
+  if (product_focus && product_focus.length) {
+    query.where(function () {
+      product_focus.forEach((focus, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        const col = focii[focus];
+        this[fnName](`projects.json_focus`, "like", `%${col}%`);
+      });
+    });
+  }
+  if (customer_type && customer_type.length) {
+    query.where(function () {
+      customer_type.forEach((customer, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName]("projects.customer_type", "=", customer);
+      });
+    });
+  }
+  if (country && country.length) {
+    query.whereIn("hackathons.country", country);
+  }
+
+  if (has_focus && has_focus.length) {
+    query.where(function () {
+      has_focus.forEach((focus, index) => {
+        const fnName = index === 0 ? "whereNotNull" : "orWhereNotNull";
+        const colName = `projects.json_${focus}_focus`;
+        this[fnName](colName);
+      });
+    });
+  }
+
+  if (participant_name && participant_name.length) {
+    query.whereIn("projects.id", function () {
+      this.select("project_id")
+        .from("members")
+        .join("users", "users.id", "members.user_id")
+        .where("users.name", "like", `%${participant_name}%`);
+    });
+  }
+
+  if (has_votes && has_votes.length) {
+    query.where(function () {
+      has_votes.forEach((voteCategory, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        const colName = `projects.vote_count_${voteCategory}`;
+        this[fnName](colName, ">", 0);
+      });
+    });
+  }
+
+  if (custom_categories && custom_categories.length) {
+    query.where(function () {
+      custom_categories.forEach((category, index) => {
+        const fnName = index === 0 ? "where" : "orWhere";
+        this[fnName](`projects.json_custom_categories`, "like", `%${category}%`);
+      });
+    });
+  }
+
+  query.leftJoin("video_views", "video_views.project_id", "=", "projects.id")
+    .select(knex.raw("ifnull(video_views.views, 0) as video_views"));
+
+  const orderByCol = sort_col || "created_at";
+  const orderByDirection = sort_direction || "desc";
+  if (sort_col === "owner_alias") {
+    query.orderBy(`users.alias`, orderByDirection);
+  } else if (sort_col === "video_views") {
+    query.orderBy(`video_views.views`, orderByDirection);
+  } else {
+    query.orderBy(`projects.${orderByCol}`, orderByDirection);
+  }
+
+  query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
+    "hackathons.name as hackathon_name");
+
+  return query;
+};
+// end projectSearchReplica
 
 const addMembersToProjects = (projects, usersByProject) => {
   return _.map(projects, (project) => {

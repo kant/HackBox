@@ -70,7 +70,7 @@ const register = function (server, options, next) {
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          return paginate(getHackathonGeneralReport(query), {limit, offset});
+          return paginate(getHackathonReport(query), {limit, offset});
         });
 
         reply(response);
@@ -249,6 +249,7 @@ const register = function (server, options, next) {
             .select([
               "users.alias as alias",
               "users.email as email",
+              "users.name as hb_name",
               "users.city as hb_city",
               "users.country as hb_country",
               "users.json_expertise as json_expertise",
@@ -259,6 +260,7 @@ const register = function (server, options, next) {
               "members.joined_at as registration_date",
               "participants.json_participation_meta as json_participation_meta",
               "video_views.views as video_views",
+              "projects.*",
               "reports.json_reporting_data as json_reporting_data"
             ])
             .innerJoin("users", "users.id", "members.user_id")
@@ -273,14 +275,15 @@ const register = function (server, options, next) {
             .orderBy("participants.joined_at")
             .orderBy("projects.title");
           return addTeamDataToPagination(
+                addOwnersToPagination(
               addTagsToPagination(
-                paginate(members, {limit, offset})))
+                paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;
             });
         });
-
+        
         return reply(response);
       },
       validate: {
