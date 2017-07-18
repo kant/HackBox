@@ -259,6 +259,7 @@ const register = function (server, options, next) {
               "members.joined_at as registration_date",
               "participants.json_participation_meta as json_participation_meta",
               "video_views.views as video_views",
+              "projects.*",
               "reports.json_reporting_data as json_reporting_data"
             ])
             .innerJoin("users", "users.id", "members.user_id")
