@@ -92,7 +92,75 @@ export const getHackathon = (id, opts = {allowDeleted: false}) => {
   });
 };
 
+// Used in reporting and replication
+export const getHackathonReports = (id, opts = {allowDeleted: false}) => {
+  const participantCount = clientReplica.select()
+    .count("participants.hackathon_id")
+    .from("participants")
+    .where("participants.hackathon_id", "=", id)
+    .as("participants");
+  const projectCount = clientReplica.select()
+    .count("projects.hackathon_id")
+    .from("projects")
+    .where("projects.hackathon_id", "=", id)
+    .as("projects");
+
+  const whereClause = {
+    id
+  };
+
+  if (!opts.allowDeleted) {
+    projectCount.where("deleted", false);
+    whereClause.deleted = false;
+  }
+
+  const mainQuery = clientReplica("hackathons")
+    .select("*", participantCount, projectCount)
+    .from("hackathons")
+    .where(whereClause);
+
+  const adminQuery = clientReplica("users")
+    .select("users.*")
+    .join("hackathon_admins", "users.id", "=", "hackathon_admins.user_id")
+    .where("hackathon_admins.hackathon_id", id);
+
+  return Promise.all([mainQuery, adminQuery]).then(([hackathonRows, admins]) => {
+    const hackathon = hackathonRows[0];
+    if (hackathon) {
+      hackathon.admins = admins;
+      hackathon.status = hackathonStatus(hackathon);
+    }
+
+    return hackathon;
+  });
+};
+
 export const ensureHackathon = (id, opts = {
+  checkOwner: false,
+  checkPublished: false,
+  allowDeleted: false
+}) => {
+  return getHackathon(id, {allowDeleted: opts.allowDeleted}).then((result) => {
+    if (!result) {
+      throw Boom.notFound(`No hackathon with id ${id} was found`);
+    }
+
+    const userId = opts.checkOwner || opts.checkPublished;
+    const hasOwner = result.admins.some((user) => user.id === userId);
+
+    if (opts.checkPublished && !result.is_published && !hasOwner) {
+      throw Boom.notFound(`No hackathon with id ${id} was found`);
+    }
+
+    if (opts.checkOwner && !hasOwner) {
+      throw Boom.forbidden(`You must be a hackathon admin to do this`);
+    }
+
+    return result;
+  });
+};
+
+export const ensureHackathonReports = (id, opts = {
   checkOwner: false,
   checkPublished: false,
   allowDeleted: false
@@ -1387,7 +1455,7 @@ export const getHackathonCities = (hackathonId) => {
 };
 
 export const getHackathonReport = (queryObj) => {
-  const query = clientReplica("users")
+  const query = client("users")
     .select(
     [
       "users.alias as alias",
@@ -1415,11 +1483,14 @@ export const getHackathonReport = (queryObj) => {
   return query;
 };
 
+// Used in reporting on replicated db
 export const getHackathonGeneralReport = (queryObj) => {
   const query = clientReplica("users")
     .select(
     [
       "users.alias as alias",
+      "users.email as email",
+      "users.name as hb_name",
       "users.json_working_on as json_working_on",
       "users.json_expertise as json_expertise",
       "users.json_interests as json_interests",

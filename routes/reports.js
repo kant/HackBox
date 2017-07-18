@@ -8,11 +8,8 @@ import Boom from "boom";
 import Joi from "joi";
 import winston from "winston";
 import { id, pagination } from "../data/validation";
-//clientReplica will replace 'db' references for reports when replica is complete - ASC
-import db, { clientReplica, ensureHackathon, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
+import db, { clientReplica, ensureHackathon, ensureHackathonReports, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
   from "../db-connection";
-
-  console.log(clientReplica)
 
 const logger = new (winston.Logger)({
   transports: [
@@ -33,7 +30,7 @@ const register = function (server, options, next) {
 
         // ensureHackathon will force to query the master DB, not replica 4/10/17
         // It's used in other API endpoints that cannot use the replica.
-        const response = ensureHackathon(hackathonId)
+        const response = ensureHackathonReports(hackathonId)
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
@@ -62,9 +59,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
 
-        // ensureHackathon will force to query the master DB, not replica 4/10/17
-        // It's used in other API endpoints that cannot use the replica.
-        const response = ensureHackathon(hackathonId)
+        const response = ensureHackathonReports(hackathonId)
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
@@ -180,7 +175,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { hackathonId } = request.params;
 
-        const response = ensureHackathon(hackathonId)
+        const response = ensureHackathonReports(hackathonId)
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
@@ -242,12 +237,13 @@ const register = function (server, options, next) {
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
         const { hackathonId } = request.params;
+                console.log('***************************')
 
-        const response = ensureHackathon(hackathonId)
+        const response = ensureHackathonReports(hackathonId)
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
-          const members = db("members")
+          const members = clientReplica("members")
             .select([
               "users.alias as alias",
               "users.email as email",
@@ -306,7 +302,7 @@ const register = function (server, options, next) {
       handler(request, reply) {
         const { email } = request.params;
 
-        const response = db("reports")
+        const response = clientReplica("reports")
           .select("json_reporting_data")
           .where({email});
 
