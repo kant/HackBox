@@ -4,8 +4,8 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
 import db, {
   paginate, ensureHackathon, ensureProject, projectSearch, projectSearchReports,
-  addProjectMembersToPagination, addProjectUrlsToPagination,
-  addProjectTags, addTagsToPagination, addOrUpdateProjectTags,
+  addProjectMembersToPagination, addProjectMembersToPaginationReports, addProjectUrlsToPagination,
+  addProjectTags, addTagsToPagination, addTagsToPaginationReports, addOrUpdateProjectTags,
   addUserVotesToProject
 } from "../db-connection";
 import Joi from "joi";
@@ -110,8 +110,8 @@ const register = function (server, options, next) {
         const response = projectSearchReports(query);
 
         reply(
-          addProjectMembersToPagination(
-            addTagsToPagination(
+          addProjectMembersToPaginationReports(
+            addTagsToPaginationReports(
               addProjectUrlsToPagination(
                 paginate(response, {limit, offset}),
                 request.params.hackathonId),

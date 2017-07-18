@@ -13,12 +13,12 @@ import dbConfig from "./config";
 import { projectTypes, europeList } from "./data/fixed-data";
 
 const client = knex(dbConfig.db);
-const clientReplica = knex(dbConfig.replica.db);
+// const clientReplica = knex(dbConfig.replica.db);
 // const client2 = knex(replica.slave.db);
 
 export default client;
 
-// export const clientReplica = knex(slaveDB.slave.db);
+export const clientReplica = knex(dbConfig.replica.db);
 
 export const resolveOr404 = (promise, label = "resource") => {
   return promise.then((rows) => {
@@ -751,6 +751,24 @@ export const addTagsToPagination = (paginationQuery, key = "project_id") => {
   });
 };
 
+export const addTagsToPaginationReports = (paginationQuery, key = "project_id") => {
+  return paginationQuery.then((paginated) => {
+    const projects = _.pluck(paginated.data, key);
+    const tagsQuery = clientReplica("project_tags")
+      .select("project_id", "json_tags")
+      .whereIn("project_id", projects);
+    return tagsQuery.then((tags) => {
+      tags = _.groupBy(tags, "project_id");
+      paginated.data = _.map(paginated.data, (entry) => {
+        entry.json_special_tags = tags[entry[key]] ?
+        _.pluck(tags[entry[key]], "json_tags") : "[]";
+        return entry;
+      });
+      return paginated;
+    });
+  });
+};
+
 export const addProjectTags = (project) => {
   const tagsQuery = client.select("json_tags")
     .from("project_tags")
@@ -771,6 +789,22 @@ export const addProjectMembersToPagination = (paginationQuery) => {
   return paginationQuery.then((pagination) => {
     const projectIds = _.pluck(pagination.data, "id");
     const membersQuery = client("members")
+      .select("members.project_id", "users.id", "users.name", "users.alias")
+      .innerJoin("users", "members.user_id", "users.id")
+      .whereIn("members.project_id", projectIds);
+
+    return membersQuery.then((users) => {
+      const usersByProject = _.groupBy(users, "project_id");
+      pagination.data = addMembersToProjects(pagination.data, usersByProject);
+      return pagination;
+    });
+  });
+};
+
+export const addProjectMembersToPaginationReports = (paginationQuery) => {
+  return paginationQuery.then((pagination) => {
+    const projectIds = _.pluck(pagination.data, "id");
+    const membersQuery = clientReplica("members")
       .select("members.project_id", "users.id", "users.name", "users.alias")
       .innerJoin("users", "members.user_id", "users.id")
       .whereIn("members.project_id", projectIds);
@@ -1353,7 +1387,7 @@ export const getHackathonCities = (hackathonId) => {
 };
 
 export const getHackathonReport = (queryObj) => {
-  const query = client("users")
+  const query = clientReplica("users")
     .select(
     [
       "users.alias as alias",
@@ -1382,7 +1416,7 @@ export const getHackathonReport = (queryObj) => {
 };
 
 export const getHackathonGeneralReport = (queryObj) => {
-  const query = client("users")
+  const query = clientReplica("users")
     .select(
     [
       "users.alias as alias",
@@ -1397,7 +1431,7 @@ export const getHackathonGeneralReport = (queryObj) => {
       "reports.json_reporting_data as json_reporting_data"
     ])
     .select(
-      client.raw(
+      clientReplica.raw(
         `exists (select 1 from members where
         user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
     .from("users")

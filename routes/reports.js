@@ -9,8 +9,10 @@ import Joi from "joi";
 import winston from "winston";
 import { id, pagination } from "../data/validation";
 //clientReplica will replace 'db' references for reports when replica is complete - ASC
-import db, { clientReplica, ensureHackathon, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPagination }
+import db, { clientReplica, ensureHackathon, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
   from "../db-connection";
+
+  console.log(clientReplica)
 
 const logger = new (winston.Logger)({
   transports: [
@@ -70,7 +72,7 @@ const register = function (server, options, next) {
           // make sure we limit search to within this hackathon
           query.hackathon_id = hackathonId;
 
-          return paginate(getHackathonReport(query), {limit, offset});
+          return paginate(getHackathonGeneralReport(query), {limit, offset});
         });
 
         reply(response);
@@ -87,7 +89,7 @@ const register = function (server, options, next) {
   const addTeamDataToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const projectIds = _.pluck(paginated.data, "project_id");
-      const teamQuery = db("members")
+      const teamQuery = clientReplica("members")
         .select("members.project_id", "users.email")
         .distinct()
         .join("users", "users.id", "members.user_id")
@@ -109,7 +111,7 @@ const register = function (server, options, next) {
   const addOwnersToPagination = (paginationQuery) => {
     return paginationQuery.then((paginated) => {
       const ownerIds = _.pluck(paginated.data, "owner_id");
-      const ownersQuery = db("users")
+      const ownersQuery = clientReplica("users")
         .select("users.id as owner_id", "users.name as owner_name", "users.alias as owner_alias")
         .distinct()
         .whereIn("users.id", ownerIds);
@@ -128,28 +130,28 @@ const register = function (server, options, next) {
     });
   };
 
-  const addReportsToPagination = (paginationQuery) => {
-    // Background: We use 'alias' because it's the only data in a user profile that matches an entry in reports.
-    // Think of alias as 'email' in this case. Using 'email' would produce incorrect output due to differences
-    // between an FTE's contact info.
-    return paginationQuery.then((paginated) => {
-      const emails = _.pluck(paginated.data, "alias");
-      const reportsQuery = db("reports")
-        .select("email", "json_reporting_data")
-        .whereIn("email", emails)
-        .groupBy("email");
+  // const addReportsToPagination = (paginationQuery) => {
+  //   // Background: We use 'alias' because it's the only data in a user profile that matches an entry in reports.
+  //   // Think of alias as 'email' in this case. Using 'email' would produce incorrect output due to differences
+  //   // between an FTE's contact info.
+  //   return paginationQuery.then((paginated) => {
+  //     const emails = _.pluck(paginated.data, "alias");
+  //     const reportsQuery = db("reports")
+  //       .select("email", "json_reporting_data")
+  //       .whereIn("email", emails)
+  //       .groupBy("email");
 
-      return reportsQuery.then((reports) => {
-        reports = _.groupBy(reports, "email");
-        paginated.data = _.map(paginated.data, (entry) => {
-          entry.json_reporting_data = reports[entry.alias] ?
-          reports[entry.alias][0].json_reporting_data : "{}";
-          return entry;
-        });
-        return paginated;
-      });
-    });
-  };
+  //     return reportsQuery.then((reports) => {
+  //       reports = _.groupBy(reports, "email");
+  //       paginated.data = _.map(paginated.data, (entry) => {
+  //         entry.json_reporting_data = reports[entry.alias] ?
+  //         reports[entry.alias][0].json_reporting_data : "{}";
+  //         return entry;
+  //       });
+  //       return paginated;
+  //     });
+  //   });
+  // };
 
   const cleanUpUser = (user) => {
     user.role = user.owner_id === user.user_id ? "Project Owner" : "Team Member";
@@ -182,7 +184,7 @@ const register = function (server, options, next) {
         .then(() => {
           const { query } = request;
           const { limit, offset } = query;
-          const members = db("members")
+          const members = clientReplica("members")
             .select([
               "users.alias as alias",
               "users.email as email",
@@ -213,7 +215,7 @@ const register = function (server, options, next) {
             .orderBy("projects.title");
           return addTeamDataToPagination(
                 addOwnersToPagination(
-              addTagsToPagination(
+              addTagsToPaginationReports(
                 paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
@@ -236,7 +238,7 @@ const register = function (server, options, next) {
     method: "GET",
     path: "/hackathons/{hackathonId}/generalreports/project-reports",
     config: {
-      description: "Fetch detailed participant report for all projects in a hackathon",
+      description: "Fetch restricted participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
         const { hackathonId } = request.params;
@@ -276,7 +278,7 @@ const register = function (server, options, next) {
             .orderBy("projects.title");
           return addTeamDataToPagination(
                 addOwnersToPagination(
-              addTagsToPagination(
+              addTagsToPaginationReports(
                 paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
