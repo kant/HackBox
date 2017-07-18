@@ -55,6 +55,5 @@ var fillInEnvironmentVariables = function (obj) {
 };
 
 fillInEnvironmentVariables(config);
-console.log(config.replica);
 
 module.exports = config;
