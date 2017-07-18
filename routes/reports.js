@@ -233,11 +233,10 @@ const register = function (server, options, next) {
     method: "GET",
     path: "/hackathons/{hackathonId}/generalreports/project-reports",
     config: {
-      description: "Fetch restricted participant report for all projects in a hackathon",
+      description: "Fetch participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
         const { hackathonId } = request.params;
-                console.log('***************************')
 
         const response = ensureHackathonReports(hackathonId)
         .then(() => {
