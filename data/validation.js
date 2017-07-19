@@ -243,7 +243,8 @@ const projectBase = {
   video_data: Joi.string().allow(null),
   video_views: Joi.number().integer().min(0),
   tent_name: Joi.string().max(255).allow(null),
-  tent_color: Joi.string().max(255).allow(null)
+  tent_color: Joi.string().max(255).allow(null),
+  has_video: Joi.boolean()
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -285,7 +286,8 @@ export const newProject = Joi.object(projectBase)
     custom_categories: arrayOfStrings.default([]),
     video_views: projectBase.video_views,
     tent_name: projectBase.tent_name,
-    tent_color: projectBase.tent_color
+    tent_color: projectBase.tent_color,
+    has_video: Joi.boolean().default(false),
   });
 export const project = newProject.keys({id});
 
