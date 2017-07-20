@@ -425,9 +425,9 @@ export const projectSearch = (queryObj) => {
 
   if (has_video === false || has_video === true) {
     if (has_video) {
-      query.whereNot("projects.has_video", "0");
+      query.where("projects.video_data", "like", '%streamingURL":"http%');
     } else {
-      query.where("projects.has_video", "0");
+      query.whereNot("projects.video_data", "like", '%streamingURL":"http%');
     }
   }
   const checkBoolean = (col) => {
