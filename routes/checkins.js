@@ -46,8 +46,7 @@ const register = function (server, options, next) {
           objectToReturn.checkedIn = !checkedInUser.length ? false : true;
           return db("projects").select("projects.id", "projects.title", "projects.tent_name", "projects.tent_color").join("members", function () {
             this.onIn("members.user_id", userObject.user_id)
-              .andOn("members.project_id", "=", "projects.id")
-              .onIn("projects.venue", "USA - Redmond, WA Hack Venue");
+              .andOn("members.project_id", "=", "projects.id");
           });
         }).then((projects) => {
             objectToReturn.projects = projects;
