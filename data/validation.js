@@ -287,7 +287,7 @@ export const newProject = Joi.object(projectBase)
     video_views: projectBase.video_views,
     tent_name: projectBase.tent_name,
     tent_color: projectBase.tent_color,
-    has_video: Joi.boolean().default(false),
+    has_video: Joi.boolean().default(false)
   });
 export const project = newProject.keys({id});
 
