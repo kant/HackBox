@@ -801,6 +801,19 @@ const addMembersToProjects = (projects, usersByProject) => {
   });
 };
 
+const addMembersToProjectsReports = (projects, usersByProject) => {
+  return _.map(projects, (project) => {
+    if (usersByProject[project.id]) {
+      project.team_size = usersByProject[project.id].length;
+      project.members = usersByProject[project.id].map((user) => {
+        return user.alias;
+      });
+    }
+
+    return project;
+  });
+};
+
 export const addTagsToPagination = (paginationQuery, key = "project_id") => {
   return paginationQuery.then((paginated) => {
     const projects = _.pluck(paginated.data, key);
@@ -879,7 +892,7 @@ export const addProjectMembersToPaginationReports = (paginationQuery) => {
 
     return membersQuery.then((users) => {
       const usersByProject = _.groupBy(users, "project_id");
-      pagination.data = addMembersToProjects(pagination.data, usersByProject);
+      pagination.data = addMembersToProjectsReports(pagination.data, usersByProject);
       return pagination;
     });
   });
