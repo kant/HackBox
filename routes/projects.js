@@ -3,9 +3,9 @@ import { paginationWithDeleted, newProject, stringId, neededExpertiseArray,
   roleArray, productArray, projectUpdate, id, customerTypeArray,
   sortDirection, arrayOfStrings, voteCategoryId } from "../data/validation";
 import db, {
-  paginate, ensureHackathon, ensureProject, projectSearch,
-  addProjectMembersToPagination, addProjectUrlsToPagination,
-  addProjectTags, addTagsToPagination, addOrUpdateProjectTags,
+  paginate, ensureHackathon, ensureProject, projectSearch, projectSearchReports,
+  addProjectMembersToPagination, addProjectMembersToPaginationReports, addProjectUrlsToPagination,
+  addProjectTags, addTagsToPagination, addTagsToPaginationReports, addOrUpdateProjectTags,
   addUserVotesToProject
 } from "../db-connection";
 import Joi from "joi";
@@ -43,6 +43,75 @@ const register = function (server, options, next) {
         reply(
           addProjectMembersToPagination(
             addTagsToPagination(
+              addProjectUrlsToPagination(
+                paginate(response, {limit, offset}),
+                request.params.hackathonId),
+              "id")
+            )
+          );
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        },
+        query: paginationWithDeleted.keys({
+          search: Joi.string(),
+          search_array: arrayOfStrings,
+          has_video: Joi.boolean(),
+          needs_hackers: Joi.boolean(),
+          writing_code: Joi.boolean(),
+          existing: Joi.boolean(),
+          external_customers: Joi.boolean(),
+          needed_roles: roleArray,
+          needed_expertise: neededExpertiseArray,
+          product_focus: productArray,
+          customer_type: customerTypeArray,
+          has_member: stringId,
+          has_challenges: arrayOfStrings,
+          venue: arrayOfStrings,
+          project_motivations: arrayOfStrings,
+          participant_name: Joi.string(),
+          video_type: Joi.string(),
+          has_votes: Joi.array().items(voteCategoryId).description("Vote category IDs"),
+          custom_categories: arrayOfStrings,
+          video_views: Joi.number().integer(),
+          sort_col: Joi.any()
+          .valid("created_at", "title", "like_count", "share_count", "view_count", "comment_count",
+            "tagline", "owner_alias", "vote_count_0", "vote_count_1", "vote_count_2",
+            "vote_count_3", "video_views"),
+          sort_direction: sortDirection
+        })
+      }
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/hackathons/{hackathonId}/generalreports/projects",
+    config: {
+      description: "Fetch all projects",
+      tags: ["api", "paginated", "list", "filterable"],
+      notes: [
+        `The 'has_member' query paramater can either be a `,
+        `user ID or the string 'me' as an alias to fetch your own.`
+      ].join(""),
+      handler(request, reply) {
+        const { query } = request;
+        const { limit, offset } = query;
+
+        // hardcode hackathon id to match
+        query.hackathon_id = request.params.hackathonId;
+
+        // allow alias "me" for searching for own
+        if (query.has_member === "me") {
+          query.has_member = request.userId();
+        }
+
+        const response = projectSearchReports(query);
+
+        reply(
+          addProjectMembersToPaginationReports(
+            addTagsToPaginationReports(
               addProjectUrlsToPagination(
                 paginate(response, {limit, offset}),
                 request.params.hackathonId),
