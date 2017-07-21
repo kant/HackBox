@@ -13,8 +13,17 @@ const trackEvent = function (type) {
         project_id: projectId
       });
     }).then(() => {
-      const column = type === "shares" ? "share_count" : "view_count";
+
+      let column; 
+      if (type === "shares") {
+        column = "share_count"; 
+      } else if (type === "video_views") {
+        column = "video_views";
+      } else {
+        column = "view_count";
+      }
       return db("projects").where("id", "=", projectId).increment(column, 1);
+
     }).then(() => {
       return request.generateResponse().code(204);
     });
@@ -100,6 +109,38 @@ const register = function (server, options, next) {
       }
     }
   });
+
+  server.route({
+    method: "POST",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/videoviews",
+    config: {
+      description: "Track views of a project video. No body or query params required.",
+      tags: ["api", "action", "stats"],
+      handler: (request, reply) => {
+          const { hackathonId, projectId } = request.params;
+          const response = ensureProject(hackathonId, projectId).then(() => {
+              return db('projects').where({
+                  id: projectId
+              }).then(res => {
+                  if (res !== 0) {
+                      return db('projects').where({id: projectId}).increment("video_views", 1);
+                  }
+              }).then(() => {
+                  return request.generateResponse().code(204);
+              });
+          });
+
+          reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id,
+          projectId: id
+        }
+      }
+    }
+  });
+
 
   server.route({
     method: "GET",
