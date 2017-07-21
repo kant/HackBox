@@ -13,7 +13,7 @@ client("reports").then((reports) => {
   
   reports.forEach((element) => {
     if (element.email.indexOf('@microsoft.com') == -1) {
-      console.log('================+>>>>>>>>>>>>>');
+      console.log('Error. Email is not correct');
     }
     let data = JSON.parse(element.json_reporting_data);
     msft.push([element.email.substring(0, element.email.length - 14).toLowerCase(), data.DisplayName]);
