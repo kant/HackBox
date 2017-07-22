@@ -46,7 +46,8 @@ const register = function (server, options, next) {
           objectToReturn.checkedIn = !checkedInUser.length ? false : true;
           return db("projects").select("projects.id", "projects.title", "projects.tent_name", "projects.tent_color").join("members", function () {
             this.onIn("members.user_id", userObject.user_id)
-              .andOn("members.project_id", "=", "projects.id");
+              .andOn("members.project_id", "=", "projects.id")
+              .andOn("projects.hackathon_id", "=", 1074);
           });
         }).then((projects) => {
             objectToReturn.projects = projects;
