@@ -389,6 +389,37 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/savecaptions",
+    config: {
+        description: "Save caption data associated with a project's video data and remove the caption job id",
+        tags: ["api"],
+        handler(request, reply) {
+            const { hackathonId, projectId } = request.params;
+            const video_data = request.payload.video_data;
+
+            const response = ensureProject(hackathonId, projectId).then(() => {
+              return db("projects").where({
+                id: projectId
+              }).update({ 
+                video_data: video_data
+              });
+            }).then(() => {
+              return request.generateResponse(video_data).code(201);
+            });
+
+            reply(response);
+        },
+        validate: {
+            params: {
+                hackathonId: id,
+                projectId: id
+            }
+        }
+    }
+  });
+
+  server.route({
+    method: "POST",
     path: "/hackathons/{hackathonId}/projects/{projectId}/vote",
     config: {
       description: "Submit a vote for this project in the given category",
