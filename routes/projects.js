@@ -389,9 +389,9 @@ const register = function (server, options, next) {
 
   server.route({
     method: "POST",
-    path: "/hackathons/{hackathonId}/projects/{projectId}/savecaptions",
+    path: "/hackathons/{hackathonId}/projects/{projectId}/videodata",
     config: {
-        description: "Save caption data associated with a project's video data and remove the caption job id",
+        description: "Update video data associated with a project's video data.",
         tags: ["api"],
         handler(request, reply) {
             const { hackathonId, projectId } = request.params;
