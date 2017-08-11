@@ -103,6 +103,17 @@ available via `npm run-script`:
     knex seed:run
 ```
 
+## How to update data/msft.json file
+
+There is a script file scripts/msft-fte-list-update.js
+Usually I update this file after updating feedstore column in DB.
+
++ Point your app to the production database (env variables)
++ Just run this script with node: node scripts/msft-fte-list-update.js
++ Wait. It usualy takes 20-30 secs
++ After successful process script will create msft.json file in scripts folder
++ Replace msft.json in ./data folder with newly created file. I did not want to overwrite existing because I want to see the diffs first and doublecheck that all latest data is there 
+
 
 
 [development]: ./DEVELOPMENT.md
