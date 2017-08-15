@@ -30,7 +30,12 @@ console.log('Parsing "awards_file.csv" ...');
 fs.readFile(`./${filename}`,'utf8', parseCSV);
 
 function parseCSV(err, data) {
-    if (err) throw err;
+    if (err) {
+        if (err.code === 'ENOENT')
+            return console.log(`File '${filename}' can't be found.`);
+
+        throw err;
+    }
 
     const AWARD_PLACE_NAME = 2;
     const PROJECT_ID = 4;
