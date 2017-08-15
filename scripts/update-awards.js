@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+/*eslint no-process-exit: 0, no-console: 0, camelcase:0, strict:0*/
+"use strict";
+require("babel/register");
+const _ = require("lodash");
+const baby = require("babyparse"); const client = require("../db-connection").default;
+const fs = require("fs");
+const knex = require("knex");
+
+const defaultDB = 'b2c';
+const USAGE = `usage: update-awards [db]`;
+let db;
+
+const parseArgs = function(args) {
+
+    if (!args.length) return;
+    if (args[0] === '-h' || args[0] === '--help') {
+        console.log(USAGE);
+        process.exit(0);
+    } 
+    else 
+        db = args[0]
+};
+
+parseArgs(process.argv.slice(2));
+
+console.log(`Preparing to update ${ db || defaultDB } ... `);  
+console.log('Parsing "awards_file.csv" ...');
+fs.readFile('./awards_file.csv','utf8', parseCSV);
+
+function parseCSV(err, data) {
+    if (err) throw err;
+
+    const AWARD_PLACE_NAME = 2;
+    const PROJECT_ID = 4;
+
+    const splitOn = delim => line => line.split(delim);
+    const getValuesAtIndexes = (...indexes) => line => indexes.map(index => line[index]);
+    const hasRequiredValues = line => line.every(Boolean); 
+
+    let [ 
+
+        header, 
+        ...lines 
+
+    ] = data
+            .split('\r')
+            .map(splitOn(','))
+            .map(getValuesAtIndexes(PROJECT_ID, AWARD_PLACE_NAME))
+            .filter(hasRequiredValues);
+
+    console.log('updating database ... ');
+
+    const updates = lines.map(line => {
+        const [ projectId, awardDescription ] = line;
+        return client.raw(`update ${db || defaultDB}.projects set json_meta = "${awardDescription}" where id = "${Number(projectId)}"`);
+    });
+
+    Promise.all(updates).then(values => {
+        console.log("done!")
+        process.exit(0);
+    }).catch(e => {
+        console.log(`Error: ${e.code}`);
+        process.exit(0);
+    });
+
+};
