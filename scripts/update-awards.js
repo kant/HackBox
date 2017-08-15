@@ -18,9 +18,9 @@ const parseArgs = function(args) {
         console.log(`usage: update-awards [db] [csv filename]`);
         process.exit(0);
     } 
-    else 
-        db = args[0]
-        filename = args[1]
+
+    db = args[0]
+    filename = args[1]
 };
 
 parseArgs(process.argv.slice(2));
