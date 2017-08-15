@@ -7,27 +7,27 @@ const _ = require("lodash");
 const baby = require("babyparse"); const client = require("../db-connection").default;
 const fs = require("fs");
 const knex = require("knex");
-
 const defaultDB = 'b2c';
-const USAGE = `usage: update-awards [db]`;
+
 let db;
+let filename;
 
 const parseArgs = function(args) {
 
-    if (!args.length) return;
-    if (args[0] === '-h' || args[0] === '--help') {
-        console.log(USAGE);
+    if (args.length < 2 || args.includes('-h') || args.includes('--help')) {
+        console.log(`usage: update-awards [db] [csv filename]`);
         process.exit(0);
     } 
     else 
         db = args[0]
+        filename = args[1]
 };
 
 parseArgs(process.argv.slice(2));
 
 console.log(`Preparing to update ${ db || defaultDB } ... `);  
 console.log('Parsing "awards_file.csv" ...');
-fs.readFile('./awards_file.csv','utf8', parseCSV);
+fs.readFile(`./${filename}`,'utf8', parseCSV);
 
 function parseCSV(err, data) {
     if (err) throw err;
