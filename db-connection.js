@@ -1305,7 +1305,7 @@ export const awardSearch = (hackathonId, filters = {}) => {
   const awardQuery = client("awards")
     .select("awards.*")
     .where({hackathon_id: hackathonId})
-    .orderBy("awards.name", "asc");
+    .orderBy("awards.id", "desc");
 
   if (awardCategoryIds) {
     awardQuery
