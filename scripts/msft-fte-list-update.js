@@ -25,9 +25,9 @@ client("reports").then((reports) => {
           msft.push([user.alias.substring(0, user.email.length - 14).toLowerCase(), user.name, user.id]);
         }
       });
-      fs.writeFile('myjsonfile.json', JSON.stringify(msft), 'utf8', (err, result) => {
-      console.log(err);
-      console.log(result);
+      fs.writeFile('msft.json', JSON.stringify(msft), 'utf8', (err, result) => {
+      console.log('Error:' + err);
+      console.log('Done.')
   });
   });
   
