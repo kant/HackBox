@@ -115,6 +115,18 @@ Usually I update this file after updating feedstore column in DB.
 + Replace msft.json in ./data folder with newly created file. I did not want to overwrite existing because I want to see the diffs first and doublecheck that all latest data is there 
 
 
+## How to add awards to winner projects
+
++ Usually we get a list of awards in xls file. Compose the final list of first and second level categories from xls file. 
++ Go to award_categories table and manually create categories with new hackathon id. 
++ Prepare a csv file with 4 columns: project id, value to insert into the project, categorie id (manually insert to the file from previous task), 1st place categorie id if appliccable.
++ Value to insert should look like following (find colors manually, they are different only for first level of awards_categories):
+```sh
+{awards:[{"name":"Advertisers  - 3rd Place","color":"#7030a0"}]}
+```
++ Copy csv file and name it CSV.csv
++ Run script from here script/update-awards.js. This will read the file and insert all values and awards and id's to the db.
++ Also, you need to update id's and category names in filters in CLient app. HackBoxClient/lib/main/components/filterableLists/filters.directive.js
 
 [development]: ./DEVELOPMENT.md
 [production]: ./PRODUCTION.md
