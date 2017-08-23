@@ -158,7 +158,6 @@ const register = function (server, options, next) {
     delete user.view_count;
     delete user.deleted;
     delete user.product_focus;
-    delete user.json_meta;
     delete user.user_id;
     delete user.project_id;
     delete user.id;
