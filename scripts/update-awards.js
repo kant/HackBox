@@ -4,10 +4,13 @@
 "use strict";
 require("babel/register");
 const _ = require("lodash");
-const baby = require("babyparse"); const client = require("../db-connection").default;
+const baby = require("babyparse"); 
+const client = require("../db-connection").default;
 const fs = require("fs");
 const knex = require("knex");
 const defaultDB = 'b2c';
+const inputFile = 'CSV.csv';
+
 
 let db;
 let filename;
@@ -27,47 +30,82 @@ parseArgs(process.argv.slice(2));
 
 console.log(`Preparing to update ${ db || defaultDB } ... `);  
 console.log('Parsing "awards_file.csv" ...');
-fs.readFile(`./${filename}`,'utf8', parseCSV);
 
-function parseCSV(err, data) {
-    if (err) {
-        if (err.code === 'ENOENT')
-            return console.log(`File '${filename}' can't be found.`);
 
-        throw err;
-    }
+var parse = require('csv-parse');
+var async = require('async');
 
-    const AWARD_PLACE_NAME = 2;
-    const PROJECT_ID = 4;
 
-    const splitOn = delim => line => line.split(delim);
-    const getValuesAtIndexes = (...indexes) => line => indexes.map(index => line[index]);
-    const hasRequiredValues = line => line.every(Boolean); 
 
-    let [ 
+var parser = parse({delimiter: ','}, function (err, data) {
+    // console.log(data);
+  const updates = data.filter(line => {
+      return line[0] !== '';
+  });
+   var index = updates.length - 1;
+    // var index = 2;
+   var runQuery = function() {
+    //    if (Number(updates[index][0]) == 65440) {
+       console.log('GOING TO UPDATE:');
+       console.log(updates[index][1]); 
+       var value = updates[index][1].replace('awards', '"awards"');
+       var newAwardId = 0;
 
-        header, 
-        ...lines 
+    console.log('Proj ID: ' + Number(updates[index][0]));
 
-    ] = data
-            .split('\r')
-            .map(splitOn(','))
-            .map(getValuesAtIndexes(PROJECT_ID, AWARD_PLACE_NAME))
-            .filter(hasRequiredValues);
+    
 
-    console.log('updating database ... ');
+    
 
-    const updates = lines.map(line => {
-        const [ projectId, awardDescription ] = line;
-        return client.raw(`update ${db || defaultDB}.projects set json_meta = "${awardDescription}" where id = "${Number(projectId)}"`);
-    });
+       client('projects').select('*').where({id: Number(updates[index][0])})
+       .then(proj => {
+           var meta = {awards: []};
+           if (JSON.parse(proj[0].json_meta).awards && JSON.parse(proj[0].json_meta).awards.length > 0) {
+                var projAwards = JSON.parse(proj[0].json_meta).awards;
+                projAwards.forEach(aw => {
+                    meta.awards.push(aw);
+                })
+                meta.awards.push(JSON.parse(value).awards[0]);
+                return client.update({json_meta: JSON.stringify(meta)}).into("projects").where("id", Number(updates[index][0]));
+                       
+            } else {
+                return client.update({json_meta: value}).into("projects").where("id", Number(updates[index][0]));
+            }
 
-    Promise.all(updates).then(values => {
-        console.log("done!")
-        process.exit(0);
-    }).catch(e => {
-        console.log(`Error: ${e.code}`);
-        process.exit(0);
-    });
+           
+       })
+       .then(data => {
+            var obj = JSON.parse(value);
+            return client('awards').insert({hackathon_id: 1074, project_id: Number(updates[index][0]), name: obj.awards[0].name, json_meta: '{}'})
+            })
+            .then(response => {
+                newAwardId = response[0];
+                var arrayToInsert = [];
 
-};
+                arrayToInsert.push({award_id: newAwardId, award_category_id: Number(updates[index][2])});
+                if (updates[index][3] !== '') {
+                    arrayToInsert.push({award_id: newAwardId, award_category_id: Number(updates[index][3])});
+                }
+                return client('awards_award_categories').insert(arrayToInsert);
+            })
+            .then(res => {
+                console.log('---------DONE');
+                console.log(res);
+                index--;
+                if (index >= 0) {
+                    runQuery();
+                } else {
+                    console.log('DONE!!!!');
+                }
+            })
+
+   }
+   runQuery();
+
+});
+
+fs.createReadStream(inputFile).pipe(parser);
+
+
+
+
