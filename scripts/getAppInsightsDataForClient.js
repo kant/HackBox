@@ -11,9 +11,12 @@ var seriesToRun = [];
 var aHundred = [];
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++
-//GET LIST OF ALL FILE NAMES AND STORE TO THE FILE
-//++++++++++++++++++++++++++++++++++++++++++++++++
+//UNCOMMENT AND RUN BLOCKS SEQUENTIALLY
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++
+// 1.  GET LIST OF ALL FILE NAMES AND STORE TO THE FILE
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // var getResults = function(token) {
 //     blobSvc.listBlobsSegmented('customevents', token ? token : null, function(error, result, response){
@@ -41,6 +44,9 @@ var aHundred = [];
 
 
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// 2. READ FILE NAMES AND GET ALL FILES FROM BLOB STORAGE AND SAVE TO THE EVENTS.TXT FILE
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // var allNames = require('./names');
 // var wstream = fs.createWriteStream('events.txt');
@@ -91,10 +97,10 @@ var aHundred = [];
 
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//3. STREAM EVENTS FROM EVENTS.txt FILE TO CSV AND FILTER BY DATE AND EVENT NAME
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//++++++++++++++++++++++++++++++++++
-//STREAM EVENTS FROM txt FILE TO CSV
-//++++++++++++++++++++++++++++++++++
 // var csvWriter = require('csv-write-stream')
 // var writer = csvWriter();
 // var names = {};
@@ -107,6 +113,11 @@ var aHundred = [];
 // lineReader.on('line', function (line) {
 //   var obj = JSON.parse(line);
   
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Next 3 if statements are used to filter all events by name because if you want to have all events in one file, 
+//the file is going to be so huge so excel will not be able to open it. So use only one at a time.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 // //   if (obj.event[0].name.includes('ProjectChange_')) {
 // //       writer.write({name: obj.event[0].name, time: obj.context.data.eventTime, id: obj.context.custom.dimensions[0].id});
 // //       count++;
@@ -130,9 +141,6 @@ var aHundred = [];
 //       count++;
 //       console.log(count);
 //   }
-    
-    
-  
 // });
 
 // lineReader.on('close', function (line) {
