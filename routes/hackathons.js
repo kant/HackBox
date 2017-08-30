@@ -7,6 +7,8 @@ import { newHackathon, hackathonUpdate, id,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
   from "../db-connection";
+
+import admin from "../data/approved-admins";
 import appInsights from "applicationinsights";
 
 const client = appInsights.getClient();
@@ -30,13 +32,18 @@ const register = function (server, options, next) {
       tags: ["api", "paginated", "list"],
       handler(request, reply) {
         const { limit, offset } = request.query;
-        const requestorId = request.userId();
+        let requestorId = request.userId();
         const adminsContain = request.query.admins_contain;
 
         // allow users to pass `me` instead of full user ID
         // if they're just wanting to see their own hackathons
         if (adminsContain === "me") {
           request.query.admins_contain = requestorId;
+        }
+
+        // certain users have full admin rights and can see all hackathons in H.O.P.
+        if (admin[requestorId] && adminsContain === 'me') {
+          request.query.admins_contain = undefined;
         }
 
         const askingForOwn = request.query.admins_contain === requestorId;
