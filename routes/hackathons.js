@@ -41,7 +41,7 @@ const register = function (server, options, next) {
           request.query.admins_contain = requestorId;
         }
 
-        // certain users have full admin rights and can see all hackathons in H.O.P.
+        // Checks approved admins who can view all hacks in admin portal
         if (admin[requestorId] && adminsContain === 'me') {
           request.query.admins_contain = undefined;
         }
