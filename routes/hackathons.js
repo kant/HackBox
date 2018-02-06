@@ -58,7 +58,8 @@ const register = function (server, options, next) {
         if (request.auth.credentials && request.auth.credentials.organization_id) {
           request.query.organization_id = request.auth.credentials.organization_id;
         }
-
+        console.log(hackathonSearch(request.query));
+    
         const response = hackathonSearch(request.query);
 
         reply(paginate(response, {limit, offset}));
@@ -69,7 +70,7 @@ const register = function (server, options, next) {
           admins_contain: Joi.string(),
           participants_contain: Joi.string(),
           country: countryArray,
-          sort_col: Joi.any().valid("start_at", "end_at", "name", "tagline",
+          sort_col: Joi.any().valid("start_at", "name", "tagline",
             "city", "country", "projects", "participants", "status"),
           sort_direction: sortDirection
         })
@@ -92,7 +93,7 @@ const register = function (server, options, next) {
 
         payload.created_at = now;
         payload.updated_at = now;
-
+        console.log(request);
         // Use transaction to insert hackathon and
         // corresponding entry in admins table
         const response = db.transaction((trx) => {
