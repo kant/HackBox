@@ -169,7 +169,7 @@ const hackathonBase = {
 };
 export const hackathonUpdate = Joi.object(hackathonBase);
 export const newHackathon = Joi.object(hackathonBase)
-  .requiredKeys("name", "slug", "logo_url", "start_at", "end_at", "city", "country")
+  .requiredKeys("name", "slug", "logo_url", "start_at", "city", "country")
   .keys({
     color_scheme: Joi.any().valid(colorSchemes).default(colorSchemes[3]),
     tagline: hackathonBase.tagline.default(""),
@@ -181,6 +181,7 @@ export const newHackathon = Joi.object(hackathonBase)
     resources: hackathonBase.resources.default(""),
     org: hackathonBase.org.default(""),
     city: hackathonBase.org.default(""),
+    end_at: hackathonBase.end_at,
     meta: metaWithDefault,
     logo_url: urlWithDefault,
     header_image_url: urlWithDefault,
