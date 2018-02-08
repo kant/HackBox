@@ -2,7 +2,7 @@
 "use strict";
 
 /* Migrate data from projects.needed_role to projects.json_needed_roles */
-require("babel/register");
+require("babel-register");
 const client = require("../db-connection").default;
 const Promise = require("bluebird");
 
