@@ -12,6 +12,7 @@ require("./user-search");
 require("./hackathon-search");
 require("./awards");
 require("./award-categories");
+require("./validationTests");
 // Running this requires a valid auth token <1hr old saved as TOKEN at project route
 // require("./auth");
 
