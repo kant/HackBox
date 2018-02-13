@@ -1,5 +1,5 @@
 "use strict";
-require("babel/register");
+require("babel-register");
 const _ = require("lodash");
 const baby = require("babyparse");
 const client = require("../db-connection").default;
