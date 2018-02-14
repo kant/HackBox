@@ -1,6 +1,6 @@
 "use strict";
 
-require("babel/register");
+require("babel-register");
 const client = require("../db-connection").default;
 const fs = require("fs");
 const knex = require("knex");
