@@ -31,6 +31,7 @@ try {
     throw e;
   }
 }
+
 // walk the structure, filling in any environment variables
 var fillInEnvironmentVariables = function (obj) {
   var value;
