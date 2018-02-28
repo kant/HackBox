@@ -11,10 +11,46 @@ import assert from "assert";
 import _ from "lodash";
 import dbConfig from "./config";
 import { projectTypes, europeList } from "./data/fixed-data";
+import winston from "winston";
 
 const client = knex(dbConfig.db);
 // const clientReplica = knex(dbConfig.replica.db);
 // const client2 = knex(replica.slave.db);
+
+const logger = winston.createLogger({
+    exitOnError: false,
+    level: 'debug',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.Console({
+                level: 'debug',
+                format: winston.format.combine(
+                  winston.format.timestamp({format: 'YYYY-MM-DD HH:MM:SS'}),
+                  winston.format.json()
+                )}),
+        new winston.transports.File({
+            format: winston.format.combine(
+                winston.format.timestamp({format: 'YYYY-MM-DD HH:MM:SS'}),
+                winston.format.json()
+            ),
+            filename: 'sql.log',
+            dirname: `${__dirname}/logs/`,
+            timestamp: true,
+            maxsize: 10,
+            keep: 3,
+            level: 'debug',
+            name: 'sqllog'})
+    ]
+});
+
+client.on("query", (data) => {
+    // data properties:
+    //  level, message, method, options, timeout,
+    //  cancelOnTimeout, bindings, __knexQueryUid, sql
+    logger.log("debug", `${data.sql} [${data.bindings}]`);
+});
+
+winston.level = process.env.LOG_LEVEL || 'info';
 
 export default client;
 

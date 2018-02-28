@@ -11,7 +11,7 @@ import { id, pagination } from "../data/validation";
 import db, { clientReplica, ensureHackathon, ensureHackathonReports, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
   from "../db-connection";
 
-const logger = new (winston.Logger)({
+const logger = winston.createLogger({
   transports: [
     new (winston.transports.Console)({'timestamp':true, 'colorize': true})
   ]
