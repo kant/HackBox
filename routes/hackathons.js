@@ -290,6 +290,7 @@ const register = function (server, options, next) {
                 const requestorId = request.userId();
                 const isAddingSelf = requestorId === userId;
                 const { payload } = request;
+                const superUser = request.isSuperUser();
                 let checkOwner = false;
 
                 payload.user_id = userId;
@@ -311,7 +312,7 @@ const register = function (server, options, next) {
                         throw Boom.conflict(`User ${userId} is already owner in hackathon ${hackathonId}`);
                     }
 
-                    if (!isHackathonAdmin) {
+                    if (!superUser && !isHackathonAdmin) {
                         throw Boom.forbidden(`You must be added by one of a hackathon owner`);
                     }
                 }).then(() => {
