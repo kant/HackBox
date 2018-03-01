@@ -237,13 +237,14 @@ const register = function (server, options, next) {
                     const hackathonResult = results[0];
                     const projectResult = results[2];
                     const isHackathonAdmin = hackathonResult.admins.some((item) => item.id === request.userId());
-
-                    if (!isHackathonAdmin) {
-                        if (projectResult.length <= 0) {
-                            throw Boom.conflict(`User ${userId} should be an owner of the project ${projectId} or hackathon ${hackathonId} to delete project.`);
-                        }
-                        else {
-                            throw Boom.conflict(`As you are not owner of the project, then you should be an owner of hackathon ${hackathonId} to delete project.`);
+                    if (!request.isSuperUser()) {
+                        if (!isHackathonAdmin) {
+                            if (projectResult.length <= 0) {
+                                throw Boom.conflict(`User ${userId} should be an owner of the project ${projectId} or hackathon ${hackathonId} to delete project.`);
+                            }
+                            else {
+                                throw Boom.conflict(`As you are not owner of the project, then you should be an owner of hackathon ${hackathonId} to delete project.`);
+                            }
                         }
                     }
                 }).then(() => {
