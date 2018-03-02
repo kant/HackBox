@@ -12,3 +12,4 @@ TOKEN
 .nyc_output
 .vscode/launch.json
 cache
+.idea
