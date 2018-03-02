@@ -335,7 +335,6 @@ export const ensureParticipant = (hackathonId, userId, opts = {includeUser: fals
   });
 };
 
-
 export const paginate = (query, {limit, offset}) => {
   assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
   assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
@@ -941,16 +940,13 @@ export const userSearch = (queryObj) => {
     let rawQuery = [
       "select distinct users.*, participants.json_participation_meta, participants.joined_at,",
       "(select case when exists",
-        "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
-      "then true else false end) as has_project, ",
-      "(select case when exists",
-        "(select * from  hackathon_admins where hackathon_admins.user_id = users.id and hackathon_admins.hackathon_id = ?) ",
-      "then true else false end) as isAdmin ",
-      "from users",
+      "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
+      "then true else false end)",
+      "as has_project from users",
       "inner join participants on participants.user_id = users.id",
       "where participants.hackathon_id = ?"
     ].join(" ");
-    const rawQueryVars = [hackathon_id, hackathon_id, hackathon_id];
+    const rawQueryVars = [hackathon_id, hackathon_id];
 
     /*
       We need to sort by joined_at in the query that includes participants
@@ -965,12 +961,11 @@ export const userSearch = (queryObj) => {
     if (orderByCol === "joined_at" && _.includes(["asc", "desc"], orderByDirection)) {
       rawQuery += ` order by participants.joined_at ${orderByDirection}`;
     }
-    
+
     query = client.select().joinRaw(`from (${rawQuery}) as derived`, rawQueryVars);
   } else {
     query = client("users");
   }
- 
 
   if (!include_deleted) {
     query.andWhere("deleted", false);
