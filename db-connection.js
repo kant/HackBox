@@ -941,12 +941,15 @@ export const userSearch = (queryObj) => {
       "select distinct users.*, participants.json_participation_meta, participants.joined_at,",
       "(select case when exists",
       "(select * from members where members.user_id = users.id and members.hackathon_id = ?)",
-      "then true else false end)",
-      "as has_project from users",
+		"then true else false end) as has_project, ",
+		"(select case when exists",
+		"(select * from  hackathon_admins where hackathon_admins.user_id = users.id and hackathon_admins.hackathon_id = ?) ",
+		"then true else false end) as isAdmin ",
+		"from users",
       "inner join participants on participants.user_id = users.id",
       "where participants.hackathon_id = ?"
     ].join(" ");
-    const rawQueryVars = [hackathon_id, hackathon_id];
+    const rawQueryVars = [hackathon_id, hackathon_id, hackathon_id];
 
     /*
       We need to sort by joined_at in the query that includes participants
