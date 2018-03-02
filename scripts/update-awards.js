@@ -2,7 +2,7 @@
 
 /*eslint no-process-exit: 0, no-console: 0, camelcase:0, strict:0*/
 "use strict";
-require("babel/register");
+require("babel-register");
 const _ = require("lodash");
 const baby = require("babyparse"); 
 const client = require("../db-connection").default;
