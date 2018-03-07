@@ -1,0 +1,16 @@
+{
+  "level": "debug",
+  "message": "select *, (select count(`participants`.`hackathon_id`) from `participants` where `participants`.`hackathon_id` = ?) as `participants`, (select count(`projects`.`hackathon_id`) from `projects` where `projects`.`hackathon_id` = ? and `deleted` = ?) as `projects` from `hackathons` where `id` = ? and `deleted` = ? [1169,1169,false,1169,false]",
+  select *, (select count(participants.hackathon_id) from participants where participants.hackathon_id = 1169) as participants, (select count(projects.hackathon_id) from projects where projects.hackathon_id = 1169 and deleted = false) as projects from hackathons where id = 1169 and deleted = false [1169,1169,false,
+  "timestamp": "2018-02-28 14:02:04"
+}
+{
+  "level": "debug",
+  "message": "select `users`.* from `users` inner join `hackathon_admins` on `users`.`id` = `hackathon_admins`.`user_id` where `hackathon_admins`.`hackathon_id` = ? [1169]",
+  "timestamp": "2018-02-28 14:02:05"
+}
+{
+  "level": "debug",
+  "message": "select * from `hackathons_orgs` where `hackathon_id` = ? [1169]",
+  "timestamp": "2018-02-28 14:02:06"
+}
