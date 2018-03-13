@@ -7,7 +7,7 @@ import {
     stringId, paginationWithDeleted, countryArray,
     sortDirection
 } from "../data/validation";
-import db, { paginate, ensureHackathon, hackathonSearch, getHackathonCities }
+import db, { paginate, ensureHackathon, ensureUser, hackathonSearch, getHackathonCities }
     from "../db-connection";
 
 import admin from "../data/approved-admins";
@@ -176,7 +176,9 @@ const register = function (server, options, next) {
                 if (!request.isSuperUser()) {
                     delete payload.deleted;
                 }
-
+                if (payload.end_at == undefined || payload.end_at == '') {
+                    payload.end_at = null;
+                }
                 const response = ensureHackathon(hackathonId, {
                     checkOwner: ownerId,
                     allowDeleted: isSuperUser
@@ -278,39 +280,45 @@ const register = function (server, options, next) {
 
     server.route({
         method: "POST",
-        path: "/hackathons/{hackathonId}/admins/{userId}",
+        path: "/hackathons/{hackathonId}/owner/{userId}",
         config: {
-            description: "Add an admin to a hackathon",
+            description: "Add an owner to a hackathon",
             tags: ["api"],
             handler(request, reply) {
-                const { userId, hackathonId } = request.params;
+
+                const { hackathonId, userId } = request.params;
                 const requestorId = request.userId();
-                const isSuperUser = request.isSuperUser();
+                const isAddingSelf = requestorId === userId;
+                const { payload } = request;
+                const superUser = request.isSuperUser();
                 let checkOwner = false;
-                const whereClause = {
-                    user_id: userId,
-                    hackathon_id: hackathonId
-                };
-                var hackthonResult = ensureHackathon(hackathonId, { checkOwner });
 
-                var isOwner = hackthonResult.length > 0 && hackthonResult[0].ownerId == requestorId;
+                payload.user_id = userId;
+                payload.hackathon_id = hackathonId;
 
-                if (!isOwner || (requestorId === userId && !isSuperUser)) {
-                    return reply(Boom.forbidden(`Only super users or Hackathon owner can add themselves as admins`));
-                }
+                const response = Promise.all([
+                    ensureHackathon(hackathonId, { checkOwner }),
+                    ensureUser(userId),
+                    db("hackathon_admins").where({
+                        user_id: userId,
+                        hackathon_id: hackathonId
+                    })
+                ]).then((results) => {
+                    const hackathonResult = results[0];
+                    const participantResult = results[2];
+                    const isHackathonAdmin = hackathonResult.admins.some((item) => item.id === requestorId);
 
-                const response = db("hackathon_admins").where(whereClause).then((rows) => {
-                    if (rows.length > 0) {
-                        throw Boom.conflict(`User ${userId} is already an admin of this hackathon`);
+                    if (participantResult.length > 0) {
+                        throw Boom.conflict(`User ${userId} is already owner in hackathon ${hackathonId}`);
                     }
-                    return;
+
+                    if (!superUser && !isHackathonAdmin) {
+                        throw Boom.forbidden(`You must be added by one of a hackathon owner`);
+                    }
                 }).then(() => {
-                    return db("hackathon_admins").insert(whereClause);
-                }).then(() => {
-                    return request.generateResponse().code(204);
+                    return db("hackathon_admins").insert(payload);
                 });
 
-                reply(response);
             },
             validate: {
                 params: {
@@ -324,36 +332,45 @@ const register = function (server, options, next) {
 
     server.route({
         method: "DELETE",
-        path: "/hackathons/{hackathonId}/admins/{userId}",
+        path: "/hackathons/{hackathonId}/owner/{userId}",
         config: {
             description: "Remove an admin from a hackathon",
             tags: ["api"],
             handler(request, reply) {
-                const { userId, hackathonId } = request.params;
-                const isSuperUser = request.isSuperUser();
-                const ownerId = isSuperUser ? false : request.userId();
+                const { hackathonId, userId } = request.params;
+                const requestorId = request.userId();
+                const isRemovingSelf = requestorId === userId;
+                // const isSuperUser = request.isSuperUser();
+                let checkOwner = false;
 
-                const response = ensureHackathon(hackathonId, { checkOwner: ownerId }).then(() => {
-                    return db("hackathon_admins").where({
-                        hackathon_id: hackathonId
-                    });
-                }).then((adminResults) => {
-                    if (adminResults.length === 1 && !isSuperUser) {
-                        throw Boom.forbidden(`Cannot remove only remaining admin unless you're a super user.`);
-                    }
-                    // make sure user we're removing is an admin
-                    if (!adminResults.some((admin) => admin.user_id === userId)) {
-                        throw Boom.notFound(`User ${userId} is not an admin of this hackathon`);
-                    }
-                    return db("hackathon_admins").where({
+                // unless you're a super user, or adding yourself
+                // make sure requestor is an owner
+                if (isRemovingSelf) {
+                    checkOwner = requestorId;
+                    throw Boom.forbidden(`You can not remove yourself. You need to take help of another owner.`);
+                }
+
+                const owner = {
+                    user_id: userId,
+                    hackathon_id: hackathonId
+                };
+
+                const response = Promise.all([
+                    ensureHackathon(hackathonId, { checkOwner }),
+                    db("hackathon_admins").where({
                         user_id: userId,
                         hackathon_id: hackathonId
-                    }).del();
+                    })
+                ]).then((results) => {
+                    const hackathonResult = results[0];
+                    const isHackathonAdmin = hackathonResult.admins.some((item) => item.id === requestorId);
+                    
+                    if (!isHackathonAdmin) {
+                        throw Boom.forbidden(`Hackathon owner can be deleted by owner only.`);
+                    }
                 }).then(() => {
-                    return request.generateResponse().code(204);
-                });
-
-                reply(response);
+                    return db("hackathon_admins").where(owner).del();                
+                });               
             },
             validate: {
                 params: {
