@@ -164,7 +164,6 @@ const hackathonBase = {
   show_judges: Joi.boolean(),
   show_rules: Joi.boolean(),
   show_schedule: Joi.boolean(),
-  show_challenges: Joi.boolean(),
   meta,
   custom_categories: arrayOfStrings
 };
@@ -186,7 +185,6 @@ export const newHackathon = Joi.object(hackathonBase)
     meta: metaWithDefault,
     logo_url: urlWithDefault,
     header_image_url: urlWithDefault,
-    show_challenges: Joi.boolean(),
     custom_categories: arrayOfStrings.default([])
   });
 export const hackathon = newHackathon
