@@ -17,7 +17,7 @@ exitWithMessageOnError () {
 }
 
 # Prerequisites
-# -------------
+# --------------
 
 # Verify node.js installed
 hash node 2>/dev/null
