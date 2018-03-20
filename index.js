@@ -24,6 +24,7 @@ import HackbotRoutes from "./routes/hackbot";
 import WhitelistRoutes from "./routes/whitelist";
 import CheckinsRoutes from "./routes/checkins";
 import OneWeekRoutes from "./routes/oneweek";
+import ChallengeRoutes from "./routes/challenges";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
 import HapiSwagger from "hapi-swagger";
@@ -38,29 +39,29 @@ appInsights.setup().start();
 
 let serverOpts = {};
 if (config.serverDebug) {
-  serverOpts = { debug: { request: ["error"] } };
+    serverOpts = { debug: { request: ["error"] } };
 }
 
 const server = new Hapi.Server(serverOpts);
 const port = process.env.PORT || 3000;
 
 server.connection({
-  host: "0.0.0.0",
-  routes: {
-    cors: {
-      credentials: true,
-      headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'x-ms-request-id', 'x-ms-request-root-id']
+    host: "0.0.0.0",
+    routes: {
+        cors: {
+            credentials: true,
+            headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'x-ms-request-id', 'x-ms-request-root-id']
+        },
+        validate: {
+            options: {
+                stripUnknown: true
+            }
+        },
+        auth: {
+            strategy: "bearer"
+        }
     },
-    validate: {
-      options: {
-        stripUnknown: true
-      }
-    },
-    auth: {
-      strategy: "bearer"
-    }
-  },
-  port
+    port
 });
 
 server.register([
@@ -106,25 +107,26 @@ server.register([
   WhitelistRoutes,
   CheckinsRoutes,
   OneWeekRoutes,
+  ChallengeRoutes,
   ExpandMetaPlugin
 ], (err) => {
-  if (err) {
-    throw err;
-  }
+    if (err) {
+        throw err;
+    }
 });
 
 server.views({
-  engines: {
-    jade: Jade
-  },
-  path: `${__dirname}/templates`,
-  compileOptions: {
-    pretty: true
-  }
+    engines: {
+        jade: Jade
+    },
+    path: `${__dirname}/templates`,
+    compileOptions: {
+        pretty: true
+    }
 });
 
 server.start(() => {
-  server.log(["info", "start"], `api server started at ${server.info.uri}\n`);
+    server.log(["info", "start"], `api server started at ${server.info.uri}\n`);
 });
 
 module.exports = server;
