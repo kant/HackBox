@@ -65,7 +65,7 @@ if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
 fi
 
 # Node Helpers
-# ------------
+# -------------
 
 selectNodeVersion () {
   if [[ -n "$KUDU_SELECT_NODE_VERSION_CMD" ]]; then
