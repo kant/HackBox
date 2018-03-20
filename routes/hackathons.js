@@ -7,7 +7,7 @@ import {
     stringId, paginationWithDeleted, countryArray,
     sortDirection
 } from "../data/validation";
-import db, { paginate, ensureHackathon, ensureUser, ensureChallenge, hackathonSearch, getHackathonCities }
+import db, { paginate, ensureHackathon, ensureUser, hackathonSearch, getHackathonCities }
     from "../db-connection";
 
 import admin from "../data/approved-admins";
@@ -60,7 +60,7 @@ const register = function (server, options, next) {
                 if (request.auth.credentials && request.auth.credentials.organization_id) {
                     request.query.organization_id = request.auth.credentials.organization_id;
                 }
-                //console.log(hackathonSearch(request.query));
+                console.log(hackathonSearch(request.query));
 
                 const response = hackathonSearch(request.query);
 
@@ -380,7 +380,7 @@ const register = function (server, options, next) {
             }
         }
     });
-    
+
     next();
 };
 
