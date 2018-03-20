@@ -1,5 +1,6 @@
 /*eslint camelcase: [2, {"properties": "never"}] */
 import db from "../db-connection";
+import {id} from "../data/validation";
 
 const register = function (server, options, next) {
   server.route({
@@ -37,16 +38,16 @@ const register = function (server, options, next) {
 
   server.route({
     method: "GET",
-    path: "/oneweekstats",
+    path: "/oneweekstats/{hackathonId}",
     config: {
       description: "Get global statistics for oneweek hackathon",
       tags: ["api"],
       handler(request, reply) {
-        const hackathonId = 1074;
+        const { hackathonId } = request.params;
         const response = Promise.all([
           db("projects").count().as("value").where({hackathon_id: hackathonId}).whereNot({deleted: true}),
           db("users").join('participants', function() {
-              this.on('users.id', '=', 'participants.user_id').andOn('participants.hackathon_id', '=', hackathonId)
+              this.on('users.id', '=', 'participants.user_id').andOn('participants.hackathon_id', '=', hackathonId);
           }).select('users.id', 'users.country', 'users.city').countDistinct('users.country as country').countDistinct('users.city as city').countDistinct('users.id as id')
         ]).then(([projects, users]) => {
           return {
@@ -58,6 +59,11 @@ const register = function (server, options, next) {
         });
 
         reply(response);
+      },
+      validate: {
+        params: {
+          hackathonId: id
+        }
       }
     }
   });

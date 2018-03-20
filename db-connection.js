@@ -1545,3 +1545,23 @@ export const addUserVotesToProject = (project, userId) => {
       return project;
     });
 };
+
+export const getHackathonOneweek = () => {
+   return client.column(
+    "Hackathon_oneweek.Id",
+    "Hackathon_oneweek.year",
+    "Hackathon_oneweek.Hackathon_id",
+    "Hackathon_oneweek.status",
+    "Hackathon_oneweek.title",
+    "Hackathon_oneweek.title_2",
+    "Hackathon_oneweek.title_3",
+    "Hackathon_oneweek.enter_img",
+    "Hackathon_oneweek.registration_open",
+    "Hackathon_oneweek.registration_closed",
+    "Hackathon_oneweek.registration_img",
+    "Hackathons.Start_at",
+    "Hackathons.End_at")
+    .from("Hackathon_oneweek")
+    .join("Hackathons", "Hackathons.Id", "Hackathon_oneweek.Hackathon_id")
+      .orderBy("Hackathon_oneweek.year");
+};
