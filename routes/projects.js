@@ -193,11 +193,25 @@ const register = function (server, options, next) {
                             .then((results) => {
                                 // store our project ID
                                 projectId = results[0];
+                                //insert owner as project member
                                 return trx("members")
                                     .insert({
                                         user_id: payload.owner_id,
                                         project_id: projectId,
                                         hackathon_id: hackathonId
+                                    }).then(() => {
+                                        //Insert project challenges
+                                        if (payload.json_custom_categories[0] != undefined) {
+                                            let challenge = JSON.parse(payload.json_custom_categories);
+                                            challenge = JSON.parse(challenge);
+                                            if (challenge != undefined && challenge.id != undefined) {
+                                                return trx("project_challenges").insert({
+                                                    challenge_id: challenge.id,
+                                                    project_id: projectId,
+                                                    hackathon_id: hackathonId
+                                                });
+                                            }
+                                        }
                                     });
                             });
                     });
@@ -282,6 +296,7 @@ const register = function (server, options, next) {
                 const ownerId = isSuperUser ? false : request.userId();
                 const { payload } = request;
                 payload.updated_at = new Date();
+                let projectObject;
 
                 // only superusers can delete/undelete
                 // via PUT
@@ -289,13 +304,37 @@ const register = function (server, options, next) {
                     delete payload.deleted;
                 }
 
+                const challengesWhere = {
+                    project_id: projectId,
+                    hackathon_id: hackathonId
+                };
+
                 const response = ensureProject(hackathonId, projectId, {
                     checkMember: ownerId,
                     allowDeleted: isSuperUser
-                }).then(() => {
+                }).then((project) => {
+                    projectObject = project;
                     return db("projects")
                         .where(projectObj)
                         .update(payload);
+                }).then(() => {
+                    //Insert project challenges
+                    if (payload.json_custom_categories != undefined) {
+                        let challengeList = JSON.parse(payload.json_custom_categories);   
+                        if (challengeList != undefined && challengeList[0] != undefined) {
+                            let challengeObject = JSON.parse(challengeList[0]);
+                            if (projectObject.challenges.length > 0) {
+                                return db("project_challenges").where(challengesWhere).update({ "challenge_id": challengeObject.id });
+                            }
+                            else {
+                                return db("project_challenges").insert({
+                                    challenge_id: challengeObject.id,
+                                    project_id: projectId,
+                                    hackathon_id: hackathonId
+                                });
+                            }
+                        }
+                    }
                 }).then(() => {
                     return ensureProject(hackathonId, projectId);
                 });
@@ -311,6 +350,7 @@ const register = function (server, options, next) {
             }
         }
     });
+    
 
     server.route({
         method: "PUT",
