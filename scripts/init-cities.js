@@ -1,5 +1,5 @@
 /*eslint no-process-exit: 0*/
-require("babel-register");
+require("babel/register");
 const client = require("../db-connection").default;
 const cities = require("../data/cities").cities;
 
