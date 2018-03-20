@@ -84,7 +84,8 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
     const challengesQuery = client("challenges")
         .select("challenges.*")
         .from("challenges")
-        .where("hackathon_id", id);
+        .where("hackathon_id", id)
+        .andWhere("deleted", false);
 
     return Promise.all([mainQuery, adminQuery, challengesQuery]).then(([hackathonRows, admins, challenges]) => {
         const hackathon = hackathonRows[0];
@@ -198,7 +199,7 @@ export const ensureChallenge = (hackathonId, id, opts = {
     allowDeleted: false
 }) => {
 
-    
+
     // our main aggregate query
     const challengeQuery = client("challenges")
         .select("challenges.*")
@@ -273,11 +274,21 @@ export const ensureProject = (hackathonId, id, opts = {
     const pendingMemberQuery = client("members_invitations").select("*")
         .where("members_invitations.project_id", "=", id);
 
+
+
+    const challengesQuery = client("challenges").select("challenges.*")
+        .leftOuterJoin("project_challenges", "project_challenges.challenge_id", "=", "challenges.id")
+        .where("project_challenges.hackathon_id", hackathonId)
+        .andWhere("project_challenges.project_id", "=", id)
+        .andWhere("challenges.hackathon_id", "=", hackathonId)
+        .andWhere("challenges.deleted", "=", false);
+
     return Promise.all([
         projectQuery,
         memberQuery,
-        pendingMemberQuery
-    ]).then(([projectResult, members, pendingMembers]) => {
+        pendingMemberQuery,
+        challengesQuery
+    ]).then(([projectResult, members, pendingMembers, challenges]) => {
         const project = projectResult[0];
 
         if (!project || project.deleted && !opts.allowDeleted) {
@@ -294,6 +305,7 @@ export const ensureProject = (hackathonId, id, opts = {
 
         project.members = members;
         project.pendingMembers = pendingMembers;
+        project.challenges = challenges;
 
         return project;
     });
@@ -413,7 +425,7 @@ export const paginate = (query, { limit, offset }) => {
 
 export const challengeSearch = (queryObj) => {
     const {
-        hackathon_id, search, include_deleted, sort_col, sort_direction, 
+        hackathon_id, search, include_deleted, sort_col, sort_direction,
   } = queryObj;
 
     const query = client("challenges")
@@ -1229,7 +1241,7 @@ export const hackathonSearch = (queryObj) => {
         "hackathons.deleted",
         "hackathons.is_public",
         "hackathons.is_published",
-        "hackathons.json_meta", 
+        "hackathons.json_meta",
         "hackathons.show_challenges"
     ];
 
