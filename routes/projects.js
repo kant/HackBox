@@ -201,17 +201,19 @@ const register = function (server, options, next) {
                                         hackathon_id: hackathonId
                                     }).then(() => {
                                         //Insert project challenges
-                                        if (payload.json_custom_categories[0] != undefined) {
-                                            let challenge = JSON.parse(payload.json_custom_categories);
-                                            challenge = JSON.parse(challenge);
-                                            if (challenge != undefined && challenge.id != undefined) {
-                                                return trx("project_challenges").insert({
-                                                    challenge_id: challenge.id,
-                                                    project_id: projectId,
-                                                    hackathon_id: hackathonId
-                                                });
+                                        if (payload.json_custom_categories != undefined && payload.json_custom_categories[0] != undefined) {
+                                                let challenge = JSON.parse(payload.json_custom_categories);
+                                                if (challenge.length > 0) {
+                                                    challenge = JSON.parse(challenge);
+                                                if (challenge.id != undefined) {
+                                                    return trx("project_challenges").insert({
+                                                        challenge_id: challenge.id,
+                                                        project_id: projectId,
+                                                        hackathon_id: hackathonId
+                                                    });
+                                                }
                                             }
-                                        }
+                                            }
                                     });
                             });
                     });
