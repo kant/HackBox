@@ -1,6 +1,6 @@
 /*eslint no-process-exit: 0*/
 
-require("babel-register");
+require("babel/register");
 const db = require("./config").db;
 const client = require("./db-connection").default;
 

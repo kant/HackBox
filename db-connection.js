@@ -391,11 +391,10 @@ export const ensureParticipant = (hackathonId, userId, opts = { includeUser: fal
     });
 };
 
-
-export const paginate = (query, { limit, offset }) => {
-    assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
-    assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
-    const countQuery = query.clone();
+export const paginate = (query, {limit, offset}) => {
+  assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
+  assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
+  const countQuery = query.clone();
 
     // delete any specific columns mentioned by the query for our count query
     // otherwise we can create a query that MySQL doesn't consider to be valid
