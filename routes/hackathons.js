@@ -220,7 +220,7 @@ const register = function (server, options, next) {
                 })
                     .then((hack) => {
                         hackathon = hack;
-
+                        hackathon.show_challenges = !(hackathon.show_challenges == 0);
                         //Check if hackathon belongs to the same organization as user
                         return db("hackathons_orgs")
                             .where({ hackathon_id: hack.id })
