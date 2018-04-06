@@ -1634,6 +1634,8 @@ export const getHackathonOneweek = () => {
     "Hackathon_oneweek.enter_img",
     "Hackathon_oneweek.registration_open",
     "Hackathon_oneweek.registration_closed",
+    "Hackathon_oneweek.voting_open",
+    "Hackathon_oneweek.voting_closed",
     "Hackathon_oneweek.registration_img",
     "Hackathons.Start_at",
     "Hackathons.End_at")
