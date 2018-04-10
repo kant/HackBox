@@ -10,10 +10,10 @@
       "multipleStatements": true
     },
     "pool": {
-      "min": 10,
-      "max": 100
+      "min": 0,
+      "max": 25
     },
-    "acquireConnectionTimeout": 40000,
+    "acquireConnectionTimeout": 240000,
     "migrations": {
       "tableName": "knex_migrations"
     }

@@ -95,6 +95,7 @@ const register = function (server, options, next) {
 
                 payload.created_at = now;
                 payload.updated_at = now;
+                console.log(request);
                 // Use transaction to insert hackathon and
                 // corresponding entry in admins table
                 const response = db.transaction((trx) => {
