@@ -23,6 +23,7 @@ import ReportRoutes from "./routes/reports";
 import HackbotRoutes from "./routes/hackbot";
 import WhitelistRoutes from "./routes/whitelist";
 import CheckinsRoutes from "./routes/checkins";
+import OneWeekRoutes from "./routes/oneweek";
 import ChallengeRoutes from "./routes/challenges";
 import config from "./config";
 import AuthPlugin from "./plugins/auth";
@@ -64,49 +65,50 @@ server.connection({
 });
 
 server.register([
-    AuthPlugin,
-    Inert,
-    Vision,
-    {
-        register: HapiSwagger,
-        options: {
-            protocol: config.https ? "https" : "http",
-            enableDocumentationPage: false,
-            apiVersion: "1.0"
+  AuthPlugin,
+  Inert,
+  Vision,
+  {
+    register: HapiSwagger,
+    options: {
+      protocol: config.https ? "https" : "http",
+      enableDocumentationPage: false,
+      apiVersion: "1.0"
+    }
+  },
+  Bell,
+  {
+    register: Good,
+    options: {
+      reporters: [
+        {
+          reporter: GoodConsole,
+          events: config.logEvents
         }
-    },
-    Bell,
-    {
-        register: Good,
-        options: {
-            reporters: [
-                {
-                    reporter: GoodConsole,
-                    events: config.logEvents
-                }
-            ]
-        }
-    },
-    DbPlugin,
-    HackathonRoutes,
-    GlobalStatsRoutes,
-    GlobalSearchRoutes,
-    ParticipantRoutes,
-    ProjectRoutes,
-    UserRoutes,
-    MemberRoutes,
-    CommentRoutes,
-    DataSetRoutes,
-    StatsRoutes,
-    DocumentationRoutes,
-    AwardsRoutes,
-    AwardCategoriesRoutes,
-    ReportRoutes,
-    HackbotRoutes,
-    WhitelistRoutes,
-    CheckinsRoutes,
-    ChallengeRoutes,
-    ExpandMetaPlugin
+      ]
+    }
+  },
+  DbPlugin,
+  HackathonRoutes,
+  GlobalStatsRoutes,
+  GlobalSearchRoutes,
+  ParticipantRoutes,
+  ProjectRoutes,
+  UserRoutes,
+  MemberRoutes,
+  CommentRoutes,
+  DataSetRoutes,
+  StatsRoutes,
+  DocumentationRoutes,
+  AwardsRoutes,
+  AwardCategoriesRoutes,
+  ReportRoutes,
+  HackbotRoutes,
+  WhitelistRoutes,
+  CheckinsRoutes,
+  OneWeekRoutes,
+  ChallengeRoutes,
+  ExpandMetaPlugin
 ], (err) => {
     if (err) {
         throw err;
