@@ -1,4 +1,4 @@
-require("babel-register");
+require("babel/register");
 var data = require("../data/mock-data");
 
 exports.seed = function (knex, Promise) {

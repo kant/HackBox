@@ -275,7 +275,7 @@ const projectMotivations = [
 
 ];
 
-module.exports = {
+export default {
   customerTypes,
   productTypes,
   expertiseTypes,
