@@ -660,9 +660,6 @@ export const projectSearch = (queryObj) => {
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
         "hackathons.name as hackathon_name");
-console.log("Projectsearch ================");
-console.log(query.toString());
-console.log("Projectsearch ================");
     return query;
 };
 // end projectSearch
