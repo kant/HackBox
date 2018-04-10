@@ -1357,9 +1357,6 @@ export const hackathonSearch = (queryObj) => {
     } else {
         query.orderBy(orderByCol, orderByDirection);
     }
-console.log("Query ========== ");
-console.log(query.toString());
-console.log("Query ========== ");
     return query;
 };
 
