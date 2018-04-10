@@ -68,3 +68,4 @@
     "coverage": "npm run pretest && tap test/*.js --cov --coverage-report=html"
   }
 }
+
