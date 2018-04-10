@@ -152,7 +152,7 @@ const hackathonBase = {
   logo_url: url,
   header_image_url: url,
   start_at: Joi.date(),
-  end_at: Joi.date().allow(null),
+  end_at: Joi.date().allow(null,''),
   org: emptyString,
   city: emptyString,
   country,
