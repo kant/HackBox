@@ -65,7 +65,8 @@ if [[ ! -n "$KUDU_SYNC_CMD" ]]; then
 fi
 
 # Node Helpers
-# -------------
+# ------------
+
 selectNodeVersion () {
   if [[ -n "$KUDU_SELECT_NODE_VERSION_CMD" ]]; then
     SELECT_NODE_VERSION="$KUDU_SELECT_NODE_VERSION_CMD \"$DEPLOYMENT_SOURCE\" \"$DEPLOYMENT_TARGET\" \"$DEPLOYMENT_TEMP\""
@@ -81,8 +82,8 @@ selectNodeVersion () {
       NODE_EXE=node
     fi
 
-    # Manually setting npm version to npm@8.9.4
-    NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\8.9.4\\node_modules\\npm\\bin\\npm-cli.js\""
+    # Manually setting npm version to npm@3.1.0
+    NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\3.10.10\\node_modules\\npm\\bin\\npm-cli.js\""
   else
     NPM_CMD=npm
     NODE_EXE=node

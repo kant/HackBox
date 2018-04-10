@@ -391,10 +391,11 @@ export const ensureParticipant = (hackathonId, userId, opts = { includeUser: fal
     });
 };
 
-export const paginate = (query, {limit, offset}) => {
-  assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
-  assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
-  const countQuery = query.clone();
+
+export const paginate = (query, { limit, offset }) => {
+    assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
+    assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
+    const countQuery = query.clone();
 
     // delete any specific columns mentioned by the query for our count query
     // otherwise we can create a query that MySQL doesn't consider to be valid
@@ -1631,24 +1632,4 @@ export const addUserVotesToProject = (project, userId) => {
             project.user_votes = userVotes;
             return project;
         });
-};
-
-export const getHackathonOneweek = () => {
-   return client.column(
-    "Hackathon_oneweek.Id",
-    "Hackathon_oneweek.year",
-    "Hackathon_oneweek.Hackathon_id",
-    "Hackathon_oneweek.status",
-    "Hackathon_oneweek.title",
-    "Hackathon_oneweek.title_2",
-    "Hackathon_oneweek.title_3",
-    "Hackathon_oneweek.enter_img",
-    "Hackathon_oneweek.registration_open",
-    "Hackathon_oneweek.registration_closed",
-    "Hackathon_oneweek.registration_img",
-    "Hackathons.Start_at",
-    "Hackathons.End_at")
-    .from("Hackathon_oneweek")
-    .join("Hackathons", "Hackathons.Id", "Hackathon_oneweek.Hackathon_id")
-      .orderBy("Hackathon_oneweek.year");
 };
