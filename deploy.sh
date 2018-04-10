@@ -81,8 +81,8 @@ selectNodeVersion () {
       NODE_EXE=node
     fi
 
-    # Manually setting npm version to npm@8.9.4
-    NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\8.9.4\\node_modules\\npm\\bin\\npm-cli.js\""
+    # Manually setting npm version to npm@3.10.10
+    NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\3.10.10\\node_modules\\npm\\bin\\npm-cli.js\""
   else
     NPM_CMD=npm
     NODE_EXE=node
