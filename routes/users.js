@@ -90,6 +90,7 @@ const register = function (server, options, next) {
 
         // Check to make sure it doesn't exist, it's possible it was
         // soft deleted, if so, re-inserting same ID would fail.
+        console.log
         const response = db("users").where({id: userProps.id}).then((result) => {
           if (result.length) {
             return db("users").update(userProps).where({id: userProps.id});
