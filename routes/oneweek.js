@@ -21,6 +21,9 @@ const register = function (server, options, next) {
                 if (request.auth.credentials && request.auth.credentials.organization_id) {
                     request.query.organization_id = request.auth.credentials.organization_id;
                 }
+
+                console.log(getHackathonOneweek().toString();)
+
                 getHackathonOneweek()
                     .then(_.partial(onSuccess, resp))
                     .catch(_.partial(onError, resp,

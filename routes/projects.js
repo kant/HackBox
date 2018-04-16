@@ -41,7 +41,6 @@ const register = function (server, options, next) {
                 const response = projectSearch(query);
 
                 client.trackEvent("Get Projects", { hackId: query.hackathon_id });
-
                 reply(
                     addProjectMembersToPagination(
                         addTagsToPagination(
@@ -310,7 +309,7 @@ const register = function (server, options, next) {
                     project_id: projectId,
                     hackathon_id: hackathonId
                 };
-
+                
                 const response = ensureProject(hackathonId, projectId, {
                     checkMember: ownerId,
                     allowDeleted: isSuperUser
