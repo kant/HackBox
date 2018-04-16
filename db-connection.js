@@ -1633,21 +1633,23 @@ export const addUserVotesToProject = (project, userId) => {
 
 export const getHackathonOneweek = () => {
    return client.column(
-    "Hackathon_oneweek.Id",
-    "Hackathon_oneweek.year",
-    "Hackathon_oneweek.Hackathon_id",
-    "Hackathon_oneweek.status",
-    "Hackathon_oneweek.title",
-    "Hackathon_oneweek.title_2",
-    "Hackathon_oneweek.title_3",
-    "Hackathon_oneweek.enter_img",
-    "Hackathon_oneweek.registration_open",
-    "Hackathon_oneweek.registration_closed",
-    "Hackathon_oneweek.registration_img",
-    "Hackathons.Start_at",
-    "Hackathons.End_at")
-    .from("Hackathon_oneweek")
-    .join("Hackathons", "Hackathons.Id", "Hackathon_oneweek.Hackathon_id")
-      .orderBy("Hackathon_oneweek.year");
+    "hackathon_oneweek.Id",
+    "hackathon_oneweek.year",
+    "hackathon_oneweek.Hackathon_id",
+    "hackathon_oneweek.status",
+    "hackathon_oneweek.title",
+    "hackathon_oneweek.title_2",
+    "hackathon_oneweek.title_3",
+    "hackathon_oneweek.enter_img",
+    "hackathon_oneweek.registration_open",
+    "hackathon_oneweek.registration_closed",
+    "hackathon_oneweek.voting_open",
+    "hackathon_oneweek.voting_closed",
+    "hackathon_oneweek.registration_img",
+    "hackathons.Start_at",
+    "hackathons.End_at")
+    .from("hackathon_oneweek")
+    .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
+      .orderBy("hackathon_oneweek.year");
 };
 
