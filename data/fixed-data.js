@@ -243,19 +243,19 @@ const colorSchemes = [
 
 const executiveChallenges = [
 
-  "Judson Althoff--Empower customers to harness the power of the cloud to drive digital transformation.",
-  "Chris Capossela--How do we grow millennial fans in both enterprise and consumer for Office?",
-  "Jean-Philippe Courtois--Empower our field organization to identify the highest propensity Cloud customers and partners.",
-  "Kurt DelBene--How can Microsoft empower employees and accelerate customer engagement with digital transformation?",
-  "Scott Guthrie--Show ways to make Azure the #1 cloud in commercial segments.",
-  "Kathleen Hogan--How can we establish a culture of learning that is as strong as our culture of giving?",
-  "Amy Hood--Create examples of our internal first party systems being applicable, sellable showcases for our customers.",
-  "Rajesh Jha--Show us how our products and services can work together seamlessly in service of end to end customer scenarios.",
-  "Terry Myerson--Use Windows 10 Creators Update to make something that inspires the creator in all of us.",
-  "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?",
-  "Harry Shum--Build solutions that infuse AI into Microsoft products and services.",
-  "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. (Hack for Good)",
-  "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?"
+  "Judson Althoff--Empower customers to harness the power of the cloud to drive digital transformation.--Judson.Althoff@microsoft.com",
+  "Chris Capossela--How do we grow millennial fans in both enterprise and consumer for Office?--Chris.Capossela@microsoft.com",
+  "Jean-Philippe Courtois--Empower our field organization to identify the highest propensity Cloud customers and partners.--jeanc@microsoft.com",
+  "Kurt DelBene--How can Microsoft empower employees and accelerate customer engagement with digital transformation?--Kurt.DelBene@microsoft.com",
+  "Scott Guthrie--Show ways to make Azure the #1 cloud in commercial segments.--scottgu@microsoft.com",
+  "Kathleen Hogan--How can we establish a culture of learning that is as strong as our culture of giving?--khogan@microsoft.com",
+  "Amy Hood--Create examples of our internal first party systems being applicable, sellable showcases for our customers.--amyhood@microsoft.com",
+  "Rajesh Jha--Show us how our products and services can work together seamlessly in service of end to end customer scenarios.--rajeshj@microsoft.com",
+  "Terry Myerson--Use Windows 10 Creators Update to make something that inspires the creator in all of us.--Terry.Myerson@microsoft.com",
+  "Kevin Scott--How can we help more developers innovate and achieve success with Microsoft technology and platforms?--kvnscott@microsoft.com",
+  "Harry Shum--Build solutions that infuse AI into Microsoft products and services.--hshum@microsoft.com",
+  "Brad Smith--Demonstrate new ways for Microsoft talent and technology to help solve the world’s greatest societal problems. (Hack for Good)--Brad.Smith@microsoft.com",
+  "Jeff Weiner--How can Microsoft help grow LinkedIn faster while at the same time, differentiating Microsoft products to create more value for customers?--jweiner@linkedin.com"
 
 ];
 
