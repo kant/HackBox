@@ -49,6 +49,7 @@ const register = function (server, options, next) {
           db("users").join('participants', function() {
               this.on('users.id', '=', 'participants.user_id').andOn('participants.hackathon_id', '=', hackathonId);
           }).select('users.id', 'users.country', 'users.city').countDistinct('users.country as country').countDistinct('users.city as city').countDistinct('users.id as id')
+          .groupBy('users.id', 'users.country', 'users.city')
         ]).then(([projects, users]) => {
           return {
             users: users[0].id,
