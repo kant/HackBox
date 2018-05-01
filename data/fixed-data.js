@@ -269,7 +269,7 @@ const executiveChallenges = [
   "Gaming--Make something that enables gamers to play the games they want, with the people they want, on the devices they want.",  
   "Microsoft Employees--Create something that makes a more inclusive culture and productive work environment at Microsoft.",
   "Hack for Good--Make something that demonstrates how Microsoft talent and technology can help solve the world’s greatest societal problems.",
-  "Ethics in AI--Build something that accelerates our pursuit of AI Solutions that are ethical and empathetic.",
+  "Ethics in AI--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
   "Developers--Make something to help developers innovate with AI.",
   "GSMO & WCB--Make something that accelerates our Sales culture of empowering digital success.",
   "Marketing--Use your Marketing skills and ideas to make a marketing or business plan that helps us deliver on Microsoft Solution Areas.",
