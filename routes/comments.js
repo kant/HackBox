@@ -18,7 +18,7 @@ const register = function (server, options, next) {
           .where({
             project_id: projectId
           })
-          .orderBy("created_at", "asc");
+          .orderBy("created_at", "desc");
 
         const result = Promise.all([
           ensureProject(hackathonId, projectId),
