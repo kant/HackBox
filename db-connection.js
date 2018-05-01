@@ -665,7 +665,7 @@ export const projectSearch = (queryObj) => {
     }
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
-        "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneweekHackathonId" );
+        "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId" );
 
     //console.log("Query :: " + query);
     return query;
