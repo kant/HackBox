@@ -267,13 +267,14 @@ const executiveChallenges = [
   "Applications and Infrastructure--Make something that enables customers to have consistent identity, developer extensibility and security across their application portfolio.",
   "Data and AI--Make something that uses Data and AI to amplify human ingenuity and drives competitive advantage for businesses.",
   "Gaming--Make something that enables gamers to play the games they want, with the people they want, on the devices they want.",  
-  "Microsoft Employees--Make something to empower Microsoft employees to achieve more.",
+  "Microsoft Employees--Create something that makes a more inclusive culture and productive work environment at Microsoft.",
   "Hack for Good--Make something that demonstrates how Microsoft talent and technology can help solve the world’s greatest societal problems.",
-  "AI for Earth--Make something with AI technology to amplify human ingenuity and advance sustainability around the globe.",
+  "Ethics in AI--Build something that accelerates our pursuit of AI Solutions that are ethical and empathetic.",
   "Developers--Make something to help developers innovate with AI.",
   "GSMO & WCB--Make something that accelerates our Sales culture of empowering digital success.",
   "Marketing--Use your Marketing skills and ideas to make a marketing or business plan that helps us deliver on Microsoft Solution Areas.",
-  "Finance--Use your Finance skills and ideas to make something that helps teams factor in platform and infrastructure costs for new products and features."
+  "Finance--Use your Finance skills and ideas to make something that helps teams factor in platform and infrastructure costs for new products and features.",
+  "Other--A project that does not align with any of the other challenges."
 ];
 
 const projectMotivations = [
