@@ -8,7 +8,7 @@ import db, {
     paginate, ensureHackathon, ensureProject, projectSearch, projectSearchReports,
     addProjectMembersToPagination, addProjectMembersToPaginationReports, addProjectUrlsToPagination,
     addProjectTags, addTagsToPagination, addTagsToPaginationReports, addOrUpdateProjectTags,
-    addUserVotesToProject
+    addUserVotesToProject, addOneWeekHackathon
 } from "../db-connection";
 import Joi from "joi";
 import appInsights from "applicationinsights";
@@ -309,7 +309,7 @@ const register = function (server, options, next) {
                     project_id: projectId,
                     hackathon_id: hackathonId
                 };
-                
+
                 const response = ensureProject(hackathonId, projectId, {
                     checkMember: ownerId,
                     allowDeleted: isSuperUser
@@ -438,8 +438,9 @@ const register = function (server, options, next) {
                     return addProjectTags(project);
                 }).then((project) => {
                     return addUserVotesToProject(project, userId);
+                }).then((project) => {
+                    return addOneWeekHackathon(project, hackathonId);
                 });
-
                 reply(response);
             },
             validate: {
