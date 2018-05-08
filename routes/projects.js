@@ -8,7 +8,7 @@ import db, {
     paginate, ensureHackathon, ensureProject, projectSearch, projectSearchReports,
     addProjectMembersToPagination, addProjectMembersToPaginationReports, addProjectUrlsToPagination,
     addProjectTags, addTagsToPagination, addTagsToPaginationReports, addOrUpdateProjectTags,
-    addUserVotesToProject
+    addUserVotesToProject, addOneWeekHackathon
 } from "../db-connection";
 import Joi from "joi";
 import appInsights from "applicationinsights";
@@ -41,7 +41,6 @@ const register = function (server, options, next) {
                 const response = projectSearch(query);
 
                 client.trackEvent("Get Projects", { hackId: query.hackathon_id });
-
                 reply(
                     addProjectMembersToPagination(
                         addTagsToPagination(
@@ -439,8 +438,9 @@ const register = function (server, options, next) {
                     return addProjectTags(project);
                 }).then((project) => {
                     return addUserVotesToProject(project, userId);
+                }).then((project) => {
+                    return addOneWeekHackathon(project, hackathonId);
                 });
-
                 reply(response);
             },
             validate: {
