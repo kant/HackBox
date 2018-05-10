@@ -323,8 +323,8 @@ const register = function (server, options, next) {
                     if (payload.json_custom_categories != undefined) {
                         let challengeList = JSON.parse(payload.json_custom_categories);   
                         if (challengeList != undefined && challengeList[0] != undefined) {
-                            let challengeObject = JSON.parse(challengeList[0]);
-                            if(challengeObject && challengeObject.id > 0)
+                           let challengeObject = JSON.parse(challengeList[0]);
+                           if(challengeObject && challengeObject.id > 0)
                             {
                                 if (projectObject.challenges.length > 0) {
                                     return db("project_challenges").where(challengesWhere).update({ "challenge_id": challengeObject.id });
