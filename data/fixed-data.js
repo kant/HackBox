@@ -267,7 +267,7 @@ const executiveChallenges = [
   "Business Apps--Create something that accelerates the digitization of every business process.",
   "Modern Life--Create something that makes the work-to-life journey seamless and integrated.",
   "LinkedIn--TBD",
-  "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment.",
+  "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment for all.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",
   "GSMO & WCB--Use your sales skills to create something that accelerates our sales culture of Empowering Digital Success in the areas of Learn and coach, Use simplified tools, and Connect with new rhythms.",
