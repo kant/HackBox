@@ -272,7 +272,7 @@ const executiveChallenges = [
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",
   "GSMO & WCB--Use your sales skills to create something that accelerates our sales culture of Empowering Digital Success in the areas of Learn and coach, Use simplified tools, and Connect with new rhythms.",
   "New Growth Ideas and Other--Create something in new areas of growth for the company that will attract new customers and/or new business, or other projects that do not align with any of the other challenges.",
-  "Marketing--Use your marketing skills to create a marketing or business plan that helps us deliver on the Microsoft Solution Areas.",
+  "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
   "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
   
 ];
