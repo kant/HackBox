@@ -13,3 +13,4 @@ module.exports = {
   production: environmentAwareDbConfig,
   test: environmentAwareDbConfig
 };
+
