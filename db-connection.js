@@ -87,14 +87,17 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
         .where("hackathon_id", id)
         .andWhere("deleted", false);
 
-    return Promise.all([mainQuery, adminQuery, challengesQuery]).then(([hackathonRows, admins, challenges]) => {
+    const oneweekHackQuery = client("hackathon_oneweek").select("hackathon_oneweek.*")
+        .where("hackathon_oneweek.status", "=", 1);    
+
+    return Promise.all([mainQuery, adminQuery, challengesQuery, oneweekHackQuery]).then(([hackathonRows, admins, challenges, oneweekHack]) => {
         const hackathon = hackathonRows[0];
         if (hackathon) {
             hackathon.challenges = challenges;
             hackathon.admins = admins;
             hackathon.status = hackathonStatus(hackathon);
         }
-
+        hackathon.oneweekHackathon = oneweekHack[0];
         return hackathon;
     });
 };
@@ -210,8 +213,8 @@ export const ensureChallenge = (hackathonId, id, opts = {
         .where("project_challenges.challenge_id", "=", id)
         .andWhere("project_challenges.hackathon_id", "=", hackathonId);
 
-    console.log(challengeQuery.toString());
-    console.log(projectQuery.toString());
+    //console.log(challengeQuery.toString());
+    //console.log(projectQuery.toString());
 
     return Promise.all([
         challengeQuery,
@@ -274,8 +277,6 @@ export const ensureProject = (hackathonId, id, opts = {
     const pendingMemberQuery = client("members_invitations").select("*")
         .where("members_invitations.project_id", "=", id);
 
-
-
     const challengesQuery = client("challenges").select("challenges.*")
         .leftOuterJoin("project_challenges", "project_challenges.challenge_id", "=", "challenges.id")
         .where("project_challenges.hackathon_id", hackathonId)
@@ -283,12 +284,16 @@ export const ensureProject = (hackathonId, id, opts = {
         .andWhere("challenges.hackathon_id", "=", hackathonId)
         .andWhere("challenges.deleted", "=", false);
 
+    const oneweekHackQuery = client("hackathon_oneweek").select("hackathon_oneweek.*")
+        .where("hackathon_oneweek.status", "=", 1);
+
     return Promise.all([
         projectQuery,
         memberQuery,
         pendingMemberQuery,
-        challengesQuery
-    ]).then(([projectResult, members, pendingMembers, challenges]) => {
+        challengesQuery,
+        oneweekHackQuery
+    ]).then(([projectResult, members, pendingMembers, challenges, oneweekHack]) => {
         const project = projectResult[0];
 
         if (!project || project.deleted && !opts.allowDeleted) {
@@ -305,8 +310,8 @@ export const ensureProject = (hackathonId, id, opts = {
 
         project.members = members;
         project.pendingMembers = pendingMembers;
+        project.oneweekHackathon = oneweekHack[0];
         project.challenges = challenges;
-
         return project;
     });
 };
@@ -391,10 +396,10 @@ export const ensureParticipant = (hackathonId, userId, opts = { includeUser: fal
     });
 };
 
-export const paginate = (query, {limit, offset}) => {
-  assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
-  assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
-  const countQuery = query.clone();
+export const paginate = (query, { limit, offset }) => {
+    assert(typeof limit === "number", "Must pass a numeric 'limit' to 'paginate' method");
+    assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
+    const countQuery = query.clone();
 
     // delete any specific columns mentioned by the query for our count query
     // otherwise we can create a query that MySQL doesn't consider to be valid
@@ -425,7 +430,7 @@ export const paginate = (query, {limit, offset}) => {
 export const challengeSearch = (queryObj) => {
     const {
         hackathon_id, search, include_deleted, sort_col, sort_direction,
-  } = queryObj;
+    } = queryObj;
 
     const query = client("challenges")
         .where(include_deleted ? {} : { "challenges.deleted": false })
@@ -449,22 +454,23 @@ export const challengeSearch = (queryObj) => {
     query.orderBy(`challenges.${orderByCol}`, orderByDirection);
 
     query.select("challenges.*");
-    console.log(query.toString());
+    //console.log(query.toString());
     return query;
 };
 
 // we use this for two different routes so it lives here for re-use
 export const projectSearch = (queryObj) => {
     const {
-    hackathon_id, search, include_deleted, has_video, country,
+        hackathon_id, search, include_deleted, has_video, country,
         needed_roles, needed_expertise, product_focus, customer_type, has_member,
         has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
         participant_name, video_type, has_votes, custom_categories
-  } = queryObj;
+    } = queryObj;
 
     const query = client("projects")
         .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
         .innerJoin("users", "projects.owner_id", "users.id")
+        .leftOuterJoin("hackathon_oneweek", "hackathon_oneweek.status", 1)
         .andWhere(include_deleted ? {} : { "projects.deleted": false });
 
     if (hackathon_id) {
@@ -659,8 +665,9 @@ export const projectSearch = (queryObj) => {
     }
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
-        "hackathons.name as hackathon_name");
+        "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId" );
 
+    //console.log("Query :: " + query);
     return query;
 };
 // end projectSearch
@@ -668,11 +675,11 @@ export const projectSearch = (queryObj) => {
 // Using a replica-based project search. Should all be refactored/moved because modules are too big.
 export const projectSearchReports = (queryObj) => {
     const {
-    hackathon_id, search, include_deleted, has_video, country,
+        hackathon_id, search, include_deleted, has_video, country,
         needed_roles, needed_expertise, product_focus, customer_type, has_member,
         has_focus, has_challenges, sort_col, sort_direction, venue, search_array,
         participant_name, video_type, has_votes, custom_categories
-  } = queryObj;
+    } = queryObj;
 
     const query = clientReplica("projects")
         .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
@@ -998,9 +1005,9 @@ export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
 
 export const userSearch = (queryObj) => {
     let {
-    search, hackathon_id, has_project, include_deleted,
+        search, hackathon_id, has_project, include_deleted,
         role, product_focus, country, sort_col, sort_direction
-  } = queryObj;
+    } = queryObj;
 
     const orderByCol = sort_col || "given_name";
     const orderByDirection = sort_direction || "asc";
@@ -1217,9 +1224,9 @@ export const userSearch = (queryObj) => {
 
 export const hackathonSearch = (queryObj) => {
     const {
-    include_deleted, include_unpublished, country,
+        include_deleted, include_unpublished, country,
         admins_contain, participants_contain, search, sort_col, sort_direction, organization_id
-  } = queryObj;
+    } = queryObj;
 
     // we don't include all fields
     // because some of them could be quite large
@@ -1358,7 +1365,6 @@ export const hackathonSearch = (queryObj) => {
     } else {
         query.orderBy(orderByCol, orderByDirection);
     }
-
     return query;
 };
 
@@ -1368,10 +1374,10 @@ export const ensureAward = (hackathonId, id, opts = { includeCategories: false }
         .where({ hackathon_id: hackathonId, id });
     const awardCategoriesQuery = client("awards_award_categories")
         .innerJoin(
-        "award_categories",
-        "awards_award_categories.award_category_id",
-        "=",
-        "award_categories.id"
+            "award_categories",
+            "awards_award_categories.award_category_id",
+            "=",
+            "award_categories.id"
         )
         .where("awards_award_categories.award_id", id)
         .select("award_categories.*");
@@ -1402,7 +1408,7 @@ export const awardSearch = (hackathonId, filters = {}) => {
     if (awardCategoryIds) {
         awardQuery
             .innerJoin("awards_award_categories", "awards.id", "=",
-            "awards_award_categories.award_id")
+                "awards_award_categories.award_id")
             .whereIn("awards_award_categories.award_category_id", awardCategoryIds);
     }
 
@@ -1440,10 +1446,10 @@ export const addAwardProjectsAndCategoriesToPagination = (paginationQuery) => {
         const awardIds = _.pluck(pagination.data, "id");
         const awardCategoriesQuery = client("awards_award_categories")
             .innerJoin(
-            "award_categories",
-            "awards_award_categories.award_category_id",
-            "=",
-            "award_categories.id"
+                "award_categories",
+                "awards_award_categories.award_category_id",
+                "=",
+                "award_categories.id"
             )
             .whereIn("awards_award_categories.award_id", awardIds)
             .select("awards_award_categories.award_id", "award_categories.*");
@@ -1562,23 +1568,23 @@ export const getHackathonCities = (hackathonId) => {
 export const getHackathonReport = (queryObj) => {
     const query = client("users")
         .select(
-        [
-            "users.alias as alias",
-            "users.email as email",
-            "users.name as hb_name",
-            "users.json_working_on as json_working_on",
-            "users.json_expertise as json_expertise",
-            "users.json_interests as json_interests",
-            "users.city as hb_city",
-            "users.country as hb_country",
-            "users.profession as hb_profession",
-            "participants.json_participation_meta as json_participation_meta",
-            "participants.joined_at as registration_date",
-            "reports.json_reporting_data as json_reporting_data"
-        ])
+            [
+                "users.alias as alias",
+                "users.email as email",
+                "users.name as hb_name",
+                "users.json_working_on as json_working_on",
+                "users.json_expertise as json_expertise",
+                "users.json_interests as json_interests",
+                "users.city as hb_city",
+                "users.country as hb_country",
+                "users.profession as hb_profession",
+                "participants.json_participation_meta as json_participation_meta",
+                "participants.joined_at as registration_date",
+                "reports.json_reporting_data as json_reporting_data"
+            ])
         .select(
-        client.raw(
-            `exists (select 1 from members where
+            client.raw(
+                `exists (select 1 from members where
         user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
         .from("users")
         .join("participants", "users.id", "participants.user_id")
@@ -1592,23 +1598,23 @@ export const getHackathonReport = (queryObj) => {
 export const getHackathonGeneralReport = (queryObj) => {
     const query = clientReplica("users")
         .select(
-        [
-            "users.alias as alias",
-            "users.email as email",
-            "users.name as hb_name",
-            "users.json_working_on as json_working_on",
-            "users.json_expertise as json_expertise",
-            "users.json_interests as json_interests",
-            "users.city as hb_city",
-            "users.country as hb_country",
-            "users.profession as hb_profession",
-            "participants.json_participation_meta as json_participation_meta",
-            "participants.joined_at as registration_date",
-            "reports.json_reporting_data as json_reporting_data"
-        ])
+            [
+                "users.alias as alias",
+                "users.email as email",
+                "users.name as hb_name",
+                "users.json_working_on as json_working_on",
+                "users.json_expertise as json_expertise",
+                "users.json_interests as json_interests",
+                "users.city as hb_city",
+                "users.country as hb_country",
+                "users.profession as hb_profession",
+                "participants.json_participation_meta as json_participation_meta",
+                "participants.joined_at as registration_date",
+                "reports.json_reporting_data as json_reporting_data"
+            ])
         .select(
-        clientReplica.raw(
-            `exists (select 1 from members where
+            clientReplica.raw(
+                `exists (select 1 from members where
         user_id = users.id and hackathon_id = ${queryObj.hackathon_id}) as has_project`))
         .from("users")
         .join("participants", "users.id", "participants.user_id")
@@ -1618,6 +1624,15 @@ export const getHackathonGeneralReport = (queryObj) => {
     return query;
 };
 
+export const addOneWeekHackathon = (project, hackathon_id) => {
+    return client("hackathon_oneweek")
+        .select("*")
+        .where({ "hackathon_id": hackathon_id })
+        .then((oneweek) => {
+            project.oneweekHack = oneweek;
+            return project;
+        });
+};
 
 export const addUserVotesToProject = (project, userId) => {
     const userVotes = { 0: false, 1: false, 2: false, 3: false };
@@ -1632,3 +1647,26 @@ export const addUserVotesToProject = (project, userId) => {
             return project;
         });
 };
+
+export const getHackathonOneweek = () => {
+    return client.column(
+        "hackathon_oneweek.Id",
+        "hackathon_oneweek.year",
+        "hackathon_oneweek.Hackathon_id",
+        "hackathon_oneweek.status",
+        "hackathon_oneweek.title",
+        "hackathon_oneweek.title_2",
+        "hackathon_oneweek.title_3",
+        "hackathon_oneweek.enter_img",
+        "hackathon_oneweek.registration_open",
+        "hackathon_oneweek.registration_closed",
+        "hackathon_oneweek.voting_open",
+        "hackathon_oneweek.voting_closed",
+        "hackathon_oneweek.registration_img",
+        "hackathons.Start_at",
+        "hackathons.End_at")
+        .from("hackathon_oneweek")
+        .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
+        .orderBy("hackathon_oneweek.year");
+};
+
