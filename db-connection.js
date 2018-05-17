@@ -88,7 +88,7 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
         .andWhere("deleted", false);
 
     const oneweekHackQuery = client("hackathon_oneweek").select("hackathon_oneweek.*")
-        .where("hackathon_oneweek.status", "=", 1);
+        .where("hackathon_oneweek.status", "=", 1);    
 
     return Promise.all([mainQuery, adminQuery, challengesQuery, oneweekHackQuery]).then(([hackathonRows, admins, challenges, oneweekHack]) => {
         const hackathon = hackathonRows[0];
@@ -665,7 +665,7 @@ export const projectSearch = (queryObj) => {
     }
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
-        "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId");
+        "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId" );
 
     //console.log("Query :: " + query);
     return query;
@@ -1649,45 +1649,24 @@ export const addUserVotesToProject = (project, userId) => {
 };
 
 export const getHackathonOneweek = () => {
-    return client("hackathon_oneweek")
-        .select([
-            "hackathon_oneweek.Id",
-            "hackathon_oneweek.year",
-            "hackathon_oneweek.Hackathon_id",
-            "hackathon_oneweek.status",
-            "hackathon_oneweek.title",
-            "hackathon_oneweek.title_2",
-            "hackathon_oneweek.title_3",
-            "hackathon_oneweek.enter_img",
-            "hackathon_oneweek.registration_open",
-            "hackathon_oneweek.registration_closed",
-            "hackathon_oneweek.voting_open",
-            "hackathon_oneweek.voting_closed",
-            "hackathon_oneweek.registration_img",
-            "hackathons.Start_at",
-            "hackathons.End_at"
-        ])
+    return client.column(
+        "hackathon_oneweek.Id",
+        "hackathon_oneweek.year",
+        "hackathon_oneweek.Hackathon_id",
+        "hackathon_oneweek.status",
+        "hackathon_oneweek.title",
+        "hackathon_oneweek.title_2",
+        "hackathon_oneweek.title_3",
+        "hackathon_oneweek.enter_img",
+        "hackathon_oneweek.registration_open",
+        "hackathon_oneweek.registration_closed",
+        "hackathon_oneweek.voting_open",
+        "hackathon_oneweek.voting_closed",
+        "hackathon_oneweek.registration_img",
+        "hackathons.Start_at",
+        "hackathons.End_at")
+        .from("hackathon_oneweek")
         .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
-        .orderBy('hackathon_oneweek.year', 'desc');
-        //Updating query for performance
-    // return client.column(
-    //     "hackathon_oneweek.Id",
-    //     "hackathon_oneweek.year",
-    //     "hackathon_oneweek.Hackathon_id",
-    //     "hackathon_oneweek.status",
-    //     "hackathon_oneweek.title",
-    //     "hackathon_oneweek.title_2",
-    //     "hackathon_oneweek.title_3",
-    //     "hackathon_oneweek.enter_img",
-    //     "hackathon_oneweek.registration_open",
-    //     "hackathon_oneweek.registration_closed",
-    //     "hackathon_oneweek.voting_open",
-    //     "hackathon_oneweek.voting_closed",
-    //     "hackathon_oneweek.registration_img",
-    //     "hackathons.Start_at",
-    //     "hackathons.End_at")
-    //     .from("hackathon_oneweek")
-    //     .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
-    //     .orderBy("hackathon_oneweek.year");
+        .orderBy("hackathon_oneweek.year");
 };
 
