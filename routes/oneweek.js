@@ -9,7 +9,6 @@ const register = function (server, options, next) {
         method: "GET",
         path: "/oneweekstatus",
         config: {
-            auth: false,
             description: "Get Oneweek hackathon ids that are current next and previous",
             notes: [
                 `Will get the current hackathon.`
