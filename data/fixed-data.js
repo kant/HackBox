@@ -275,7 +275,7 @@ const executiveChallenges = [
   "New Growth Ideas--Create something in new areas of growth for the company that will attract new customers and/or new business.",
   "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
   "LinkedIn--How does LinkedIn feature in an ambient computing world?",  
-  "Other--Create project for other challenges."
+  "Other--Does not align to any other Challenge."
 ];
 
 const projectMotivations = [
