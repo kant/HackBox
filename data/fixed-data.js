@@ -260,21 +260,22 @@ const colorSchemes = [
 // ];
 const executiveChallenges = [
 
-  "Modern Work--Create something to unlock the creator in everyone and enable seamless teamwork not just in the workplace, but also at school and at home, across all the devices.",
+  "Modern Workplace--Create something to help businesses empower employees and foster a new culture of work by unlocking creativity and enabling teamwork in a secure and simple way.",
   "Applications and Infrastructure--Create something that enables customers to have consistent identity, developer extensibility, and security across their application portfolio.",    
   "Data and AI--Create something that uses Data and AI to amplify human ingenuity and drives competitive advantage for businesses.",
   "Gaming--Create something that enables gamers to play the games they want, with the people they want, on the devices they want.",
   "Business Apps--Create something that accelerates the digitization of every business process.",
-  "Modern Life--Create something that makes the work-to-life journey seamless and integrated.",
-  "LinkedIn--TBD",
+  "Modern Life--Create something that could help people make the most of their time to achieve more.",
+  "LinkedIn--How does LinkedIn feature in an ambient computing world?",
   "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment for all.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",
-  "GSMO & WCB--Use your sales skills to create something that accelerates our sales culture of Empowering Digital Success in the areas of Learn and coach, Use simplified tools, and Connect with new rhythms.",
-  "New Growth Ideas and Other--Create something in new areas of growth for the company that will attract new customers and/or new business, or other projects that do not align with any of the other challenges.",
+  "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
+  "New Growth Ideas--Create something in new areas of growth for the company that will attract new customers and/or new business.",
   "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
   "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
-  
+  "Internal Digital Transformation--Create a tool, system, application, or anything that enables our own internal digital transformation and empowers employees, engages customers, and optimizes operations.",
+  "Other--Create project for other challenges."
 ];
 
 const projectMotivations = [
