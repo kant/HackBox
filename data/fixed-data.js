@@ -266,15 +266,15 @@ const executiveChallenges = [
   "Gaming--Create something that enables gamers to play the games they want, with the people they want, on the devices they want.",
   "Business Apps--Create something that accelerates the digitization of every business process.",
   "Modern Life--Create something that could help people make the most of their time to achieve more.",
-  "LinkedIn--How does LinkedIn feature in an ambient computing world?",
-  "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment for all.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
-  "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",
-  "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
-  "New Growth Ideas--Create something in new areas of growth for the company that will attract new customers and/or new business.",
-  "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
-  "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
+  "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment for all.",
   "Internal Digital Transformation--Create a tool, system, application, or anything that enables our own internal digital transformation and empowers employees, engages customers, and optimizes operations.",
+  "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
+  "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",  
+  "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
+  "New Growth Ideas--Create something in new areas of growth for the company that will attract new customers and/or new business.",
+  "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
+  "LinkedIn--How does LinkedIn feature in an ambient computing world?",  
   "Other--Create project for other challenges."
 ];
 
