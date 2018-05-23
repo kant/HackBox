@@ -13,3 +13,4 @@ TOKEN
 .vscode/launch.json
 cache
 package-lock.json
+.idea
