@@ -272,7 +272,7 @@ const executiveChallenges = [
   "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",  
   "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
-  "New Growth Ideas--Create something in new areas of growth for the company that will attract new customers and/or new business.",
+  "New Growth Ideas--Using Microsoft assets, create a new area of growth for the company that will attract new customers and/or new business.",
   "Finance--Use your finance skills to create something that helps teams factor in platform and infrastructure costs for new products and features.",
   "LinkedIn--How does LinkedIn feature in an ambient computing world?",  
   "Other--Does not align to any other Challenge."
