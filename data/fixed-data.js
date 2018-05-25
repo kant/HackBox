@@ -267,14 +267,14 @@ const executiveChallenges = [
   "Business Apps--Create something that accelerates the digitization of every business process.",
   "Modern Life--Create something that could help people make the most of their time to achieve more.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
-  "Inclusive Microsoft--Create something that makes a more inclusive culture and productive work environment for all.",
+  "Inclusive Microsoft--Create Something that continues to build an inclusive culture and productive work environment for all.",
   "Internal Digital Transformation--Re-invent how we operate and radically improve the experience of our customers, partners, and employees to accelerate growth for Microsoft.",
   "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",  
   "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
   "New Growth Ideas--Using Microsoft assets, create a new area of growth for the company that will attract new customers and/or new business.",
   "LinkedIn--How does LinkedIn feature in an ambient computing world?",  
-  "Finance--Create something that a CFO would use every day.",  
+  "Finance--Create something that provides a CFO with daily business insight that assists her/him in making astute company decisions.",  
   "Other--Does not align to any other Challenge."
 ];
 
