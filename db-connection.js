@@ -1649,24 +1649,28 @@ export const addUserVotesToProject = (project, userId) => {
 };
 
 export const getHackathonOneweek = () => {
-    return client.column(
-        "hackathon_oneweek.Id",
-        "hackathon_oneweek.year",
-        "hackathon_oneweek.Hackathon_id",
-        "hackathon_oneweek.status",
-        "hackathon_oneweek.title",
-        "hackathon_oneweek.title_2",
-        "hackathon_oneweek.title_3",
-        "hackathon_oneweek.enter_img",
-        "hackathon_oneweek.registration_open",
-        "hackathon_oneweek.registration_closed",
-        "hackathon_oneweek.voting_open",
-        "hackathon_oneweek.voting_closed",
-        "hackathon_oneweek.registration_img",
-        "hackathons.Start_at",
-        "hackathons.End_at")
-        .from("hackathon_oneweek")
-        .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
-        .orderBy("hackathon_oneweek.year");
+    return client("hackathon_oneweek")
+        .select("*")
+        .orderBy("year", "desc");
+    //TODO : Commented due to join
+    // return client.column(
+    //     "hackathon_oneweek.Id",
+    //     "hackathon_oneweek.year",
+    //     "hackathon_oneweek.Hackathon_id",
+    //     "hackathon_oneweek.status",
+    //     "hackathon_oneweek.title",
+    //     "hackathon_oneweek.title_2",
+    //     "hackathon_oneweek.title_3",
+    //     "hackathon_oneweek.enter_img",
+    //     "hackathon_oneweek.registration_open",
+    //     "hackathon_oneweek.registration_closed",
+    //     "hackathon_oneweek.voting_open",
+    //     "hackathon_oneweek.voting_closed",
+    //     "hackathon_oneweek.registration_img",
+    //     "hackathons.Start_at",
+    //     "hackathons.End_at")
+    //     .from("hackathon_oneweek")
+    //     .join("hackathons", "hackathons.Id", "hackathon_oneweek.Hackathon_id")
+    //     .orderBy("hackathon_oneweek.year");
 };
 
