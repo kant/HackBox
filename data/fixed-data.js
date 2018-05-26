@@ -267,7 +267,7 @@ const executiveChallenges = [
   "Business Apps--Create something that accelerates the digitization of every business process.",
   "Modern Life--Create something that could help people make the most of their time to achieve more.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
-  "Inclusive Microsoft--Create Something that continues to build an inclusive culture and productive work environment for all.",
+  "Inclusive Microsoft--Create something that continues to build an inclusive culture and productive work environment for all.",
   "Internal Digital Transformation--Re-invent how we operate and radically improve the experience of our customers, partners, and employees to accelerate growth for Microsoft.",
   "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
   "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",  
