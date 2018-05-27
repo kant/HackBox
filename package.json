@@ -28,7 +28,7 @@
     "jade": "^1.11.0",
     "joi": "^6.9.1",
     "jsonwebtoken": "^7.4.1",
-    "knex": "^0.14.4",
+    "knex": "^0.14.6",
     "lodash.sample": "^3.1.0",
     "moment": "^2.10.6",
     "mysql": "^2.10.0",
@@ -69,4 +69,3 @@
     "coverage": "npm run pretest && tap test/*.js --cov --coverage-report=html"
   }
 }
-
