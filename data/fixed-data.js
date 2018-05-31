@@ -13,7 +13,8 @@ const customerTypes = [
   "Public Sector",
   "Students and Educators",
   "Women and Girls",
-  "Other"
+  "Other",
+  "None"
 
 ];
 
@@ -89,7 +90,7 @@ const participantTypes = [
   "HR",
   "HW Engineering",
   "IT Operations",
-  "Legal & Corporate Affairs",
+  "Corporate, External and Legal Affairs (CELA)",
   "Marketing",
   "PM",
   "Sales",
