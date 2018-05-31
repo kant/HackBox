@@ -109,7 +109,8 @@ const userBase = {
   state: Joi.string().max(255).trim().allow("").allow(null),
   phone: Joi.string().max(16).trim().allow("").allow(null),
   organization: Joi.string().max(255).trim(),
-  external: Joi.string().max(255).trim()
+  external: Joi.string().max(255).trim(),
+  graph_data_updated: Joi.date(),
 };
 export const newUser = Joi.object(userBase);
 export const updateUser = Joi.object(userBase);
