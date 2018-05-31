@@ -13,7 +13,8 @@ const customerTypes = [
   "Public Sector",
   "Students and Educators",
   "Women and Girls",
-  "Other"
+  "Other",
+  "None"
 
 ];
 
