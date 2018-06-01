@@ -97,7 +97,6 @@ const participantTypes = [
   "Service Eng",
   "Services",
   "Supply Chain & Ops"
-
 ];
 
 const countryList = [
