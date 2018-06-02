@@ -90,14 +90,13 @@ const participantTypes = [
   "HR",
   "HW Engineering",
   "IT Operations",
-  "Corporate, External and Legal Affairs (CELA)",
+  "Legal & Corporate Affairs",
   "Marketing",
   "PM",
   "Sales",
   "Service Eng",
   "Services",
   "Supply Chain & Ops"
-
 ];
 
 const countryList = [
