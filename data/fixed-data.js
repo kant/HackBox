@@ -13,7 +13,8 @@ const customerTypes = [
   "Public Sector",
   "Students and Educators",
   "Women and Girls",
-  "Other"
+  "Other",
+  "None"
 
 ];
 
@@ -96,7 +97,6 @@ const participantTypes = [
   "Service Eng",
   "Services",
   "Supply Chain & Ops"
-
 ];
 
 const countryList = [
