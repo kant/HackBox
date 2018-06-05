@@ -261,20 +261,20 @@ const colorSchemes = [
 const executiveChallenges = [
 
   "Modern Workplace--Create something to help businesses empower employees and foster a new culture of work by unlocking creativity and enabling teamwork in a secure and simple way.",
-  "Applications and Infrastructure--Create something that enables customers to have consistent identity, developer extensibility, and security across their application portfolio.",    
+  "Applications and Infrastructure--Create something that enables customers to have consistent identity, developer extensibility, and security across their application portfolio.",   
   "Data and AI--Create something that uses Data and AI to amplify human ingenuity and drives competitive advantage for businesses.",
-  "Gaming--Create something that enables gamers to play the games they want, with the people they want, on the devices they want.",
-  "Business Apps--Create something that accelerates the digitization of every business process.",
-  "Modern Life--Create something that could help people make the most of their time to achieve more.",
   "AI and Ethics--Build AI Solutions that advance our AI principles and the pursuit of ethical AI for our customers and the world.",
+  "Business Apps--Create something that connects internal processes and transforms businesses.",
+  "Modern Life--Create something that could help people make the most of their time to achieve more.",
   "Inclusive Microsoft--Create something that continues to build an inclusive culture and productive work environment for all.",
+  "Finance--Create something that provides a CFO with daily business insight that assists her/him in making astute company decisions.",  
+  "Gaming--Create something that enables inclusivity in Gaming. Could be something that builds a more inclusive culture and/or a gaming product that could impact the 2.6B global gamers.",
   "Internal Digital Transformation--Re-invent how we operate and radically improve the experience of our customers, partners, and employees to accelerate growth for Microsoft.",
   "Sales--Demonstrate your customer obsession by creating an innovative solution that accelerates our ability to sell, deliver world class service, and enable our customers' digital success.",
-  "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",  
+  "Hack for Good--Create something with Microsoft technology and your unique skills to help nonprofits drive social impact and achieve their missions more effectively.",
   "Marketing--Create a marketing or business plan that helps us reach and engage Millennials with the goal of earning them as fans across our products and services.",
   "New Growth Ideas--Using Microsoft assets, create a new area of growth for the company that will attract new customers and/or new business.",
-  "LinkedIn--How does LinkedIn feature in an ambient computing world?",  
-  "Finance--Create something that provides a CFO with daily business insight that assists her/him in making astute company decisions.",  
+  "LinkedIn--How does LinkedIn feature in an ambient computing world?",
   "Other--Does not align to any other Challenge."
 ];
 
