@@ -85,7 +85,7 @@ selectNodeVersion () {
       NPM_CMD="\"$NODE_EXE\" \"$PROGRAMFILES\\npm\\3.10.10\\node_modules\\npm\\bin\\npm-cli.js\""
     #else
     #  NPM_CMD="\"$NODE_EXE\" \"D:\\Program Files (x86)\\npm\\5.6.0\\node_modules\\npm\\bin\\npm-cli.js\""
-    fi
+    #fi
   else
     NPM_CMD=npm
     NODE_EXE=node
