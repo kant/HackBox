@@ -580,9 +580,9 @@ export const projectSearch = (queryObj) => {
 
     const focii = { //TODO can probably convert with a regex
         Windows: "windows",
-        Devices: "devices",
+        "Devices and Gaming": "devices_and_gaming",
         "Consumer Services": "consumer_services",
-        "Cloud & Enterprise": "cloud_and_enterprise",
+        "Cloud and Business": "cloud_and_business",
         "AI & Research": "ai_and_research",
         "Office 365": "office_365",
         "Dynamics 365": "dynamics_365",

@@ -21,10 +21,10 @@ const customerTypes = [
 const productTypes = [
 
   "3rd Party Platforms",
-  "Cloud & Enterprise",
+  "Cloud and Business",
   "AI & Research",
   "Consumer Services",
-  "Devices",
+  "Devices and Gaming",
   "Dynamics",
   "Misc",
   "Office 365",
