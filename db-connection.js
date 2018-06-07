@@ -484,7 +484,13 @@ export const projectSearch = (queryObj) => {
         query[fnName](function () {
             this.where("projects.title", "like", `%${searchFor}%`)
                 .orWhere("projects.json_tags", "like", `%${searchFor}%`)
-                .orWhere("projects.tagline", "like", `%${searchFor}%`);
+                .orWhere("projects.tagline", "like", `%${searchFor}%`)
+                .orWhereIn("projects.id", function () {
+                this.select("project_id")
+                      .from("members")
+                      .join("users", "users.id", "members.user_id")
+                      .where("users.name", "like", `%${searchFor}%`);
+                });
         });
     };
 
