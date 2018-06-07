@@ -96,7 +96,7 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
             hackathon.challenges = challenges;
             hackathon.admins = admins;
             hackathon.status = hackathonStatus(hackathon);
-        }
+        }        
         hackathon.oneweekHackathon = oneweekHack[0];
         return hackathon;
     });
@@ -469,13 +469,13 @@ export const projectSearch = (queryObj) => {
 
     const query = client("projects")
         .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
-        .innerJoin("users", "projects.owner_id", "users.id")
+        .innerJoin("users", "projects.owner_id", "users.id") 
         .leftOuterJoin("hackathon_oneweek", "hackathon_oneweek.status", 1)
         .andWhere(include_deleted ? {} : { "projects.deleted": false });
 
     if (hackathon_id) {
         query.where("projects.hackathon_id", hackathon_id);
-    }
+    }    
 
     let searched = false;
     const addSearch = (searchFor) => {
@@ -484,8 +484,14 @@ export const projectSearch = (queryObj) => {
         query[fnName](function () {
             this.where("projects.title", "like", `%${searchFor}%`)
                 .orWhere("projects.json_tags", "like", `%${searchFor}%`)
-                .orWhere("projects.tagline", "like", `%${searchFor}%`);
-        });
+                .orWhere("projects.tagline", "like", `%${searchFor}%`)
+                .orWhereIn("projects.id", function () {
+                      this.select("project_id")
+                        .from("members")
+                        .join("users", "users.id", "members.user_id")
+                        .where("users.name", "like", `%${searchFor}%`);
+                });
+        }); 
     };
 
     let sponSearched = false;
@@ -666,8 +672,7 @@ export const projectSearch = (queryObj) => {
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
         "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId" );
-
-    //console.log("Query :: " + query);
+    
     return query;
 };
 // end projectSearch
