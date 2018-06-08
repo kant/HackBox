@@ -489,7 +489,8 @@ export const projectSearch = (queryObj) => {
                       this.select("project_id")
                         .from("members")
                         .join("users", "users.id", "members.user_id")
-                        .where("users.name", "like", `%${searchFor}%`);
+                        .where("users.name", "like", `%${searchFor}%`)
+                        .orWhere("users.alias", "like", `%${searchFor}%`);
                 });
         }); 
     };
