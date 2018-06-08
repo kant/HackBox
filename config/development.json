@@ -11,9 +11,9 @@
     },
     "pool": {
       "min": 10,
-      "max": 100
+      "max": 200
     },
-    "acquireConnectionTimeout": 40000,
+    "acquireConnectionTimeout": 60000,
     "migrations": {
       "tableName": "knex_migrations"
     }
@@ -26,3 +26,4 @@
   "serverDebug": true,
   "https": false
 }
+
