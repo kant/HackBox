@@ -484,7 +484,14 @@ export const projectSearch = (queryObj) => {
         query[fnName](function () {
             this.where("projects.title", "like", `%${searchFor}%`)
                 .orWhere("projects.json_tags", "like", `%${searchFor}%`)
-                .orWhere("projects.tagline", "like", `%${searchFor}%`);
+                .orWhere("projects.tagline", "like", `%${searchFor}%`)
+                .orWhereIn("projects.id", function () {
+                this.select("project_id")
+                      .from("members")
+                      .join("users", "users.id", "members.user_id")
+                    .where("users.name", "like", `%${searchFor}%`)
+                    .orWhere("users.alias", "like", `%${searchFor}%`);
+                });
         });
     };
 
@@ -580,9 +587,9 @@ export const projectSearch = (queryObj) => {
 
     const focii = { //TODO can probably convert with a regex
         Windows: "windows",
-        Devices: "devices",
+        "Devices and Gaming": "devices_and_gaming",
         "Consumer Services": "consumer_services",
-        "Cloud & Enterprise": "cloud_and_enterprise",
+        "Cloud and Business": "cloud_and_business",
         "AI & Research": "ai_and_research",
         "Office 365": "office_365",
         "Dynamics 365": "dynamics_365",
