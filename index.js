@@ -22,6 +22,7 @@ import AwardCategoriesRoutes from "./routes/award-categories";
 import ReportRoutes from "./routes/reports";
 import HackbotRoutes from "./routes/hackbot";
 import WhitelistRoutes from "./routes/whitelist";
+import AclRoutes from "./routes/acl";
 import CheckinsRoutes from "./routes/checkins";
 import OneWeekRoutes from "./routes/oneweek";
 import ChallengeRoutes from "./routes/challenges";
@@ -105,6 +106,7 @@ server.register([
   ReportRoutes,
   HackbotRoutes,
   WhitelistRoutes,
+  AclRoutes,
   CheckinsRoutes,
   OneWeekRoutes,
   ChallengeRoutes,
