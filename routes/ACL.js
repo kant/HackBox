@@ -16,7 +16,7 @@ const register = function (server, options, next) {
       tags: ["email", "acl"],
         handler(request, reply) {
             const { email } = request.params;
-            const response = db("ACL").where({ email }).then((result) => {
+            const response = db("acl").where({ email }).then((result) => {
                 console.log('check email exist result ' + result.length);
                 if (result.length === 0) {
                     return { inAcl: false };
