@@ -23,6 +23,9 @@ const register = function (server, options, next) {
         // allow alias "me" for searching for own
         if (query.has_member === "me") {
           query.has_member = request.userId();
+          if (request.auth.credentials.proxyUser && request.auth.credentials.proxyUser.userId) {
+            query.has_member = request.auth.credentials.proxyUser.userId;
+          }
         }
 
         const response = projectSearch(query);

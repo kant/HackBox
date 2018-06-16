@@ -1,4 +1,4 @@
-/*eslint camelcase: [2, {"properties": "never"}] */ import Boom from "boom";
+import Boom from "boom";
 import {
     paginationWithDeleted, newProject, stringId, neededExpertiseArray,
     roleArray, productArray, projectUpdate, id, customerTypeArray,
@@ -11,9 +11,8 @@ import db, {
     addUserVotesToProject, addOneWeekHackathon
 } from "../db-connection";
 import Joi from "joi";
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+const client = new appInsights.TelemetryClient();
 
 const register = function (server, options, next) {
     server.route({
@@ -40,7 +39,7 @@ const register = function (server, options, next) {
 
                 const response = projectSearch(query);
 
-                client.trackEvent("Get Projects", { hackId: query.hackathon_id });
+                client.trackEvent({name: "Get Projects", properties: {hackId: query.hackathon_id}});
                 reply(
                     addProjectMembersToPagination(
                         addTagsToPagination(
@@ -219,7 +218,7 @@ const register = function (server, options, next) {
                 }).then(() => {
                     return ensureProject(hackathonId, projectId);
                 }).then((data) => {
-                    client.trackEvent("New Project", { hackId: data.hackathon_id, title: data.title, ownerId: data.owner_id });
+                    client.trackEvent({name: "New Project", properties: {hackId: data.hackathon_id, title: data.title, ownerId: data.owner_id}});
                     return request.generateResponse(data).code(201);
                 });
 
@@ -242,7 +241,8 @@ const register = function (server, options, next) {
             tags: ["api"],
             handler(request, reply) {
                 const { hackathonId, projectId } = request.params;
-                const ownerId = request.isSuperUser() ? false : request.userId();
+
+                // const ownerId = request.isSuperUser() ? false : request.userId();
                 let checkOwner = false;
 
                 const response = Promise.all([
@@ -255,7 +255,7 @@ const register = function (server, options, next) {
                     if (!request.isSuperUser()) {
                         if (!isHackathonAdmin) {
                             if (projectResult.length <= 0) {
-                                throw Boom.conflict(`User ${userId} should be an owner of the project ${projectId} or hackathon ${hackathonId} to delete project.`);
+                                throw Boom.conflict(`User ${request.userId()} should be an owner of the project ${projectId} or hackathon ${hackathonId} to delete project.`);
                             }
                             else {
                                 throw Boom.conflict(`As you are not owner of the project, then you should be an owner of hackathon ${hackathonId} to delete project.`);

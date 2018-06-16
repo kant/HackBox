@@ -6,9 +6,9 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
-import appInsights from "applicationinsights";
 
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+const client = new appInsights.TelemetryClient();
 
 const register = function (server, options, next) {
   server.route({
@@ -26,7 +26,7 @@ const register = function (server, options, next) {
         }
         const response = userSearch(request.query);
               
-        client.trackEvent("Get Hackers", {hackId: query.hackathon_id});
+        client.trackEvent({name: "Get Hackers", properties: {hackId: query.hackathon_id}});
         reply(paginate(response, {limit, offset}));
       },
       validate: {
@@ -101,7 +101,7 @@ const register = function (server, options, next) {
           request.log(["database", "response", "insert"], res);
           return ensureUser(userProps.id);
         }).then((result) => {
-          client.trackEvent("New User", {credentials: id});
+          client.trackEvent({name: "New User", properties: {credentials: id}});
           return request.generateResponse(result).code(201);
         });
 
@@ -176,7 +176,7 @@ const register = function (server, options, next) {
           return ensureUser(userId);
         });
 
-        client.trackEvent("User Update", {});
+        client.trackEvent({name: "User Update", properties: {}});
         reply(response);
       },
       validate: {
@@ -195,7 +195,10 @@ const register = function (server, options, next) {
       description: "Fetch details about a single user",
       tags: ["api", "detail"],
       handler(request, reply) {
-        const { userId } = request.params;
+        let { userId } = request.params;
+        if (request.auth.credentials.proxyUser && request.auth.credentials.proxyUser.userId) {
+          userId = request.auth.credentials.proxyUser.userId;
+        }
         const response = ensureUser(userId, {
           allowDeleted: request.isSuperUser()
         });

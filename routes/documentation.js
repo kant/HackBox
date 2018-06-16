@@ -1,6 +1,5 @@
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+const client = new appInsights.TelemetryClient();
 
 /*eslint camelcase: [2, {"properties": "never"}] */
 const register = function (server, options, next) {
@@ -10,7 +9,7 @@ const register = function (server, options, next) {
     config: {
       auth: false,
       handler(request, reply) {
-        client.trackEvent("Documentation", {});
+        client.trackEvent({name: "Documentation", properties: {}});
         reply.view("documentation");
       }
     }

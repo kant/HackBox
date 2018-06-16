@@ -11,9 +11,9 @@ import db, { paginate, ensureHackathon, ensureUser, ensureChallenge, hackathonSe
     from "../db-connection";
 
 import admin from "../data/approved-admins";
-import appInsights from "applicationinsights";
 
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+const client = new appInsights.TelemetryClient();
 
 const register = function (server, options, next) {
     server.route({
@@ -115,7 +115,7 @@ const register = function (server, options, next) {
                         organization_id: 1
                     });
                 }).then(() => {
-                    client.trackEvent("New Hackathon", { hackId: hackathonId });
+                    client.trackEvent({name: "New Hackathon", properties: {hackId: hackathonId}});
                     return ensureHackathon(hackathonId);
                 }).then((result) => {
                     return request.generateResponse(result).code(201);
@@ -187,7 +187,7 @@ const register = function (server, options, next) {
                         .where({ id: hackathonId })
                         .update(payload);
                 }).then(() => {
-                    client.trackEvent("Hack Updated", { hackId: hackathonId });
+                    client.trackEvent({name:"Hack Updated", properties: {hackId: hackathonId}});
                     return ensureHackathon(hackathonId);
                 });
 

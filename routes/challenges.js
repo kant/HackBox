@@ -8,9 +8,9 @@ import db, {
     paginate, ensureHackathon, ensureProject, ensureChallenge, challengeSearch
 } from "../db-connection";
 import Joi from "joi";
-import appInsights from "applicationinsights";
 
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+const client = new appInsights.TelemetryClient();
 
 const register = function (server, options, next) {
     server.route({
@@ -36,7 +36,7 @@ const register = function (server, options, next) {
 
                     reply(paginate(response, { limit, offset }));
                 }).then((data) => {
-                    client.trackEvent("Get Challenges", { hackId: query.hackathon_id });
+                    client.trackEvent({name: "Get Challenges", properties: {hackId: query.hackathon_id}});
                     return request.generateResponse(data).code(201);
                 });
             },
@@ -81,7 +81,7 @@ const register = function (server, options, next) {
                             .insert(payload);
                     });
                 }).then((data) => {
-                    client.trackEvent("New challenge", { hackId: data.hackathon_id, title: data.title });
+                    client.trackEvent({name: "New challenge", properties: {hackId: data.hackathon_id, title: data.title}});
                     return request.generateResponse(data).code(201);
                 });
 

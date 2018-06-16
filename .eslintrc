@@ -1,5 +1,14 @@
 {
-	"extends": "defaults/configurations/walmart/es6-node",
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "jasmine": true,
+    "protractor": true
+  },
+  "parser": "babel-eslint",
+  "extends": "eslint:recommended",
   "rules": {
     "no-bitwise": 1
   }

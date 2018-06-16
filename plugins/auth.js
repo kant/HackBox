@@ -23,7 +23,12 @@ export const validate = function (token, next) {
     if (err) {
       return next(null, false);
     } else if (decoded) {
-      return next(null, true, decoded);
+        if (decoded.proxyUser && decoded.proxyUser.userId) {
+            console.log(`Proxy UserId: ${decoded.proxyUser.userId}`);
+        } else {
+            console.log('No Proxy defined.');
+        }
+        return next(null, true, decoded);
     } else {
       return next(null, true, {});
     }
