@@ -250,8 +250,8 @@ const projectBase = {
   tent_color: Joi.string().max(255).allow(null),
   vstsProjectId: Joi.string().max(100).allow(null),
   vstsProjectName: Joi.string().max(100).allow(null),
-  teamGroupId: Joi.string().max(50).allow(null),
-  teamGroupName: Joi.string().max(100).allow(null),
+  vstsGroupId: Joi.string().max(50).allow(null),
+  vstsGroupName: Joi.string().max(100).allow(null),
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -296,8 +296,8 @@ export const newProject = Joi.object(projectBase)
     tent_color: projectBase.tent_color,
     vstsProjectId: projectBase.vstsProjectId,
     vstsProjectName: projectBase.vstsProjectName,
-    teamGroupId: projectBase.teamGroupId,
-    teamGroupName: projectBase.teamGroupName,
+    vstsGroupId: projectBase.vstsGroupId,
+    vstsGroupName: projectBase.vstsGroupName,
   });
 export const project = newProject.keys({ id });
 
