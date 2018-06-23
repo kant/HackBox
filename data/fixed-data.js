@@ -134,6 +134,7 @@ const countryList = [
   "Guatemala",
   "Hong Kong SAR",
   "Hungary",
+  "Italy",
   "India",
   "Indonesia",
   "Ireland",
