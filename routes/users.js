@@ -242,16 +242,16 @@ const register = function (server, options, next) {
         .then((data) => {
             data.forEach((elem) => {
               let reportingData = JSON.parse(elem.json_reporting_data);
-              parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName])
+              parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), reportingData.DisplayName.replace("Ou0027","O'")])
             })
             return db("users").select('*').where('email', 'like', 'v-%').orWhereNotNull('external');
         })
         .then((data) => {
             data.forEach((elem) => {
               if (elem.external == null) {
-                parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), elem.name, elem.id]);
+                parsedData.push([elem.email.replace('@microsoft.com', '').toLowerCase(), elem.name.replace("Ou0027","O'"), elem.id]);
               } else {
-                parsedData.push([elem.email.toLowerCase(), elem.name, elem.id]);
+                parsedData.push([elem.email.toLowerCase(), elem.name.replace("Ou0027","O'"), elem.id]);
               }
             })
 

@@ -1,13 +1,13 @@
 import Joi from "joi";
 import {
 
-    countryList,
-    colorSchemes,
-    customerTypes,
-    productTypes,
-    projectTypes,
-    participantTypes,
-    executiveChallenges
+  countryList,
+  colorSchemes,
+  customerTypes,
+  productTypes,
+  projectTypes,
+  participantTypes,
+  executiveChallenges
 
 } from "./fixed-data";
 
@@ -45,10 +45,10 @@ export const projectArray = Joi.array().items(projectType)
   .description("Array of one or more valid project types");
 export const arrayOfStrings = Joi.array().items(Joi.string());
 export const focusArray = Joi.array().items(Joi.string())
-.description("Array of one or more focus types");
+  .description("Array of one or more focus types");
 export const challenge = Joi.string().valid(executiveChallenges).empty("");
 export const challengeArray = Joi.array().items(challenge)
-.description("Array of one or more Executive Challenges");
+  .description("Array of one or more Executive Challenges");
 export const idArray = Joi.array().items(optionalId).required();
 export const stringIdArray = Joi.array().items(stringId).required();
 
@@ -153,7 +153,7 @@ const hackathonBase = {
   logo_url: url,
   header_image_url: url,
   start_at: Joi.date(),
-  end_at: Joi.date().allow(null,''),
+  end_at: Joi.date().allow(null, ''),
   org: emptyString,
   city: emptyString,
   country,
@@ -208,7 +208,7 @@ const projectBase = {
   title: Joi.string().min(1).max(120),
   tagline: emptyString,
   owner_id: stringId,
-  video_id: [ Joi.number().integer().positive(), Joi.empty("").default(0)],
+  video_id: [Joi.number().integer().positive(), Joi.empty("").default(0)],
   status: emptyString,
   description: emptyTextLarge,
   image_url: url,
@@ -247,7 +247,11 @@ const projectBase = {
   video_data: Joi.string().allow(null),
   video_views: Joi.number().integer().min(0),
   tent_name: Joi.string().max(255).allow(null),
-  tent_color: Joi.string().max(255).allow(null)
+  tent_color: Joi.string().max(255).allow(null),
+  vstsProjectId: Joi.string().max(100).allow(null),
+  vstsProjectName: Joi.string().max(100).allow(null),
+  vstsGroupId: Joi.string().max(50).allow(null),
+  vstsGroupName: Joi.string().max(100).allow(null),
 };
 export const projectUpdate = Joi.object(projectBase);
 export const newProject = Joi.object(projectBase)
@@ -289,9 +293,13 @@ export const newProject = Joi.object(projectBase)
     custom_categories: arrayOfStrings.default([]),
     video_views: projectBase.video_views,
     tent_name: projectBase.tent_name,
-    tent_color: projectBase.tent_color
+    tent_color: projectBase.tent_color,
+    vstsProjectId: projectBase.vstsProjectId,
+    vstsProjectName: projectBase.vstsProjectName,
+    vstsGroupId: projectBase.vstsGroupId,
+    vstsGroupName: projectBase.vstsGroupName,
   });
-export const project = newProject.keys({id});
+export const project = newProject.keys({ id });
 
 /*
   Comment
