@@ -10,7 +10,7 @@ import Boom from "boom";
 import assert from "assert";
 import _ from "lodash";
 import dbConfig from "./config";
-import { projectTypes, europeList } from "./data/fixed-data";
+import { projectTypes, europeList, chinaList } from "./data/fixed-data";
 
 const client = knex(dbConfig.db);
 // const clientReplica = knex(dbConfig.replica.db);
@@ -1211,6 +1211,13 @@ export const userSearch = (queryObj) => {
             country.splice(europeIndex, 1);
             country = country.concat(europeList);
         }
+        let chinaIndex = country.indexOf('Greater China Region');
+        console.log('chinaIndex : ' + chinaIndex);
+        if (chinaIndex !== -1) {
+            country.splice(chinaIndex, 1);
+            country = country.concat(chinaList);
+        }
+        console.log("country:" + country);
         query.whereIn("country", country);
     }
     if (has_project === true || has_project === false) {
