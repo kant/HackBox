@@ -1,9 +1,5 @@
-/*eslint camelcase: [2, {"properties": "never"}] */
 import Boom from "boom";
 import Joi from "joi";
-import { updateUser, stringId, optionalId, countryArray,
-  projectArray, roleArray, newUser, paginationWithDeleted,
-  sortDirection } from "../data/validation";
 import db, { paginate } from "../db-connection";
 
 const register = function (server, options, next) {
@@ -13,7 +9,7 @@ const register = function (server, options, next) {
     path: "/acl/{email}",
     config: {
       description: "Get emails from acl table",
-      tags: ["email", "acl"],
+      tags: ["api", "email", "acl"],
         handler(request, reply) {
             const { email } = request.params;
             const response = db("acl").where({ email }).then((result) => {
@@ -26,9 +22,48 @@ const register = function (server, options, next) {
             });
             
         reply(response);
-      }
+        },
+        validate: {
+            params: {
+                email: Joi.string().email()
+            }
+        }
     }
   });
+
+  server.route({
+        method: "POST",
+        path: "/acl/add",
+        config: {
+            description: "add new email to acl list",
+            tags: ["api"],
+            handler(request, reply) {
+                const { payload } = request;
+                const response = db("acl").where({ email: payload.email }).then((result) => {
+
+                    if (result.length > 0) {
+                        return { result: 'email already exist' };
+                    }
+                    //Prepare object to insert
+                    let newEmail = {
+                        email: payload.email
+                    };
+                    //Insert 
+                    return db("acl").insert(newEmail)
+                        .then(() => {
+                            return request.generateResponse(newEmail).code(200);
+                        });
+                });
+
+                reply(response);
+            },
+            validate: {                
+                payload: {
+                    email: Joi.string().email()
+                }
+            }
+        }
+    });
     
   next();
 };

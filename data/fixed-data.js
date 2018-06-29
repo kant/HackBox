@@ -118,7 +118,7 @@ const countryList = [
   "Bulgaria",
   "Canada",
   "Chile",
-  "China",
+  "Greater China Region",
   "Colombia",
   "Côte d'Ivoire",
   "Croatia",
@@ -228,7 +228,10 @@ const europeList = [
   "United Kingdom"
 
 ]
-
+const chinaList = [
+    "China",
+    "Taiwan"
+]
 const colorSchemes = [
 
   "Azure blue",
@@ -303,6 +306,7 @@ export default {
   projectMotivations,
   countryList,
   europeList,
+  chinaList,
   colorSchemes,
   executiveChallenges
 };
