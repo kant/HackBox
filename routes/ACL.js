@@ -51,7 +51,7 @@ const register = function (server, options, next) {
                     //Insert 
                     return db("acl").insert(newEmail)
                         .then(() => {
-                            return request.generateResponse(newEmail).code(200);
+                            return request.generateResponse({ result: `${newEmail.email} has been added to acl` }).code(200);
                         });
                 });
 
