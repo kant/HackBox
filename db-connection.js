@@ -500,7 +500,7 @@ export const projectSearch = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
@@ -712,7 +712,7 @@ export const projectSearchReports = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
