@@ -76,7 +76,7 @@ var parser = parse({delimiter: ','}, function (err, data) {
        })
        .then(data => {
             var obj = JSON.parse(value);
-            return client('awards').insert({hackathon_id: 1214, project_id: Number(updates[index][0]), name: obj.awards[0].name, json_meta: '{}'})
+            return client('awards').insert({hackathon_id: 1074, project_id: Number(updates[index][0]), name: obj.awards[0].name, json_meta: '{}'})
             })
             .then(response => {
                 newAwardId = response[0];
