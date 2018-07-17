@@ -47,7 +47,7 @@ const register = function (server, options, next) {
           return db("projects").select("projects.id", "projects.title", "projects.tent_name", "projects.tent_color").join("members", function () {
             this.onIn("members.user_id", userObject.user_id)
               .andOn("members.project_id", "=", "projects.id")
-              .andOn("projects.hackathon_id", "=", 1074);
+              .andOn("projects.hackathon_id", "=", 1214);
           });
         }).then((projects) => {
             objectToReturn.projects = projects;
