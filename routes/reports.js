@@ -6,16 +6,10 @@
 import _ from "lodash";
 import Boom from "boom";
 import Joi from "joi";
-import winston from "winston";
 import { id, pagination } from "../data/validation";
 import db, { clientReplica, ensureHackathon, ensureHackathonReports, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
   from "../db-connection";
-
-const logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({'timestamp':true, 'colorize': true})
-  ]
-});
+import hbLogger from "../hbLogger";
 
 const register = function (server, options, next) {
 
@@ -104,25 +98,31 @@ const register = function (server, options, next) {
   };
 
   const addOwnersToPagination = (paginationQuery) => {
-    return paginationQuery.then((paginated) => {
-      const ownerIds = _.pluck(paginated.data, "owner_id");
-      const ownersQuery = clientReplica("users")
-        .select("users.id as owner_id", "users.name as owner_name", "users.alias as owner_alias")
-        .distinct()
-        .whereIn("users.id", ownerIds);
+    try {
+        hbLogger.info(`reports - addOwnersToPagination`);
+        return paginationQuery.then((paginated) => {
+            const ownerIds = _.pluck(paginated.data, "owner_id");
+            const ownersQuery = clientReplica("users")
+                .select("users.id as owner_id", "users.name as owner_name", "users.alias as owner_alias")
+                .distinct()
+                .whereIn("users.id", ownerIds);
 
-      return ownersQuery.then((owners) => {
-        owners = _.groupBy(owners, "owner_id");
-        paginated.data = _.map(paginated.data, (entry) => {
-          const owner = owners[entry.owner_id];
-          // consol.log(owner);
-          entry.owner_name = owner ? _.pluck(owner, "owner_name") : {};
-          entry.owner_alias = owner ? _.pluck(owner, "owner_alias") : {};
-          return entry;
+            return ownersQuery.then((owners) => {
+                owners = _.groupBy(owners, "owner_id");
+                paginated.data = _.map(paginated.data, (entry) => {
+                    const owner = owners[entry.owner_id];
+                    // consol.log(owner);
+                    entry.owner_name = owner ? _.pluck(owner, "owner_name") : {};
+                    entry.owner_alias = owner ? _.pluck(owner, "owner_alias") : {};
+                    return entry;
+                });
+                return paginated;
+            });
         });
-        return paginated;
-      });
-    });
+    }
+    catch (e) {
+       hbLogger.error(`reports - addOwnersToPagination exception: ${e.message}`);
+    }
   };
 
   // const addReportsToPagination = (paginationQuery) => {
@@ -277,6 +277,8 @@ const register = function (server, options, next) {
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
               return paginated;
+            }).catch(e => {
+                hbLogger.error(`project-reports: exception: ${e.message}`);
             });
         });
         

@@ -12,6 +12,7 @@ import db, {
 } from "../db-connection";
 import Joi from "joi";
 import appInsights from "applicationinsights";
+import logger from "../hbLogger";
 
 const client = appInsights.getClient();
 
@@ -108,8 +109,9 @@ const register = function (server, options, next) {
                     query.has_member = request.userId();
                 }
 
+                logger.info(`projects: get generalreports/projects ${query.hackathon_id}`);
                 const response = projectSearchReports(query);
-
+                logger.info('projects: after projectSearchReports');
                 reply(
                     addProjectMembersToPaginationReports(
                         addTagsToPaginationReports(

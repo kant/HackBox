@@ -1,6 +1,7 @@
 import Boom from "boom";
 import Joi from "joi";
 import db from "../db-connection";
+import hbLogger from "../hbLogger";
 
 const register = function (server, options, next) {
 
@@ -11,7 +12,7 @@ const register = function (server, options, next) {
     path: "/checkin/hackathon/{hackathonId}/user/{alias}",
     config: {
       description: "Get user information for checkin",
-      tags: ["alias", "whitelist"],
+      tags: ["alias", "whitelist", "api"],
       handler(request, reply) {
         const objectToReturn = {
           userId: "",
@@ -76,15 +77,18 @@ const register = function (server, options, next) {
     path: "/checkin/hackathon/{hackathonId}/user/{userId}",
     config: {
       description: "Check in user for specific hackathon",
-      tags: ["checkin"],
+      tags: ["checkin", "api"],
       handler(request, reply) {
         const {userId, hackathonId} = request.params;
         
         const response = db("checkins").insert({
           user_id: userId,
           hackathon_id: hackathonId
+        }).then(r => {
+          return r;
+        }).catch(e => {
+          hbLogger.info(`checkin exception: ${e.message}`);
         });
-
         reply(response);
       },
       validate: {

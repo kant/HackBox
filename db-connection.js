@@ -11,6 +11,7 @@ import assert from "assert";
 import _ from "lodash";
 import dbConfig from "./config";
 import { projectTypes, europeList, chinaList } from "./data/fixed-data";
+import hbLogger from "./hbLogger";
 
 const client = knex(dbConfig.db);
 // const clientReplica = knex(dbConfig.replica.db);
@@ -392,6 +393,7 @@ export const ensureParticipant = (hackathonId, userId, opts = { includeUser: fal
             return participant;
         });
     }).catch((err) => {
+        hbLogger.error(`db-connections - ensureParticipant - exception: ${err.message}`);
         throw err;
     });
 };
@@ -401,30 +403,35 @@ export const paginate = (query, { limit, offset }) => {
     assert(typeof limit === "number", "Must pass a numeric 'offset' to 'paginate' method");
     const countQuery = query.clone();
 
-    // delete any specific columns mentioned by the query for our count query
-    // otherwise we can create a query that MySQL doesn't consider to be valid
-    // when we add the `.count()` to it.
-    countQuery._statements.some((statement, index) => {
-        if (statement.grouping === "columns") {
-            countQuery._statements.splice(index, 1);
-            return true;
-        }
-    });
-    return Promise.all([
-        countQuery.count(),
-        query
-            .limit(limit)
-            .offset(offset)
-    ]).then((res) => {
-        const data = res[1];
-        return {
-            offset,
-            limit,
-            result_count: data.length,
-            total_count: res[0][0]["count(*)"],
-            data
-        };
-    });
+    try {
+        // delete any specific columns mentioned by the query for our count query
+        // otherwise we can create a query that MySQL doesn't consider to be valid
+        // when we add the `.count()` to it.
+        countQuery._statements.some((statement, index) => {
+            if (statement.grouping === "columns") {
+                countQuery._statements.splice(index, 1);
+                return true;
+            }
+        });
+        return Promise.all([
+            countQuery.count(),
+            query
+                .limit(limit)
+                .offset(offset)
+        ]).then((res) => {
+            const data = res[1];
+            return {
+                offset,
+                limit,
+                result_count: data.length,
+                total_count: res[0][0]["count(*)"],
+                data
+            };
+        });
+    }
+    catch(e) {
+        hbLogger.info(`db-connection - paginate: exception ${e.message}`);
+    }
 };
 
 export const challengeSearch = (queryObj) => {
@@ -901,63 +908,84 @@ const addMembersToProjects = (projects, usersByProject) => {
 };
 
 const addMembersToProjectsReports = (projects, usersByProject) => {
-    return _.map(projects, (project) => {
-        if (usersByProject[project.id]) {
-            project.team_size = usersByProject[project.id].length;
-            project.members = usersByProject[project.id].map((user) => {
-                return user.alias;
-            });
-        }
-
-        return project;
-    });
+    try {
+        return _.map(projects, (project) => {
+            if (usersByProject[project.id]) {
+                project.team_size = usersByProject[project.id].length;
+                project.members = usersByProject[project.id].map((user) => {
+                    return user.alias;
+                });
+            }
+            return project;
+        });
+    }
+    catch(e) {
+        hbLogger.error(`db-connection - addTagsToPagination - exception: ${e.message}`);
+    }
 };
 
 export const addTagsToPagination = (paginationQuery, key = "project_id") => {
-    return paginationQuery.then((paginated) => {
-        const projects = _.pluck(paginated.data, key);
-        const tagsQuery = client("project_tags")
-            .select("project_id", "json_tags")
-            .whereIn("project_id", projects);
-        return tagsQuery.then((tags) => {
-            tags = _.groupBy(tags, "project_id");
-            paginated.data = _.map(paginated.data, (entry) => {
-                entry.json_special_tags = tags[entry[key]] ?
-                    _.pluck(tags[entry[key]], "json_tags") : "[]";
-                return entry;
+    try {
+        return paginationQuery.then((paginated) => {
+            const projects = _.pluck(paginated.data, key);
+            const tagsQuery = client("project_tags")
+                .select("project_id", "json_tags")
+                .whereIn("project_id", projects);
+            return tagsQuery.then((tags) => {
+                tags = _.groupBy(tags, "project_id");
+                paginated.data = _.map(paginated.data, (entry) => {
+                    entry.json_special_tags = tags[entry[key]] ?
+                        _.pluck(tags[entry[key]], "json_tags") : "[]";
+                    return entry;
+                });
+                return paginated;
             });
-            return paginated;
         });
-    });
+    }
+    catch(e) {
+        hbLogger.error(`db-connection - addTagsToPagination - exception: ${e.message}`);
+    }
 };
 
 export const addTagsToPaginationReports = (paginationQuery, key = "project_id") => {
-    return paginationQuery.then((paginated) => {
-        const projects = _.pluck(paginated.data, key);
-        const tagsQuery = clientReplica("project_tags")
-            .select("project_id", "json_tags")
-            .whereIn("project_id", projects);
-        return tagsQuery.then((tags) => {
-            tags = _.groupBy(tags, "project_id");
-            paginated.data = _.map(paginated.data, (entry) => {
-                entry.json_special_tags = tags[entry[key]] ?
-                    _.pluck(tags[entry[key]], "json_tags") : "[]";
-                return entry;
+    hbLogger.info(`db-connection - addTagsToPaginationReports`);
+    try {
+        return paginationQuery.then((paginated) => {
+            const projects = _.pluck(paginated.data, key);
+            const tagsQuery = clientReplica("project_tags")
+                .select("project_id", "json_tags")
+                .whereIn("project_id", projects);
+            return tagsQuery.then((tags) => {
+                tags = _.groupBy(tags, "project_id");
+                paginated.data = _.map(paginated.data, (entry) => {
+                    entry.json_special_tags = tags[entry[key]] ?
+                        _.pluck(tags[entry[key]], "json_tags") : "[]";
+                    return entry;
+                });
+                hbLogger.info(`db-connection - addTagsToPaginationReports - returning paginated`);
+                return paginated;
             });
-            return paginated;
         });
-    });
+    }
+    catch(e) {
+        hbLogger.error(`db-connection - addTagsToPaginationReports - exception: ${e.message}`);
+    }
 };
 
 export const addProjectTags = (project) => {
-    const tagsQuery = client.select("json_tags")
-        .from("project_tags")
-        .where("project_id", project.id);
+    try {
+        const tagsQuery = client.select("json_tags")
+            .from("project_tags")
+            .where("project_id", project.id);
 
-    return tagsQuery.then((res) => {
-        project.json_special_tags = res[0] ? res[0].json_tags : "[]";
-        return project;
-    });
+        return tagsQuery.then((res) => {
+            project.json_special_tags = res[0] ? res[0].json_tags : "[]";
+            return project;
+        });
+    }
+    catch(e) {
+        hbLogger.info(`db-connection - addProjectTags - Exception: ${e.message}`);
+    };
 };
 
 export const addOrUpdateProjectTags = (projectId, tags) => {
@@ -967,19 +995,23 @@ export const addOrUpdateProjectTags = (projectId, tags) => {
 
 
 export const addProjectMembersToPagination = (paginationQuery) => {
-    return paginationQuery.then((pagination) => {
-        const projectIds = _.pluck(pagination.data, "id");
-        const membersQuery = client("members")
-            .select("members.project_id", "users.id", "users.name", "users.alias")
-            .innerJoin("users", "members.user_id", "users.id")
-            .whereIn("members.project_id", projectIds);
+    try {
+        return paginationQuery.then((pagination) => {
+            const projectIds = _.pluck(pagination.data, "id");
+            const membersQuery = client("members")
+                .select("members.project_id", "users.id", "users.name", "users.alias")
+                .innerJoin("users", "members.user_id", "users.id")
+                .whereIn("members.project_id", projectIds);
 
-        return membersQuery.then((users) => {
-            const usersByProject = _.groupBy(users, "project_id");
-            pagination.data = addMembersToProjects(pagination.data, usersByProject);
-            return pagination;
+            return membersQuery.then((users) => {
+                const usersByProject = _.groupBy(users, "project_id");
+                pagination.data = addMembersToProjects(pagination.data, usersByProject);
+                return pagination;
+            });
         });
-    });
+    } catch(e) {
+        hbLogger.info(`db-connection - addProjectMembersToPagination - Exception: ${e.message}`);
+    }
 };
 
 export const addProjectMembersToPaginationReports = (paginationQuery) => {
@@ -999,14 +1031,21 @@ export const addProjectMembersToPaginationReports = (paginationQuery) => {
 };
 
 export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
-    return paginationQuery.then((pagination) => {
-        pagination.data = _.map(pagination.data, (project) => {
-            project.project_url =
-                `https://garagehackbox.azurewebsites.net/hackathons/${hackathonId}/projects/${project.id}`;
-            return project;
+    hbLogger.info(`db-connection - addProjectUrlsToPagination`);
+    try {
+        return paginationQuery.then((pagination) => {
+            pagination.data = _.map(pagination.data, (project) => {
+                project.project_url =
+                    `https://garagehackbox.azurewebsites.net/hackathons/${hackathonId}/projects/${project.id}`;
+                return project;
+            });
+            hbLogger.info(`db-connection - addProjectUrlsToPagination - returning pagination`);
+            return pagination;
         });
-        return pagination;
-    });
+    }
+    catch(e) {
+        hbLogger.info(`db-connection - addProjectUrlsToPagination [Exception: ${e.message}]`);
+    }
 };
 
 export const userSearch = (queryObj) => {
