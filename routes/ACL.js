@@ -1,6 +1,7 @@
 import Boom from "boom";
 import Joi from "joi";
 import db, { paginate } from "../db-connection";
+import * as hbLogger from "../hbLogger";
 
 const register = function (server, options, next) {
     
@@ -13,7 +14,9 @@ const register = function (server, options, next) {
         handler(request, reply) {
             const { email } = request.params;
             const response = db("acl").where({ email }).then((result) => {
-                console.log('check email exist result ' + result.length);
+                if (result) {
+                    hbLogger.info(`acl - /acl/{email} - result length: ${result.length}`);
+                }
                 if (result.length === 0) {
                     return { inAcl: false };
                 } else {

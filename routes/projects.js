@@ -12,7 +12,8 @@ import db, {
 } from "../db-connection";
 import Joi from "joi";
 import appInsights from "applicationinsights";
-import logger from "../hbLogger";
+import  * as hbLogger  from "../hbLogger";
+import StopWatch from "../StopWatch";
 
 const client = appInsights.getClient();
 
@@ -98,29 +99,40 @@ const register = function (server, options, next) {
                 `user ID or the string 'me' as an alias to fetch your own.`
             ].join(""),
             handler(request, reply) {
-                const { query } = request;
-                const { limit, offset } = query;
+                const stopWatch = new StopWatch();
+                stopWatch.start();
+                try {
+                    const {query} = request;
+                    const {limit, offset} = query;
 
-                // hardcode hackathon id to match
-                query.hackathon_id = request.params.hackathonId;
+                    // hardcode hackathon id to match
+                    query.hackathon_id = request.params.hackathonId;
 
-                // allow alias "me" for searching for own
-                if (query.has_member === "me") {
-                    query.has_member = request.userId();
+                    // allow alias "me" for searching for own
+                    if (query.has_member === "me") {
+                        query.has_member = request.userId();
+                    }
+
+                    hbLogger.info(`projects: get generalreports/projects ${query.hackathon_id}`);
+                    const response = projectSearchReports(query);
+                    hbLogger.info('projects: after projectSearchReports');
+                    reply(
+                        addProjectMembersToPaginationReports(
+                            addTagsToPaginationReports(
+                                addProjectUrlsToPagination(
+                                    paginate(response, {limit, offset}),
+                                    request.params.hackathonId),
+                                "id")
+                        )
+                    );
+                    stopWatch.stop();
+                    hbLogger.info(`projects - generalreports/projects done: duration: ${stopWatch.getElapsedSeconds()}`);
                 }
-
-                logger.info(`projects: get generalreports/projects ${query.hackathon_id}`);
-                const response = projectSearchReports(query);
-                logger.info('projects: after projectSearchReports');
-                reply(
-                    addProjectMembersToPaginationReports(
-                        addTagsToPaginationReports(
-                            addProjectUrlsToPagination(
-                                paginate(response, { limit, offset }),
-                                request.params.hackathonId),
-                            "id")
-                    )
-                );
+                catch (e) {
+                    stopWatch.stop();
+                    hbLogger.info(`projects - generalreports/projects - exception: ${e.message} duration: ${stopWatch.getElapsedSeconds()}`);
+                    res.status(500).res(e.message);
+                }
             },
             validate: {
                 params: {

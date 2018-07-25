@@ -14,7 +14,7 @@ const countries = require("../countryMap");
     .select('users.id', 'users.email', 'users.city', 'users.country')
     // .count('*')j
     .join('participants', 'participants.user_id', 'users.id')
-    .where("hackathon_id", 1074)
+    .where("hackathon_id", 1214)
     .where("country", "N/A")
     .orderBy('updated_at');
 

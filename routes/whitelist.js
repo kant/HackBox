@@ -5,6 +5,7 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate } from "../db-connection";
+import * as hbLogger from "../hbLogger";
 
 const register = function (server, options, next) {
 
@@ -33,19 +34,19 @@ const register = function (server, options, next) {
       handler(request, reply) {
 
         var response = db("whitelist").whereIn('email', request.payload.emails).then((result) => {
-          console.log(result.length);
+          hbLogger.debug(`whitelist - /whitelist[post] ${result.length}`);
           if (result.length == 0) {
             const emails = request.payload.emails.map((email) => {
-              return {email: email, organization_id: request.payload.organization_id};
-            })
+              return {email, organization_id: request.payload.organization_id};
+            });
 
             return db("whitelist").insert(emails);
           } else {
-            throw Boom.conflict(`Email is already in the invitation list`);
+            throw Boom.conflict("Email is already in the invitation list");
           }
         });
 
-        reply(response)
+        reply(response);
       },
       validate: {
         payload: {

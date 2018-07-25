@@ -57,6 +57,7 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
         .from("participants")
         .where("participants.hackathon_id", "=", id)
         .as("participants");
+
     const projectCount = client.select()
         .count("projects.hackathon_id")
         .from("projects")
@@ -89,7 +90,7 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
         .andWhere("deleted", false);
 
     const oneweekHackQuery = client("hackathon_oneweek").select("hackathon_oneweek.*")
-        .where("hackathon_oneweek.status", "=", 1);    
+        .where("hackathon_oneweek.status", "=", 1);
 
     return Promise.all([mainQuery, adminQuery, challengesQuery, oneweekHackQuery]).then(([hackathonRows, admins, challenges, oneweekHack]) => {
         const hackathon = hackathonRows[0];
@@ -214,8 +215,8 @@ export const ensureChallenge = (hackathonId, id, opts = {
         .where("project_challenges.challenge_id", "=", id)
         .andWhere("project_challenges.hackathon_id", "=", hackathonId);
 
-    //console.log(challengeQuery.toString());
-    //console.log(projectQuery.toString());
+    hbLogger.debug(`db-connection - ensureChallenge: challengeQuery ${challengeQuery.toString()}`);
+    hbLogger.debug(`db-connection - ensureChallenge: projectQuery ${projectQuery.toString()}`);
 
     return Promise.all([
         challengeQuery,
@@ -430,7 +431,7 @@ export const paginate = (query, { limit, offset }) => {
         });
     }
     catch(e) {
-        hbLogger.info(`db-connection - paginate: exception ${e.message}`);
+        hbLogger.error(`db-connection - paginate: exception ${e.message}`);
     }
 };
 
@@ -461,12 +462,13 @@ export const challengeSearch = (queryObj) => {
     query.orderBy(`challenges.${orderByCol}`, orderByDirection);
 
     query.select("challenges.*");
-    //console.log(query.toString());
+    hbLogger.debug(`db-connection - challengeSearch:  ${query.toString()}`);
     return query;
 };
 
 // we use this for two different routes so it lives here for re-use
 export const projectSearch = (queryObj) => {
+    hbLogger.info("db-connection - projectSearch ...");
     const {
         hackathon_id, search, include_deleted, has_video, country,
         needed_roles, needed_expertise, product_focus, customer_type, has_member,
@@ -476,7 +478,7 @@ export const projectSearch = (queryObj) => {
 
     const query = client("projects")
         .join("hackathons", "projects.hackathon_id", "=", "hackathons.id")
-        .innerJoin("users", "projects.owner_id", "users.id") 
+        .innerJoin("users", "projects.owner_id", "users.id")
         .leftOuterJoin("hackathon_oneweek", "hackathon_oneweek.status", 1)
         .andWhere(include_deleted ? {} : { "projects.deleted": false });
 
@@ -507,7 +509,7 @@ export const projectSearch = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
@@ -611,6 +613,7 @@ export const projectSearch = (queryObj) => {
             product_focus.forEach((focus, index) => {
                 const fnName = index === 0 ? "where" : "orWhere";
                 const col = focii[focus];
+                hbLogger.debug(`db-connection - projectSearch : json_focus - ${col}`);
                 this[fnName](`projects.json_focus`, "like", `%${col}%`);
             });
         });
@@ -628,10 +631,12 @@ export const projectSearch = (queryObj) => {
     }
 
     if (has_focus && has_focus.length) {
+        hbLogger.debug(`db-connection - projectSearch : has_focus  json_focus ....... <<<<<<<<<<  `);
         query.where(function () {
             has_focus.forEach((focus, index) => {
                 const fnName = index === 0 ? "whereNotNull" : "orWhereNotNull";
                 const colName = `projects.json_${focus}_focus`;
+                hbLogger.debug(`db-connection - projectSearch : has_focus .......   json_focus - ${colName}`);
                 this[fnName](colName);
             });
         });
@@ -680,7 +685,7 @@ export const projectSearch = (queryObj) => {
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
         "hackathons.name as hackathon_name", "hackathon_oneweek.hackathon_id as oneWeekHackathonId" );
-    
+    hbLogger.debug(`db-connection - projectSearch: ${query.toString()}`);
     return query;
 };
 // end projectSearch
@@ -719,7 +724,7 @@ export const projectSearchReports = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
@@ -826,6 +831,7 @@ export const projectSearchReports = (queryObj) => {
                 this[fnName](`projects.json_focus`, "like", `%${col}%`);
             });
         });
+        hbLogger.debug(`db-connection - projectSearch json_focus: ${query.toString()}`);
     }
     if (customer_type && customer_type.length) {
         query.where(function () {
@@ -892,16 +898,21 @@ export const projectSearchReports = (queryObj) => {
 
     query.select("projects.*", "users.name as owner_name", "users.alias as owner_alias",
         "hackathons.name as hackathon_name");
+    hbLogger.debug(`db-connection - projectSearch: ${query.toString()}`);
     return query;
 };
 // end projectSearchReplica
 
 const addMembersToProjects = (projects, usersByProject) => {
+    hbLogger.info("db-connection - addMembersToProjects ...");
     return _.map(projects, (project) => {
         if (usersByProject[project.id]) {
             project.team_size = usersByProject[project.id].length;
-            project.members = _.map(usersByProject[project.id], (user) =>
-                _.pick(user, ["id", "name", "alias"]));
+            project.members = _.map(usersByProject[project.id], (user) => {
+                const pickedVal = _.pick(user, ["id", "name", "alias"]);
+                hbLogger.debug(`db-connection - addMembersToProjects :  ${JSON.stringify(pickedVal)}`);
+                return pickedVal;
+            });
         }
         return project;
     });
@@ -909,10 +920,12 @@ const addMembersToProjects = (projects, usersByProject) => {
 
 const addMembersToProjectsReports = (projects, usersByProject) => {
     try {
+        hbLogger.info("db-connection - addMembersToProjectsReports ...");
         return _.map(projects, (project) => {
             if (usersByProject[project.id]) {
                 project.team_size = usersByProject[project.id].length;
                 project.members = usersByProject[project.id].map((user) => {
+                    hbLogger.debug(`db-connection - addMembersToProjectsReports :  ${user.alias}`);
                     return user.alias;
                 });
             }
@@ -925,6 +938,7 @@ const addMembersToProjectsReports = (projects, usersByProject) => {
 };
 
 export const addTagsToPagination = (paginationQuery, key = "project_id") => {
+    hbLogger.info("db-connection - addTagsToPagination ...");
     try {
         return paginationQuery.then((paginated) => {
             const projects = _.pluck(paginated.data, key);
@@ -936,6 +950,7 @@ export const addTagsToPagination = (paginationQuery, key = "project_id") => {
                 paginated.data = _.map(paginated.data, (entry) => {
                     entry.json_special_tags = tags[entry[key]] ?
                         _.pluck(tags[entry[key]], "json_tags") : "[]";
+                    hbLogger.debug(`db-connection - addTagsToPagination :  ${tags[entry[key]]}`);
                     return entry;
                 });
                 return paginated;
@@ -948,7 +963,7 @@ export const addTagsToPagination = (paginationQuery, key = "project_id") => {
 };
 
 export const addTagsToPaginationReports = (paginationQuery, key = "project_id") => {
-    hbLogger.info(`db-connection - addTagsToPaginationReports`);
+    hbLogger.info("db-connection - addTagsToPaginationReports ...");
     try {
         return paginationQuery.then((paginated) => {
             const projects = _.pluck(paginated.data, key);
@@ -973,6 +988,7 @@ export const addTagsToPaginationReports = (paginationQuery, key = "project_id") 
 };
 
 export const addProjectTags = (project) => {
+    hbLogger.info('db-connection - addProjectTags ...');
     try {
         const tagsQuery = client.select("json_tags")
             .from("project_tags")
@@ -984,7 +1000,7 @@ export const addProjectTags = (project) => {
         });
     }
     catch(e) {
-        hbLogger.info(`db-connection - addProjectTags - Exception: ${e.message}`);
+        hbLogger.error(`db-connection - addProjectTags - Exception: ${e.message}`);
     };
 };
 
@@ -995,6 +1011,7 @@ export const addOrUpdateProjectTags = (projectId, tags) => {
 
 
 export const addProjectMembersToPagination = (paginationQuery) => {
+    hbLogger.info("db-connection - addProjectMembersToPagination ...");
     try {
         return paginationQuery.then((pagination) => {
             const projectIds = _.pluck(pagination.data, "id");
@@ -1010,7 +1027,7 @@ export const addProjectMembersToPagination = (paginationQuery) => {
             });
         });
     } catch(e) {
-        hbLogger.info(`db-connection - addProjectMembersToPagination - Exception: ${e.message}`);
+        hbLogger.error(`db-connection - addProjectMembersToPagination - Exception: ${e.message}`);
     }
 };
 
@@ -1031,7 +1048,7 @@ export const addProjectMembersToPaginationReports = (paginationQuery) => {
 };
 
 export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
-    hbLogger.info(`db-connection - addProjectUrlsToPagination`);
+    hbLogger.info("db-connection - addProjectUrlsToPagination ...");
     try {
         return paginationQuery.then((pagination) => {
             pagination.data = _.map(pagination.data, (project) => {
@@ -1044,7 +1061,7 @@ export const addProjectUrlsToPagination = (paginationQuery, hackathonId) => {
         });
     }
     catch(e) {
-        hbLogger.info(`db-connection - addProjectUrlsToPagination [Exception: ${e.message}]`);
+        hbLogger.error(`db-connection - addProjectUrlsToPagination [Exception: ${e.message}]`);
     }
 };
 
@@ -1251,12 +1268,10 @@ export const userSearch = (queryObj) => {
             country = country.concat(europeList);
         }
         let chinaIndex = country.indexOf('Greater China Region');
-        console.log('chinaIndex : ' + chinaIndex);
         if (chinaIndex !== -1) {
             country.splice(chinaIndex, 1);
             country = country.concat(chinaList);
         }
-        console.log("country:" + country);
         query.whereIn("country", country);
     }
     if (has_project === true || has_project === false) {

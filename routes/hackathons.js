@@ -12,6 +12,7 @@ import db, { paginate, ensureHackathon, ensureUser, ensureChallenge, hackathonSe
 
 import admin from "../data/approved-admins";
 import appInsights from "applicationinsights";
+import * as hbLogger from "../hbLogger";
 
 const client = appInsights.getClient();
 
@@ -60,8 +61,7 @@ const register = function (server, options, next) {
                 if (request.auth.credentials && request.auth.credentials.organization_id) {
                     request.query.organization_id = request.auth.credentials.organization_id;
                 }
-                //console.log(hackathonSearch(request.query));
-
+                hbLogger.debug(`hackathons - /hackathons ${request.query}`);
                 const response = hackathonSearch(request.query);
 
                 reply(paginate(response, { limit, offset }));

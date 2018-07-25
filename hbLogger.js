@@ -1,8 +1,10 @@
 import winston from "winston";
 
-const logger = winston.createLogger({
+const hbLogger = winston.createLogger({
     level: "info",
-    format: winston.format.json(),
+    format: winston.format.combine(
+        winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
+        winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)),
     transports: [
         //
         // - Write to all logs with level `info` and below to `combined.log`
@@ -14,10 +16,12 @@ const logger = winston.createLogger({
 });
 
 if (process.env.NODE_ENV !== "production") {
-    logger.add(new winston.transports.Console({
-        format: winston.format.simple(),
-        colorize: true
+    hbLogger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
+            winston.format.colorize(),
+            winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`))
     }));
 }
 
-module.exports = logger;
+module.exports = hbLogger;

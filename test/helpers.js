@@ -5,6 +5,7 @@
 import server from "../index";
 import Joi from "joi";
 import { paginationResults } from "../data/validation";
+import * as hbLogger from "../hbLogger";
 
 export default (opts, t) => {
   const defaults = {
@@ -107,14 +108,14 @@ export default (opts, t) => {
         parsed.data.forEach((item) => {
           const result = Joi.validate(item, opts.schema, {allowUnknown: opts.allowUnknown});
           if (result.error) {
-            console.log(result.error);
+            hbLogger.debug(`helpers opts.hasPagination - validate: ${result.error}`);
           }
           t.ok(!result.error, "each result in data matches schema");
         });
       } else {
         const result = Joi.validate(parsed, opts.schema, {allowUnknown: opts.allowUnknown});
         if (result.error) {
-          console.log(result.error);
+          hbLogger.debug(`helpers !opts.hasPagination - validate: ${result.error}`);
         }
         t.ok(!result.error, "matches schema");
       }

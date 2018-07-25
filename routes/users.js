@@ -7,6 +7,7 @@ import { updateUser, stringId, optionalId, countryArray,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
 import appInsights from "applicationinsights";
+import * as hbLogger from "../hbLogger";
 
 const client = appInsights.getClient();
 
@@ -260,7 +261,7 @@ const register = function (server, options, next) {
               if (!err) {
                   return request.generateResponse().code(200);
               } else {
-                console.log(err);
+                hbLogger.error(`users - initmsftemployees - writeFile exception: ${err.message}`);
               }
             });
 
@@ -278,7 +279,7 @@ const register = function (server, options, next) {
       description: "Fetch details about all employees",
       tags: ["api"],
       handler(request, reply) {
-        console.log(request.query);
+          hbLogger.info("users - msftemployees ...");
           let time = Date.now();
           fs.readFile('data/msft.json', 'utf8', function(err, result) {
             if (!err) {
@@ -289,14 +290,12 @@ const register = function (server, options, next) {
                       filteredResult.push({alias: person[0], name: person[1], id: person[2] ? person[2] : undefined});
                   }
                 })
-                console.log('Time elapsed: ' + (Date.now() - time) + 'ms');
+                hbLogger.debug(`users - msftemployees - elapsed time: ${(Date.now() - time)}ms`);
                 reply(filteredResult);
             } else {
-              console.log(err);
+                hbLogger.error(`users - msftemployees - exception: ${err.message}`);
             }
           });
-
-        
       }
     }
   });

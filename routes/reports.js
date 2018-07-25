@@ -9,7 +9,8 @@ import Joi from "joi";
 import { id, pagination } from "../data/validation";
 import db, { clientReplica, ensureHackathon, ensureHackathonReports, getHackathonReport, getHackathonGeneralReport, paginate, addTagsToPaginationReports }
   from "../db-connection";
-import hbLogger from "../hbLogger";
+import * as hbLogger from "../hbLogger";
+import StopWatch from "../StopWatch";
 
 const register = function (server, options, next) {
 
@@ -235,6 +236,9 @@ const register = function (server, options, next) {
       description: "Fetch participant report for all projects in a hackathon",
       tags: ["api", "detail", "paginated", "list"],
       handler(request, reply) {
+          const stopWatch = new StopWatch();
+          stopWatch.start();
+          hbLogger.info(`reports - project-reports - started ...`);
         const { hackathonId } = request.params;
 
         const response = ensureHackathonReports(hackathonId)
@@ -276,9 +280,12 @@ const register = function (server, options, next) {
                 paginate(members, {limit, offset}))))
             .then((paginated) => {
               paginated.data = _.map(paginated.data, cleanUpUser);
+              stopWatch.stop();
+              hbLogger.info(`project-reports - done : ${stopWatch.getElapsedSeconds()}`);
               return paginated;
             }).catch(e => {
-                hbLogger.error(`project-reports: exception: ${e.message}`);
+                stopWatch.stop();
+                hbLogger.error(`project-reports: exception: ${e.message}, ${stopWatch.getElapsedSeconds()}`);
             });
         });
         
