@@ -483,6 +483,7 @@ export const projectSearch = (queryObj) => {
         searched = true;
         query[fnName](function () {
             this.where("projects.title", "like", `%${searchFor}%`)
+                .orWhere("projects.id", "=", `${searchFor}`)
                 .orWhere("projects.json_tags", "like", `%${searchFor}%`)
                 .orWhere("projects.tagline", "like", `%${searchFor}%`)
                 .orWhereIn("projects.id", function () {

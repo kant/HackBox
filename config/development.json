@@ -10,7 +10,7 @@
       "multipleStatements": true
     },
     "pool": {
-      "min": 10,
+      "min": 0,
       "max": 200
     },
     "acquireConnectionTimeout": 60000,
