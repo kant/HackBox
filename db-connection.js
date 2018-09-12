@@ -1418,7 +1418,8 @@ export const awardSearch = (hackathonId, filters = {}) => {
         .select("awards.*")
         .where({ hackathon_id: hackathonId })
         .orderBy("awards.group_order", "asc")
-        .orderBy("awards.display_order", "asc");
+        .orderBy("awards.display_order", "asc")
+        .orderBy("awards.id", "asc");
 
     if (awardCategoryIds) {
         awardQuery
