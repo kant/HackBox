@@ -483,6 +483,7 @@ export const projectSearch = (queryObj) => {
         searched = true;
         query[fnName](function () {
             this.where("projects.title", "like", `%${searchFor}%`)
+                .orWhere("projects.id", "=", `${searchFor}`)
                 .orWhere("projects.json_tags", "like", `%${searchFor}%`)
                 .orWhere("projects.tagline", "like", `%${searchFor}%`)
                 .orWhereIn("projects.id", function () {
@@ -500,7 +501,7 @@ export const projectSearch = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
@@ -712,7 +713,7 @@ export const projectSearchReports = (queryObj) => {
         const fnName = sponSearched ? "orWhere" : "where";
         sponSearched = true;
         query[fnName](function () {
-            this.where("projects.hackathon_id", "=", 1074)
+            this.where("projects.hackathon_id", "=", 1214)
                 .andWhere("projects.json_tags", "like", `%${searchFor}%`);
         });
     };
@@ -1416,7 +1417,9 @@ export const awardSearch = (hackathonId, filters = {}) => {
     const awardQuery = client("awards")
         .select("awards.*")
         .where({ hackathon_id: hackathonId })
-        .orderBy("awards.id", "desc");
+        .orderBy("awards.group_order", "asc")
+        .orderBy("awards.category_order", "asc")
+        .orderBy("awards.display_order", "asc");
 
     if (awardCategoryIds) {
         awardQuery
