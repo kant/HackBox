@@ -1265,7 +1265,7 @@ export const hackathonSearch = (queryObj) => {
         "hackathons.show_challenges"
     ];
 
-    const query = client.select(columns).from("hackathons");
+    const query = client.select(columns).from("hackathons").whereNotBetween('id', [1228, 1239]);
 
     if (search) {
         query.where(function () {
@@ -1379,6 +1379,7 @@ export const hackathonSearch = (queryObj) => {
     } else {
         query.orderBy(orderByCol, orderByDirection);
     }
+    console.log("query :: " + query.toString());
     return query;
 };
 
