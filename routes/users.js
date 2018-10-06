@@ -6,9 +6,9 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+appInsights.setup().start(); // assuming ikey in env var. start() can be omitted to disable any non-custom data
+let client = appInsights.defaultClient;
 
 const register = function (server, options, next) {
   server.route({
