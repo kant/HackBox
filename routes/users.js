@@ -6,9 +6,9 @@ import { updateUser, stringId, optionalId, countryArray,
   projectArray, roleArray, newUser, paginationWithDeleted,
   sortDirection } from "../data/validation";
 import db, { paginate, ensureUser, userSearch } from "../db-connection";
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+appInsights.setup().start(); // assuming ikey in env var. start() can be omitted to disable any non-custom data
+let client = appInsights.defaultClient;
 
 const register = function (server, options, next) {
   server.route({
@@ -42,6 +42,27 @@ const register = function (server, options, next) {
           sort_direction: sortDirection
         })
       }
+    }
+  });
+
+
+  server.route({
+    method: "GET",
+    path: "/allusers",
+    config: {
+      description: "Fetch users",
+      tags: ["api", "list"],
+      handler(request, reply) {
+        const { query } = request;
+
+        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
+          return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
+        }
+        const response = userSearch(request.query);
+              
+        client.trackEvent("Get Hackers", {hackId: query.hackathon_id});
+        reply(response);
+      }      
     }
   });
 

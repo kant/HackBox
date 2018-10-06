@@ -11,9 +11,9 @@ import db, { paginate, ensureHackathon, ensureUser, ensureChallenge, hackathonSe
     from "../db-connection";
 
 import admin from "../data/approved-admins";
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+appInsights.setup().start(); // assuming ikey in env var. start() can be omitted to disable any non-custom data
+let client = appInsights.defaultClient;
 
 const register = function (server, options, next) {
     server.route({
