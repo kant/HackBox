@@ -1,6 +1,6 @@
-import appInsights from "applicationinsights";
-
-const client = appInsights.getClient();
+let appInsights = require("applicationinsights");
+appInsights.setup().start(); // assuming ikey in env var. start() can be omitted to disable any non-custom data
+let client = appInsights.defaultClient;
 
 /*eslint camelcase: [2, {"properties": "never"}] */
 const register = function (server, options, next) {
