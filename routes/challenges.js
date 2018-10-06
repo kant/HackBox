@@ -30,13 +30,14 @@ const register = function (server, options, next) {
                 // hardcode hackathon id to match
                 query.hackathon_id = request.params.hackathonId;
 
+                client.trackEvent("Get Challenges start");
                 const response = ensureHackathon(hackathonId).then((hack) => {
 
                     const response = challengeSearch(query);
 
                     reply(paginate(response, { limit, offset }));
                 }).then((data) => {
-                    client.trackEvent("Get Challenges", { hackId: query.hackathon_id });
+                    client.trackEvent("Get Challenges end", { hackId: query.hackathon_id });
                     return request.generateResponse(data).code(201);
                 });
             },

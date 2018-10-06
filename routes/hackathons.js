@@ -61,10 +61,11 @@ const register = function (server, options, next) {
                     request.query.organization_id = request.auth.credentials.organization_id;
                 }
                 //console.log(hackathonSearch(request.query));
-
+                client.trackEvent("fetch all hackathons starts");
                 const response = hackathonSearch(request.query);
 
                 reply(paginate(response, { limit, offset }));
+                client.trackEvent("fetch all hackathons ends");
             },
             validate: {
                 query: paginationWithDeleted.keys({
@@ -97,6 +98,7 @@ const register = function (server, options, next) {
                 payload.updated_at = now;
                 // Use transaction to insert hackathon and
                 // corresponding entry in admins table
+                client.trackEvent("New hackathon start");
                 const response = db.transaction((trx) => {
                     return trx
                         .insert(payload)
@@ -220,13 +222,14 @@ const register = function (server, options, next) {
                     .then((hack) => {
                         hackathon = hack;
                         hackathon.show_challenges = !(hackathon.show_challenges == 0); 
+                        client.trackEvent("fetch hackathon starts");
                         //Check if hackathon belongs to the same organization as user
                         return db("hackathons_orgs")
                             .where({ hackathon_id: hack.id })
                     })
                     .then((data) => {
                         var authorized = false;
-
+                        client.trackEvent("fetch hackathon ends");
                         data.forEach((hack) => {
                             if (hack.organization_id == request.auth.credentials.organization_id) {
                                 authorized = true;
