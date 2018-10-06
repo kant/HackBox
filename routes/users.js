@@ -45,27 +45,6 @@ const register = function (server, options, next) {
     }
   });
 
-
-  server.route({
-    method: "GET",
-    path: "/allusers",
-    config: {
-      description: "Fetch users",
-      tags: ["api", "list"],
-      handler(request, reply) {
-        const { query } = request;
-
-        if ((query.has_project === true || query.has_project === false) && !query.hackathon_id) {
-          return reply(Boom.badRequest("cannot specify 'has_project' without a 'hackathon_id'"));
-        }
-        const response = userSearch(request.query);
-              
-        client.trackEvent("Get Hackers", {hackId: query.hackathon_id});
-        reply(response);
-      }      
-    }
-  });
-
   server.route({
     method: "POST",
     path: "/users",
