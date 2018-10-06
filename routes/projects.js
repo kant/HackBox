@@ -40,7 +40,7 @@ const register = function (server, options, next) {
 
                 const response = projectSearch(query);
 
-                client.trackEvent("Get Projects", { hackId: query.hackathon_id });
+                client.trackEvent("Get Projects starts", { hackId: query.hackathon_id });
                 reply(
                     addProjectMembersToPagination(
                         addTagsToPagination(
@@ -50,6 +50,7 @@ const register = function (server, options, next) {
                             "id")
                     )
                 );
+                client.trackEvent("Get Projects ends", { hackId: query.hackathon_id });
             },
             validate: {
                 params: {
@@ -430,7 +431,7 @@ const register = function (server, options, next) {
             handler(request, reply) {
                 const { hackathonId, projectId } = request.params;
                 const userId = request.userId();
-
+                client.trackEvent("Get Project starts");
                 const response = ensureProject(hackathonId, projectId, {
                     allowDeleted: request.isSuperUser(),
                     includeOwner: true
@@ -439,6 +440,7 @@ const register = function (server, options, next) {
                 }).then((project) => {
                     return addUserVotesToProject(project, userId);
                 }).then((project) => {
+                    client.trackEvent("Get Project ends");
                     return addOneWeekHackathon(project, hackathonId);
                 });
                 reply(response);
