@@ -1265,7 +1265,7 @@ export const hackathonSearch = (queryObj) => {
         "hackathons.show_challenges"
     ];
 
-    const query = client.select(columns).from("hackathons").whereNotBetween('id', [1228, 1239]);
+    const query = client.select(columns).from("hackathons");
 
     if (search) {
         query.where(function () {
