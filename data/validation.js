@@ -359,5 +359,5 @@ export const sortDirection = Joi.any().valid("asc", "desc");
 /*
   Voting
 */
-export const voteCategoryId = Joi.any().only(0, 1, 2, 3)
-  .description("Valid vote categories are 0-3");
+export const voteCategoryId = Joi.any().only(0, 1, 2, 3, 4)
+  .description("Valid vote categories are 0-4");
