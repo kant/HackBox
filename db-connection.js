@@ -1652,7 +1652,7 @@ export const addOneWeekHackathon = (project, hackathon_id) => {
 };
 
 export const addUserVotesToProject = (project, userId) => {
-    const userVotes = { 0: false, 1: false, 2: false, 3: false };
+    const userVotes = { 0: false, 1: false, 2: false, 3: false, 4:false };
     return client("votes")
         .select("vote_category")
         .where({ oid: userId, project_id: project.id })
