@@ -85,7 +85,8 @@ export const getHackathon = (id, opts = { allowDeleted: false }) => {
         .select("challenges.*")
         .from("challenges")
         .where("hackathon_id", id)
-        .andWhere("deleted", false);
+        .andWhere("deleted", false)
+        .orderBy(`title`, 'asc');
 
     const oneweekHackQuery = client("hackathon_oneweek").select("hackathon_oneweek.*")
         .where("hackathon_oneweek.status", "=", 1);    
