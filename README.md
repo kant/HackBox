@@ -37,7 +37,7 @@ Further information is available in the [development][] docs.
 
 ## Remote Deployment
 
-Deploys are done via Git. Every user deploying needs to have access get access to the Azure portal to acquire Git access.
+Deploys are done via Git. Every user deploying needs to have access to the Azure portal to acquire Git access.
 
 See the [production][] docs for more information on gaining access and setting up a production git remote.
 
@@ -105,14 +105,14 @@ available via `npm run-script`:
 
 ## How to update data/msft.json file
 
-There is a script file scripts/msft-fte-list-update.js
+There is a script file `scripts/msft-fte-list-update.js`
 Usually I update this file after updating feedstore column in DB.
 
 + Point your app to the production database (env variables)
 + Just run this script with node: node scripts/msft-fte-list-update.js
 + Wait. It usualy takes 20-30 secs
 + After successful process script will create msft.json file in scripts folder
-+ Replace msft.json in ./data folder with newly created file. I did not want to overwrite existing because I want to see the diffs first and doublecheck that all latest data is there 
++ Replace msft.json in `./data` folder with newly created file. I did not want to overwrite existing because I want to see the diffs first and doublecheck that all latest data is there 
 
 
 ## How to add awards to winner projects
@@ -125,7 +125,7 @@ Usually I update this file after updating feedstore column in DB.
 {awards:[{"name":"Advertisers  - 3rd Place","color":"#7030a0"}]}
 ```
 + Copy csv file and name it CSV.csv
-+ Run script from here script/update-awards.js. This will read the file and insert all values and awards and id's to the db.
++ Run script from here `script/update-awards.js`. This will read the file and insert all values and awards and id's to the db.
 + Also, you need to update id's and category names in filters in CLient app. HackBoxClient/lib/main/components/filterableLists/filters.directive.js
 
 [development]: ./DEVELOPMENT.md
